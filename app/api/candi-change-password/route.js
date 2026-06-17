@@ -1,0 +1,130 @@
+import { NextResponse } from "next/server";
+import { headers } from "next/headers";
+import { apiFetch } from "../apiFetch";
+
+
+export async function POST(req) {
+    const headersList = await headers();
+
+  const token = req.cookies.get("regToken")?.value;
+  const url = req.nextUrl.pathname;
+
+  let user = {};
+  try {
+    user = JSON.parse(token);
+  } catch (err) {
+    console.error("Invalid JSON token:", err);
+    user = {};
+  }
+    console.log("dashboard user User Role :", user.external.role);
+
+  try {
+    const {
+      OldPassword,
+      NewPassword,
+    } = await req.json();
+
+    console.log("Login attempt email:", user.external.uqId);
+    console.log("Login attempt role:", user.external.role);
+
+    // 1. Basic validation
+    if (!user.external.uqId || !user.external.role) {
+      return NextResponse.json(
+        { message: "Email and role are required" },
+        { status: 400 }
+      );
+    }
+
+     if (!OldPassword || !NewPassword ) {
+      return NextResponse.json(
+        { message: "Old password  and new password fields are required" },
+        { status: 400 }
+      );
+    }
+
+ 
+     const LoginIp =
+    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    headersList.get("x-real-ip") ||
+    headersList.get("cf-connecting-ip") ||
+    "Unknown";
+
+    const loginBody = {
+      uqId: user.external.uqId,
+      OldPassword: OldPassword, // Placeholder, replace with actual old password from request
+      NewPassword: NewPassword, // Placeholder, replace with actual new password from request
+      LoginIp: LoginIp,
+      Role: user.external.role,
+      Token: user.external.accessToken,
+    };    
+    console.log("body Data:", loginBody);
+
+    // Allow self-signed certs in local development only.
+    if (process.env.NODE_ENV !== "production") {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+    }
+
+    const externalApiBaseUrl = process.env.API_BASE_URL;
+    if (!externalApiBaseUrl) {
+      return NextResponse.json(
+        { message: "API_BASE_URL is not configured." },
+        { status: 500 }
+      );
+    }
+    console.log("External API Base URL 00:", externalApiBaseUrl);
+ 
+     const externalApiUrl =
+      process.env.REGISTER_API_URL ||
+      `${externalApiBaseUrl.replace(/\/+$/, "")}/Candidate/candi/CandiChangePassword`;
+
+      console.log("External API URL :", externalApiUrl);
+      console.log("External API Request Body:", loginBody);
+ 
+    const externalResponse = await apiFetch(externalApiUrl, {
+      method: "POST",
+      body: JSON.stringify(loginBody),
+    });
+
+    const responseData = JSON.parse(await externalResponse.text());
+
+    console.log("External Candi API response:", responseData);
+
+    console.log("External API Response Status:", responseData.message || externalResponse.status);
+
+    
+
+    if (!externalResponse.ok) {
+      console.error(
+        "External login failed:",
+        responseData.success,
+       responseData.message
+      );
+
+      return NextResponse.json(
+        {
+          message: responseData.message || "Update Failed1",
+        },
+        { status: responseData.status || 500 }
+      );
+    }
+
+    console.log("Password changed successfully");
+
+    // 6. Send response with cookies
+    const response = NextResponse.json(
+      {
+        message: responseData.message || "Password changed successfully",
+      },
+      { status: 201 }
+    );
+ 
+    return response;
+  } catch (error) {
+    console.error("UPDATE ERROR:", error);
+
+    return NextResponse.json(
+      { message: "Failed to change password" },
+      { status: 500 }
+    );
+  }
+}
