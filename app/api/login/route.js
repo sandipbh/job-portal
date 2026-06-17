@@ -7,136 +7,141 @@ import {
   generateRefreshToken,
 } from "@/lib/auth";
 
+export async function GET() {
+  return NextResponse.json({
+    message: "API Route Working",
+  });
+}
 
-export async function POST(req) {
-    const headersList = await headers();
+// export async function POST(req) {
+//     const headersList = await headers();
 
-  try {
-    const {
-      email,
-      password,
-      role
-    } = await req.json();
+//   try {
+//     const {
+//       email,
+//       password,
+//       role
+//     } = await req.json();
 
-    console.log("Login attempt:", email);
+//     console.log("Login attempt:", email);
 
-    // 1. Basic validation
-    if (!email || !password) {
-      return NextResponse.json(
-        { message: "Email and password are required" },
-        { status: 400 }
-      );
-    }
+//     // 1. Basic validation
+//     if (!email || !password) {
+//       return NextResponse.json(
+//         { message: "Email and password are required" },
+//         { status: 400 }
+//       );
+//     }
 
  
-     const LoginIp =
-    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    headersList.get("x-real-ip") ||
-    headersList.get("cf-connecting-ip") ||
-    "Unknown";
+//      const LoginIp =
+//     headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+//     headersList.get("x-real-ip") ||
+//     headersList.get("cf-connecting-ip") ||
+//     "Unknown";
 
-    const loginBody = {
-      Email: email,
-      Password: password,
-      Role: role,
-      LoginIp: LoginIp,
-    };    
-    console.log("Login body:", loginBody);
+//     const loginBody = {
+//       Email: email,
+//       Password: password,
+//       Role: role,
+//       LoginIp: LoginIp,
+//     };    
+//     console.log("Login body:", loginBody);
 
-    // Allow self-signed certs in local development only.
-    if (process.env.NODE_ENV !== "production") {
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-    }
+//     // Allow self-signed certs in local development only.
+//     if (process.env.NODE_ENV !== "production") {
+//       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+//     }
 
-    const externalApiBaseUrl = process.env.API_BASE_URL;
-    if (!externalApiBaseUrl) {
-      return NextResponse.json(
-        { message: "API_BASE_URL is not configured." },
-        { status: 500 }
-      );
-    }
-    console.log("External API Base URL 00:", externalApiBaseUrl);
+//     const externalApiBaseUrl = process.env.API_BASE_URL;
+//     if (!externalApiBaseUrl) {
+//       return NextResponse.json(
+//         { message: "API_BASE_URL is not configured." },
+//         { status: 500 }
+//       );
+//     }
+//     console.log("External API Base URL 00:", externalApiBaseUrl);
 
      
-     const externalApiUrl =
-      process.env.REGISTER_API_URL ||
-      `${externalApiBaseUrl.replace(/\/+$/, "")}/auth/login`;
+//      const externalApiUrl =
+//       process.env.REGISTER_API_URL ||
+//       `${externalApiBaseUrl.replace(/\/+$/, "")}/auth/login`;
 
-      console.log("External API URL :", externalApiUrl);
+//       console.log("External API URL :", externalApiUrl);
 
-    const externalResponse = await fetch(externalApiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(loginBody),
-    });
+//     const externalResponse = await fetch(externalApiUrl, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(loginBody),
+//     });
  
-    // const externalResponse = await apiFetch(externalApiUrl, {
-    //   method: "POST",
-    //   body: JSON.stringify(loginBody),
-    // });
+//     // const externalResponse = await apiFetch(externalApiUrl, {
+//     //   method: "POST",
+//     //   body: JSON.stringify(loginBody),
+//     // });
 
-    const externalData = await externalResponse.json();
+//     const externalData = await externalResponse.json();
 
-    console.log("External API response:", externalData);
+//     console.log("External API response:", externalData);
 
-    if (!externalResponse.ok) {
-      console.error(
-        "External login failed:",
-        externalResponse.status,
-        externalData
-      );
+//     if (!externalResponse.ok) {
+//       console.error(
+//         "External login failed:",
+//         externalResponse.status,
+//         externalData
+//       );
 
-      return NextResponse.json(
-        {
-          message: externalData.message || "Login failed",
-          external: externalData,
-        },
-        { status: externalResponse.status || 500 }
-      );
-    }
+//       return NextResponse.json(
+//         {
+//           message: externalData.message || "Login failed",
+//           external: externalData,
+//         },
+//         { status: externalResponse.status || 500 }
+//       );
+//     }
 
-    console.log("User logged in successfully:",  role);
+//     console.log("User logged in successfully:",  role);
 
-    // 6. Send response with cookies
-    const response = NextResponse.json(
-      {
-        message: externalData.message || "Login successful",
-        roleType: role,
-        external: externalData,
-      },
-      { status: 201 }
-    );
+//     // 6. Send response with cookies
+//     const response = NextResponse.json(
+//       {
+//         message: externalData.message || "Login successful",
+//         roleType: role,
+//         external: externalData,
+//       },
+//       { status: 201 }
+//     );
 
-    // Set cookies with 5-hour expiration
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      path: "/",
-      maxAge: 5 * 60 * 60, // 5 hours in seconds
-      expires: new Date(Date.now() + 5 * 60 * 60 * 1000),
-    };
+//     // Set cookies with 5-hour expiration
+//     const cookieOptions = {
+//       httpOnly: true,
+//       secure: true,
+//       sameSite: "strict",
+//       path: "/",
+//       maxAge: 5 * 60 * 60, // 5 hours in seconds
+//       expires: new Date(Date.now() + 5 * 60 * 60 * 1000),
+//     };
 
-    const regTokenData = {
+//     const regTokenData = {
        
-      AccessToken: externalData.dataAccessToken,
-      RefreshToken: externalData.dataRefreshToken,
-      UqId: externalData.dataUqId,
-      user: externalData.data,
-      external: externalData,
-    };
+//       AccessToken: externalData.dataAccessToken,
+//       RefreshToken: externalData.dataRefreshToken,
+//       UqId: externalData.dataUqId,
+//       user: externalData.data,
+//       external: externalData,
+//     };
 
-    response.cookies.set("regToken", JSON.stringify(regTokenData), cookieOptions);
+//     response.cookies.set("regToken", JSON.stringify(regTokenData), cookieOptions);
 
-    return response;
-  } catch (error) {
-    console.error("LOGIN ERROR:", error);
+//     return response;
+//   } catch (error) {
+//     console.error("LOGIN ERROR:", error);
 
-    return NextResponse.json(
-      { message: "Failed to login user" },
-      { status: 500 }
-    );
-  }
-}
+//     return NextResponse.json(
+//       { message: "Failed to login user" },
+//       { status: 500 }
+//     );
+//   }
+// }
