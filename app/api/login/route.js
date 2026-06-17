@@ -98,7 +98,10 @@ export async function POST(req) {
 
     console.log("User logged in successfully:", role);
 
-    // 6. Send response with cookies
+    // Create response
+
+
+
     const response = NextResponse.json(
       {
         message: externalData.message || "Login successful",
@@ -108,18 +111,23 @@ export async function POST(req) {
       { status: 201 }
     );
 
-    // Set cookies with 5-hour expiration
+
+    // Remove old cookies if they exist
+    response.cookies.delete("regToken");
+    response.cookies.delete("accessToken");
+    response.cookies.delete("refreshToken");
+    response.cookies.delete("userInfo");
+
+    // New cookie options
     const cookieOptions = {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge: 5 * 60 * 60, // 5 hours in seconds
-      expires: new Date(Date.now() + 5 * 60 * 60 * 1000),
+      maxAge: 5 * 60 * 60,
     };
 
     const regTokenData = {
-
       AccessToken: externalData.dataAccessToken,
       RefreshToken: externalData.dataRefreshToken,
       UqId: externalData.dataUqId,
@@ -127,14 +135,20 @@ export async function POST(req) {
       external: externalData,
     };
 
-    response.cookies.set("regToken", JSON.stringify(regTokenData), cookieOptions);
+    // Set fresh cookie
+    response.cookies.set(
+      "regToken",
+      JSON.stringify(regTokenData),
+      cookieOptions
+    );
 
     return response;
+
   } catch (error) {
     console.error("LOGIN ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to login user" },
+      { message: "Failed to login user " + error },
       { status: 500 }
     );
   }
