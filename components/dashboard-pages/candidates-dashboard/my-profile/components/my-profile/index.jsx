@@ -236,9 +236,9 @@ const Index = () => {
             style={{ width: `${progress}%` }}
           />
         </div>
-        <div className="card-progress-text">
+        {/* <div className="card-progress-text">
           <b> Profile completion: {progress}%</b>
-        </div>
+        </div> */}
       </div>
 
       {/* Steps */}
