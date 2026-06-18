@@ -70,7 +70,7 @@ export async function GET(req) {
 
     return NextResponse.json(
       {
-        message: `Failed to fetch profile details ${loginBody}  `
+        message: `Failed to fetch profile details ${JSON.stringify(loginBody)}  `
       },
       { status: 500 }
     );
