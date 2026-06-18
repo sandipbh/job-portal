@@ -100,8 +100,6 @@ export async function POST(req) {
 
     // Create response
 
-
-
     const response = NextResponse.json(
       {
         message: externalData.message || "Login successful",
@@ -110,7 +108,6 @@ export async function POST(req) {
       },
       { status: 201 }
     );
-
 
     // Remove old cookies if they exist
     response.cookies.delete("regToken");

@@ -33,6 +33,60 @@ const Project = ({ data, setData, onNext }) => {
     const dropdownRef = useRef(null);
     const [skillOptions, setSkillOptions] = useState([]);
 
+
+
+    useEffect(() => {
+        getExperienceDetails();
+    }, []);
+
+    const getSkillList = (skillsIds, skills) => {
+        const keys = skillsIds.split("^");
+        const values = skills.split("^");
+
+        const skillsLearn = keys.map((k, index) => ({
+            key: Number(k),
+            value: values[index]
+        }));
+        return skillsLearn;
+    }
+    const getExperienceDetails = async () => {
+        try {
+            const response = await fetch("/api/candi-project", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            const result = await response.json();
+
+            const profile = result?.data;
+
+            if (profile) {
+                const projectList = profile.map(item => ({
+
+                    projectName: item.projectName,
+                    projectUrl: item.projectUrl,
+                    description: item.projectDetails,
+                    skills: getSkillList(item.skillsIds, item.skills),
+                    projectStartMonth: item.fromMonth,
+                    projectStartYear: item.fromYear,
+                    projectEndMonth: item.toMonth,
+                    projectEndYear: item.toYear,
+                    currentlyWorking: item.currentCompany,
+
+                }));
+                setList(projectList);
+
+                setEditIndex(null);
+                setShowForm(false);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
@@ -54,25 +108,25 @@ const Project = ({ data, setData, onNext }) => {
             newErrors.projectName = "Project name is required";
         }
 
-        if (!form.projectStartMonth) {
+        if (!form.projectStartMonth || form.projectStartMonth.length < 2) {
             newErrors.projectStartMonth = "Select start month";
         }
 
-        if (!form.projectStartYear) {
+        if (!form.projectStartYear || form.projectStartYear.length < 4) {
             newErrors.projectStartYear = "Select start year";
         }
 
         if (!form.currentlyWorking) {
-            if (!form.projectEndMonth) {
+            if (!form.projectEndMonth || form.projectEndMonth.length < 2) {
                 newErrors.projectEndMonth = "Select end month";
             }
 
-            if (!form.projectEndYear) {
+            if (!form.projectEndYear || form.projectEndYear.length < 4) {
                 newErrors.projectEndYear = "Select end year";
             }
         }
 
-        if (!form.description.trim()) {
+        if (!form.description.trim() || form.description.length < 10) {
             newErrors.description = "Project description is required";
         }
 
@@ -276,7 +330,6 @@ const Project = ({ data, setData, onNext }) => {
 
     const getSkills = async () => {
 
-        console.log("Fetching skills for term:");
         try {
 
             const response = await fetch("/api/list-skills", {
@@ -290,7 +343,7 @@ const Project = ({ data, setData, onNext }) => {
             });
 
             const data = await response.json();
-            console.log("exam fetched:", JSON.stringify(data.data));
+            // console.log("exam fetched:", JSON.stringify(data.data));
 
             setSkillOptions(data && data.data ? data.data : []);
 

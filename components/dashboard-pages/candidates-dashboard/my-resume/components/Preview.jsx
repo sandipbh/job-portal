@@ -1,12 +1,96 @@
 'use client';
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 const Preview = ({ data }) => {
 
   const resumeRef = useRef(null);
+
+  const [personal, setPersonal] = useState({});
+  const [education, setEducation] = useState([]);
+  const [exams, setExams] = useState([]);
+  const [experience, setExperience] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [internship, setInternship] = useState([]);
+  const [project, setProject] = useState([]);
+
+
+  const [tenthData, setTenthData] = useState({});
+  const [twelfthData, setTwelfthData] = useState({});
+  const [graduateData, setGraduateData] = useState({});
+  const [mastersData, setMastersData] = useState({});
+  const [PhDData, setPhDData] = useState({});
+
+
+
+
+
+  useEffect(() => {
+    getExperienceDetails();
+  }, []);
+
+  const getSkillList = (skillsIds, skills) => {
+    const keys = skillsIds.split("^");
+    const values = skills.split("^");
+
+    const skillsLearn = keys.map((k, index) => ({
+      key: Number(k),
+      value: values[index]
+    }));
+    return skillsLearn;
+  }
+  const getExperienceDetails = async () => {
+    try {
+      const response = await fetch("/api/candi-resume-details", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const result = await response.json();
+
+      const data = result?.data;
+      console.log('data ', data)
+
+      if (data) {
+
+        setPersonal(data.personal);
+
+        setEducation(data.education);
+        if (data.education) {
+
+          setTenthData(data.education.filter(x => x.education === "10th")[0]);
+          setTwelfthData(data.education.filter(x => x.education === "12th")[0]);
+          setGraduateData(data.education.filter(x => x.education === "Graduate")[0]);
+          setMastersData(data.education.filter(x => x.education === "Masters")[0]);
+          setPhDData(data.education.filter(x => x.education === "PhD")[0]);
+
+        }
+
+        setExams(data.exams);
+        setExperience(data.experience);
+
+        const skillsList = data.skills.map(item => ({
+          key: item.skillId,
+          value: item.skillName,
+        }));
+        setSkills(skillsList);
+
+
+        setInternship(data.internship);
+        console.log('data.internship', data.internship)
+        setProject(data.project);
+
+
+
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const downloadPDF = async () => {
     const element = resumeRef.current;
@@ -49,7 +133,7 @@ const Preview = ({ data }) => {
 
         {/* HEADER */}
         <div className="resume-preview-header">
-          <h1>{data.basic?.fullName}</h1>
+          <h1>{personal?.fullName}</h1>
         </div>
 
         <div className="resume-preview-body">
@@ -62,8 +146,8 @@ const Preview = ({ data }) => {
               <h3>GET IN TOUCH!</h3>
 
               <ul className="resume-list">
-                <li>Mobile: {data.basic?.phone}</li>
-                <li>Email: {data.basic?.email}</li>
+                <li>Mobile: {personal?.mobile}</li>
+                <li>Email: {personal?.email}</li>
               </ul>
             </section>
 
@@ -72,32 +156,38 @@ const Preview = ({ data }) => {
               <h3>PERSONAL DETAILS</h3>
 
               <ul className="resume-list">
-                <li>State: {data.basic?.state}</li>
-                <li>City: {data.basic?.city}</li>
-                <li>Date of Birth: {data.basic?.dob}</li>
-                <li>Gender: {data.basic?.gender}</li>
+                <li>State: {personal?.state}</li>
+                <li>City: {personal?.city}</li>
+                <li>Date of Birth: {personal?.dob}</li>
+                <li>Gender: {personal?.gender}</li>
               </ul>
             </section>
-
+            {/* SALARY */}
+            <section>
+              <h3>SALARY   </h3>
+              <ul className="resume-list">
+                <li> Current CTC :  {personal?.currentSalary}</li>
+                <li> Expected CTC :  {personal?.expectedSalary}</li>
+              </ul>
+            </section>
             {/* SKILLS */}
             <section>
-              <h3>SKILLS</h3>
-
+              <h3>SKILLS   </h3>
               <ul className="resume-list">
-                {data.skills?.map((skill, i) => (
-                  <li key={i}>{skill}</li>
+                {skills?.map((skills, i) => (
+                  <li key={i}>{skills.value}</li>
                 ))}
               </ul>
             </section>
 
             {/* TEST RANKS */}
             <section>
-              <h3>TEST RANKS</h3>
+              <h3>TEST RANKS  </h3>
 
               <ul className="resume-list">
-                {data.competitiveExams?.map((exam, i) => (
+                {exams?.map((exam, i) => (
                   <li key={i}>
-                    {exam.examName} : {exam.score}
+                    {exam.examName} :  {exam.score}
                   </li>
                 ))}
               </ul>
@@ -110,185 +200,164 @@ const Preview = ({ data }) => {
 
             {/* EDUCATION */}
             <section>
-              <h3>EDUCATION</h3>
+              <h3>EDUCATION   </h3>
 
-              {data.education?.postGraduation && (
+              {PhDData?.university && (
+                <div className="resume-item">
+                  <strong>PhD</strong>
+                  <div className="edu-row">
+                    <span className="label">University</span>
+                    <span className="value"> {PhDData?.university}</span>
+                  </div>
+                  <div className="edu-row">
+                    <span className="label">Course</span>
+                    <span className="value">{PhDData?.course}</span>
+                  </div>
+
+                  <div className="edu-row">
+                    <span className="label">Specialization</span>
+                    <span className="value">{PhDData?.specialization}</span>
+                  </div>
+
+                  <div className="edu-row">
+                    <span className="label">Score</span>
+                    <span className="value">{PhDData?.marks} </span>
+                  </div>
+
+                </div>
+              )}
+
+              {mastersData?.university && (
                 <div className="resume-item">
                   <strong>Post Graduation</strong>
                   <div className="edu-row">
+                    <span className="label">University</span>
+                    <span className="value"> {mastersData?.university}</span>
+                  </div>
+                  <div className="edu-row">
                     <span className="label">Course</span>
-                    <span className="value">{data.education.postGraduation.course}</span>
+                    <span className="value">{mastersData?.course}</span>
                   </div>
 
                   <div className="edu-row">
-                    <span className="label">University</span>
-                    <span className="value"> {data.education.postGraduation.university}</span>
+                    <span className="label">Specialization</span>
+                    <span className="value">{mastersData?.specialization}</span>
                   </div>
-
+                  <div className="edu-row">
+                    <span className="label">Passing Year</span>
+                    <span className="value">{mastersData?.durationTo}</span>
+                  </div>
                   <div className="edu-row">
                     <span className="label">Score</span>
-                    <span className="value">{data.education.postGraduation.score}%</span>
+                    <span className="value">{mastersData?.marks}</span>
                   </div>
-
                 </div>
               )}
 
-              {data.education?.graduation && (
+              {graduateData?.university && (
                 <div className="resume-item">
                   <strong>Graduation</strong>
                   <div className="edu-row">
+                    <span className="label">University</span>
+                    <span className="value"> {graduateData?.university}</span>
+                  </div>
+                  <div className="edu-row">
                     <span className="label">Course</span>
-                    <span className="value">{data.education.graduation.course}</span>
+                    <span className="value">{graduateData?.course}</span>
                   </div>
 
                   <div className="edu-row">
-                    <span className="label">University</span>
-                    <span className="value">{data.education.graduation.university}</span>
+                    <span className="label">Specialization</span>
+                    <span className="value">{graduateData?.specialization}</span>
                   </div>
-
+                  <div className="edu-row">
+                    <span className="label">Passing Year</span>
+                    <span className="value">{graduateData?.durationTo}</span>
+                  </div>
                   <div className="edu-row">
                     <span className="label">Score</span>
-                    <span className="value">{data.education.graduation.score}%</span>
+                    <span className="value">{graduateData?.marks}</span>
                   </div>
                 </div>
               )}
 
-              {data.education?.twelfth && (
+              {twelfthData?.board && (
                 <div className="resume-item">
                   <strong>Class XII</strong>
-
                   <div className="edu-row">
                     <span className="label">Board</span>
-                    <span className="value">{data.education.twelfth.board}</span>
+                    <span className="value">{twelfthData?.board}</span>
                   </div>
-
                   <div className="edu-row">
                     <span className="label">Stream</span>
-                    <span className="value">{data.education.twelfth.stream}</span>
+                    <span className="value">{twelfthData?.stream}</span>
                   </div>
 
                   <div className="edu-row">
                     <span className="label">Year</span>
-                    <span className="value">{data.education.twelfth.passingYear}</span>
+                    <span className="value">{twelfthData?.passYear}</span>
                   </div>
 
                   <div className="edu-row">
                     <span className="label">Percentage</span>
-                    <span className="value">{data.education.twelfth.marks}%</span>
+                    <span className="value">{twelfthData?.marks}%</span>
                   </div>
                 </div>
               )}
 
-              {data.education?.tenth && (
+              {tenthData?.board && (
                 <div className="resume-item">
                   <strong>Class X</strong>
                   <div className="edu-row">
                     <span className="label">Board</span>
-                    <span className="value"> {data.education.tenth.board}</span>
+                    <span className="value">{tenthData?.board}</span>
                   </div>
 
                   <div className="edu-row">
                     <span className="label">Medium</span>
-                    <span className="value">{data.education.tenth.medium}</span>
+                    <span className="value">{tenthData?.medium}</span>
                   </div>
 
                   <div className="edu-row">
                     <span className="label">Year</span>
-                    <span className="value">{data.education.tenth.passingYear}</span>
+                    <span className="value">{tenthData?.passYear}</span>
                   </div>
 
                   <div className="edu-row">
                     <span className="label">Percentage</span>
-                    <span className="value">{data.education.tenth.marks}%</span>
+                    <span className="value">{tenthData?.marks}%</span>
                   </div>
-
                 </div>
+
               )}
             </section>
 
-            {/* WORK EXPERIENCE */}
-            <section>
-              <h3>WORK EXPERIENCE</h3>
-
-              {data.experience?.map((exp, i) => (
-                <div key={i} className="resume-item">
-
-                  <strong>{exp.company}</strong>
-
-                  <div className="resume-subtitle">
-                    {exp.designation}
-                  </div>
-
-                  <div className="resume-date">
-                    {exp.workingStartMonth} {exp.workingStartYear}
-                    {" - "}
-                    {exp.currentlyWorking
-                      ? "Present"
-                      : `${exp.workingEndMonth || ""} ${exp.workingEndYear || ""}`}
-                  </div>
-
-                  {exp.description && (
-                    <p>{exp.description}</p>
-                  )}
-                </div>
-              ))}
-            </section>
-
-            {/* PROJECTS */}
-            <section>
-              <h3>PROJECTS</h3>
-
-              {data.projects?.map((proj, i) => (
-                <div key={i} className="resume-item">
-
-                  <strong>{proj.projectName}</strong>
-
-                  <div className="resume-date">
-                    {proj.projectStartMonth} {proj.projectStartYear}
-                    {" - "}
-                    {proj.currentlyWorking
-                      ? "Present"
-                      : `${proj.projectEndMonth || ""} ${proj.projectEndYear || ""}`}
-                  </div>
-
-                  {proj.description && (
-                    <p>{proj.description}</p>
-                  )}
-
-                  {proj.skills?.length > 0 && (
-                    <p>
-                      <strong>Tech Stack:</strong>{" "}
-                      {proj.skills.join(", ")}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </section>
-
             {/* INTERNSHIPS */}
-            {data.internships?.length > 0 && (
+            {internship.length > 0 && (
               <section>
                 <h3>INTERNSHIPS</h3>
 
-                {data.internships.map((item, i) => (
+                {internship.map((item, i) => (
                   <div key={i} className="resume-item">
 
-                    <strong>{item.company}</strong>
-
+                    <strong>{item.projectName}</strong>
                     <div className="resume-subtitle">
-                      {item.profile}
+                      Company Name :  {item.companyName}
+                    </div>
+                    <div className="resume-subtitle">
+                      Skills :  {item.skills.replaceAll("^", ", ")}
                     </div>
 
-                    <div className="resume-date">
-                      {item.startMonth} {item.startYear}
+                    <div className="resume-subtitle">
+                      {item.fromMonth} {item.fromYear}
                       {" - "}
-                      {item.currentlyWorking
+                      {item.currentCompany
                         ? "Present"
-                        : `${item.endMonth || ""} ${item.endYear || ""}`}
+                        : `${item.toMonth || ""} ${item.toYear || ""}`}
                     </div>
 
                     <div className="resume-subtitle">
-                      {item.description}
+                      Work Detail :  {item.workProfile}
                     </div>
 
                   </div>
@@ -296,10 +365,78 @@ const Preview = ({ data }) => {
               </section>
             )}
 
+            {/* WORK EXPERIENCE */}
+            {experience.length > 0 && (
+              <>
+
+                <section >
+                  <h3>WORK EXPERIENCE</h3>
+                  {experience?.map((exp, i) => (
+                    <div key={i} className="resume-item">
+                      <strong>{exp.companyName}</strong>
+                      <div className="resume-subtitle">
+                        {exp.designation}
+                      </div>
+                      <div className="resume-subtitle">
+                        {exp.location}
+                      </div>
+                      <div className="resume-date">
+                        {exp.fromMonth} {exp.fromYear}
+                        {" - "}
+                        {exp.currentCompany
+                          ? "Present"
+                          : `${exp.toMonth || ""} ${exp.toYear || ""}`}
+                      </div>
+
+                      {exp.workProfile && (
+                        <p style={{ borderBottom: "1px solid #cecece", paddingBottom: "5px" }}>{exp.workProfile}</p>
+                      )}
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
+
+
+            {experience.length > 0 && (
+              <>
+
+                <section >
+                  <h3>PROJECTS</h3>
+
+                  {project?.map((proj, i) => (
+                    <div key={i} className="resume-item">
+
+                      <strong>{proj.projectName}</strong>
+
+                      <div className="resume-date">
+                        {proj.fromMonth} {proj.fromYear}
+                        {" - "}
+                        {proj.currentlyCompany
+                          ? "Present"
+                          : `${proj.toMonth || ""} ${proj.toYear || ""}`}
+                      </div>
+
+                      {proj.projectDetails && (
+                        <p style={{ marginBottom: "5px", paddingBottom: "5px" }} >{proj.projectDetails}</p>
+                      )}
+
+                      <p style={{ borderBottom: "1px solid #cecece", paddingBottom: "5px" }}>
+
+                        <strong>skills:  {proj.skills.replaceAll("^", ",")}</strong>
+                      </p>
+
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
           </div>
         </div>
 
-      </div>
+      </div >
       <div className="row mt-3 ">
         <div className="col text-center">
           <button onClick={downloadPDF} className="btn btn-info btn-md w-25 ">

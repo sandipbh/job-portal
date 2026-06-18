@@ -111,19 +111,16 @@ const Basic = ({ formData,
 
   const getProfileDetails = async () => {
     try {
-      const response = await fetch("/api/candi-profile-details", {
-        method: "POST",
+      const response = await fetch("/api/candi-update-profile-basic", {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          term: "",
-        }),
+        }
       });
 
       const result = await response.json();
 
-      console.log("Profile Details fetched:", result);
+      //console.log("Profile Details fetched:", result);
 
       const profile = result?.data;
 

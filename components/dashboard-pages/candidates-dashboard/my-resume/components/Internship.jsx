@@ -9,12 +9,15 @@ const InternshipForm = ({ data, setData, onNext }) => {
     const [errors, setErrors] = useState({});
     const dropdownRef = useRef(null);
     const [form, setForm] = useState({
+
         company: "",
         projectName: "",
         projectUrl: "",
         skillsLearned: [],
         startYear: "",
+        startMonth: "",
         endYear: "",
+        endMonth: "",
         currentlyWorking: false,
         description: ""
     });
@@ -25,6 +28,49 @@ const InternshipForm = ({ data, setData, onNext }) => {
     const currentYear = new Date().getFullYear();
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        getInternshipDetails();
+    }, []);
+
+    const getInternshipDetails = async () => {
+        try {
+            const response = await fetch("/api/candi-internship", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            const result = await response.json();
+            const profile = result?.data;
+            if (profile) {
+                const item = profile[0];
+                const keys = item.skillsIds.split("^");
+                const values = item.skills.split("^");
+
+                const skillsLearn = keys.map((k, index) => ({
+                    key: Number(k),
+                    value: values[index]
+                }));
+
+                const internList = {
+                    company: item.companyName,
+                    projectName: item.projectName,
+                    projectUrl: item.projectUrl,
+                    skillsLearned: skillsLearn,
+                    startYear: item.fromYear,
+                    startMonth: item.fromMonth,
+                    endYear: item.toYear,
+                    endMonth: item.toMonth,
+                    currentlyWorking: item.currentCompany,
+                    description: item.workProfile
+                };
+                setForm(internList);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -100,7 +146,7 @@ const InternshipForm = ({ data, setData, onNext }) => {
 
     const getSkills = async () => {
 
-        console.log("Fetching skills for term:");
+
         try {
 
             const response = await fetch("/api/list-skills", {
@@ -114,7 +160,7 @@ const InternshipForm = ({ data, setData, onNext }) => {
             });
 
             const data = await response.json();
-            console.log("exam fetched:", JSON.stringify(data.data));
+            //console.log("exam fetched:", JSON.stringify(data.data));
 
             setSkillOptions(data && data.data ? data.data : []);
 
@@ -163,18 +209,18 @@ const InternshipForm = ({ data, setData, onNext }) => {
         if (!form.projectName?.trim() || form.projectName.length < 3) {
             newErrors.projectName = "Enter valid project name";
         }
-        if (!form.startMonth?.trim()) {
+        if (!form.startMonth?.trim() || form.startMonth.length < 1) {
             newErrors.startMonth = "Select start month";
         }
-        if (!form.startYear?.trim()) {
+        if (!form.startYear?.trim() || form.startYear.length < 4) {
             newErrors.startYear = "Select start year";
         }
 
         if (!form.currentlyWorking) {
-            if (!form.endMonth?.trim()) {
+            if (!form.endMonth?.trim() || form.endMonth.length < 1) {
                 newErrors.endMonth = "Select end month";
             }
-            if (!form.endYear?.trim()) {
+            if (!form.endYear?.trim() || form.endYear.length < 4) {
                 newErrors.endYear = "Select end year";
             }
         }
@@ -214,6 +260,7 @@ const InternshipForm = ({ data, setData, onNext }) => {
                     return;
                 }
                 resetForm();
+                getInternshipDetails();
                 toast.success(user.message);
             } catch (error) {
                 console.error(error);

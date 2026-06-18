@@ -21,7 +21,7 @@ const CompetitiveExam = ({
     };
     const [exam, setExam] = useState(emptyExam);
 
- 
+
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -49,7 +49,7 @@ const CompetitiveExam = ({
             });
 
             const data = await response.json();
-            console.log("exam fetched:", JSON.stringify(data.data));
+            //console.log("exam fetched:", JSON.stringify(data.data));
 
             setExamListApi(data && data.data ? data.data : []);
 
@@ -60,6 +60,40 @@ const CompetitiveExam = ({
     useEffect(() => {
         getExams();
     }, [0]);
+
+
+    useEffect(() => {
+        getExamDetails();
+    }, []);
+
+    const getExamDetails = async () => {
+        try {
+            const response = await fetch("/api/candi-competitive-exam", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            const result = await response.json();
+
+            const profile = result?.data;
+
+            if (profile) {
+
+                const examList = profile.map(item => ({
+                    examId: item.examId,
+                    examName: item.examName,
+                    year: item.year,
+                    score: item.score
+                }));
+                setExamList(examList);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
 
 
     const handleChange = (e) => {
@@ -108,38 +142,38 @@ const CompetitiveExam = ({
         setEditingIndex(index);
     };
 
-    
+
 
     const saveExam = async (type) => {
 
-        if(type==="save"){
-        const isExamExists = examList.some(
-            (item) => item.examId === exam.examId
-        );
+        if (type === "save") {
+            const isExamExists = examList.some(
+                (item) => item.examId === exam.examId
+            );
 
-        if (isExamExists) {
-            toast.error(`${exam.examName} already exists`);
-            return true;
-        }  
+            if (isExamExists) {
+                toast.error(`${exam.examName} already exists`);
+                return true;
+            }
         }
         let newErrors = {};
-         
-        if (!exam.examName?.trim()) {
+
+        if (!exam.examName?.trim() || exam.examName.length < 2) {
             newErrors.examName = "Select exam";
         }
         if (!exam.examId?.trim()) {
             newErrors.examName = "Select exam";
         }
-        if (!exam.year?.trim()) {
+        if (!exam.year?.trim() || exam.year.length < 4) {
             newErrors.year = "Select year";
         }
-        if (!exam.score?.trim()) {
+        if (!exam.score?.trim() || exam.score.length < 1) {
             newErrors.score = "Enter rank/score";
         }
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-           
+
             try {
 
                 setLoading(true);
@@ -163,17 +197,17 @@ const CompetitiveExam = ({
                     return;
                 }
                 /*** set list** */
-            if (editingIndex !== null) {
-                const updated = [...examList];
-                updated[editingIndex] = exam;
-                setExamList(updated);
-                // close edit mode
-                setEditingIndex(null);
-            } else {
-                setExamList([...examList, exam]);
-                setShowForm(false);
-            }
-               /*** set list** */
+                if (editingIndex !== null) {
+                    const updated = [...examList];
+                    updated[editingIndex] = exam;
+                    setExamList(updated);
+                    // close edit mode
+                    setEditingIndex(null);
+                } else {
+                    setExamList([...examList, exam]);
+                    setShowForm(false);
+                }
+                /*** set list** */
                 setExam(emptyExam);
 
                 toast.success(user.message);
@@ -183,7 +217,7 @@ const CompetitiveExam = ({
             } finally {
                 setLoading(false);
             }
- 
+
         }
     };
     const handleAddExam = () => {
@@ -317,7 +351,7 @@ const CompetitiveExam = ({
                             <button
                                 type="button"
                                 className="btn btn-md btn-warning  me-3 mt-2"
-                                 onClick={() => saveExam("update")}
+                                onClick={() => saveExam("update")}
                             >
                                 Save
                             </button>
@@ -426,12 +460,12 @@ const CompetitiveExam = ({
                         <button
                             type="button"
                             className="btn btn-md btn-primary  me-3"
-                             onClick={() => saveExam("save")}
+                            onClick={() => saveExam("save")}
                             disabled={loading}
                         >
                             {loading ? "Saving....." : "Save"}
                         </button>
- 
+
                         <button
                             type="button"
                             className="btn btn-md btn-secondary"

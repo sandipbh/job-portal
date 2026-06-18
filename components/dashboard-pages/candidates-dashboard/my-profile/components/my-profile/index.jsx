@@ -42,7 +42,7 @@ const Index = () => {
 
       const result = await response.json();
 
-      console.log("Profile Details fetched:", result);
+      // console.log("Profile Details fetched:", result);
 
       const profile = result?.data;
 

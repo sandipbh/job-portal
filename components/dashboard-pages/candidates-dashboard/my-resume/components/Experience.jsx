@@ -1,9 +1,9 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 
 const ExperienceForm = ({ data, setData, onNext }) => {
- 
+
   const emptyExperience = {
     designation: "",
     company: "",
@@ -26,6 +26,53 @@ const ExperienceForm = ({ data, setData, onNext }) => {
   const [errors, setErrors] = useState({});
 
   const [editIndex, setEditIndex] = useState(null);
+
+  useEffect(() => {
+    getExperienceDetails();
+  }, []);
+
+  const getExperienceDetails = async () => {
+    try {
+      const response = await fetch("/api/candi-experience", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const result = await response.json();
+
+      const profile = result?.data;
+
+      if (profile) {
+
+        const examList = profile.map(item => ({
+
+          designation: item.designation,
+          company: item.companyName,
+          location: item.location,
+          workingStartMonth: item.fromMonth,
+          workingStartYear: item.fromYear,
+          workingEndMonth: item.toMonth,
+          workingEndYear: item.toYear,
+          currentlyWorking: item.currentCompany,
+          description: item.workProfile,
+
+        }));
+        setList(examList);
+
+        setForm(emptyExperience);
+        setEditIndex(null);
+        setShowForm(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+
+
 
   const saveExperience = async () => {
     const isValid = validateForm();
@@ -117,20 +164,20 @@ const ExperienceForm = ({ data, setData, onNext }) => {
       newErrors.company = "Company name is required";
     }
 
-    if (!form.workingStartMonth) {
+    if (!form.workingStartMonth || form.workingStartMonth.length < 3) {
       newErrors.workingStartMonth = "Select start month";
     }
 
-    if (!form.workingStartYear) {
+    if (!form.workingStartYear || form.workingStartYear.length < 4) {
       newErrors.workingStartYear = "Select start year";
     }
 
     if (!form.currentlyWorking) {
-      if (!form.workingEndMonth) {
+      if (!form.workingEndMonth || form.workingEndMonth.length < 3) {
         newErrors.workingEndMonth = "Select end month";
       }
 
-      if (!form.workingEndYear) {
+      if (!form.workingEndYear || form.workingEndYear.length < 4) {
         newErrors.workingEndYear = "Select end year";
       }
     }
@@ -141,9 +188,9 @@ const ExperienceForm = ({ data, setData, onNext }) => {
 
     if (!form.description.trim()) {
       newErrors.description = "Job description is required";
-    } else if (form.description.trim().length < 10) {
-      newErrors.description =
-        "Description your work";
+    }
+    if (form.description.trim().length < 10) {
+      newErrors.description = "Description your work";
     }
 
     setErrors(newErrors);
@@ -247,7 +294,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
       {!showForm && (
         <button
           type="button"
-          className="theme-btn btn-style-three mb-4"
+          className="btn btn-sm btn-style-four mb-4"
           onClick={() => {
             setForm(emptyExperience);
             setEditIndex(null);
@@ -259,7 +306,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
       )}
 
       {list.map((item, index) => (
-        <div key={index} className="exam-card" style={ {marginBottom:"10px"}}>
+        <div key={index} className="exam-card" style={{ marginBottom: "10px" }}>
 
           <div className="d-flex justify-content-between align-items-start">
 
@@ -270,10 +317,10 @@ const ExperienceForm = ({ data, setData, onNext }) => {
                 {item.company} ,  {item.location}
               </p>
               <p className="mb-0">
-              From {item.workingStartMonth}, {item.workingStartYear} - {" "}
-                  {item.currentlyWorking
-                    ? "Present"
-                    : `${item.workingEndMonth}, ${item.workingEndYear}`}
+                From {item.workingStartMonth}, {item.workingStartYear} - {" "}
+                {item.currentlyWorking
+                  ? "Present"
+                  : `${item.workingEndMonth}, ${item.workingEndYear}`}
               </p>
             </div>
 
@@ -326,7 +373,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
                 )}
               </div>
 
-          
+
               {/* WORKING SINCE */}
               <div className="form-group col-12 mt-2">
                 <label>Working Since</label>
@@ -491,15 +538,15 @@ const ExperienceForm = ({ data, setData, onNext }) => {
               </div>
 
               <div className="d-flex gap-3 mt-4">
- 
+
                 <button
-                            type="button"
-                            className="btn btn-md btn-primary  me-3"
-                             onClick={() => saveExperience()}
-                            disabled={loading}
-                        >
-                            {loading ? "Saving....." : "Save"}
-                        </button>
+                  type="button"
+                  className="btn btn-md btn-primary  me-3"
+                  onClick={() => saveExperience()}
+                  disabled={loading}
+                >
+                  {loading ? "Saving....." : "Save"}
+                </button>
 
                 <button
                   type="button"

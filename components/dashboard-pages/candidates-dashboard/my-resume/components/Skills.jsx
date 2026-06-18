@@ -5,10 +5,43 @@ import { toast } from 'react-toastify';
 
 const SkillsForm = ({ data, setData, onNext }) => {
 
-const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
 
   const [skillOptions, setSkillOptions] = useState([]);
+
+
+  useEffect(() => {
+    getSkillsDetails();
+  }, []);
+
+  const getSkillsDetails = async () => {
+    try {
+      const response = await fetch("/api/candi-skills", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const result = await response.json();
+
+      const profile = result?.data;
+
+      if (profile) {
+
+        const examList = profile.map(item => ({
+          key: item.skillId,
+          value: item.skillName,
+        }));
+        setSkills(examList);
+
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -53,7 +86,6 @@ const [loading, setLoading] = useState(false);
 
   const getSkills = async () => {
 
-    console.log("Fetching skills for term:");
     try {
 
       const response = await fetch("/api/list-skills", {
@@ -67,7 +99,7 @@ const [loading, setLoading] = useState(false);
       });
 
       const data = await response.json();
-      console.log("exam fetched:", JSON.stringify(data.data));
+      // console.log("exam fetched:", JSON.stringify(data.data));
 
       setSkillOptions(data && data.data ? data.data : []);
 
@@ -83,55 +115,55 @@ const [loading, setLoading] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
     setData({
-        ...data,
-        skills,
-      });
-      onNext();
+      ...data,
+      skills,
+    });
+    onNext();
   };
 
-   // SAVE
-  const handleSave =async () => {
-   
-          try {
+  // SAVE
+  const handleSave = async () => {
 
-            if(skills.length>0){
-                setLoading(true);
+    try {
 
-                const res = await fetch("/api/candi-skills", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                      body: JSON.stringify({ skills }),
-                });
+      if (skills.length > 0) {
+        setLoading(true);
 
-                const user = await res.json();
-                //console.log("Response from /api/candi-skills :", user);
+        const res = await fetch("/api/candi-skills", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ skills }),
+        });
 
-                if (!res.ok) {
-                    toast.error(user.message || "Skills update failed");
-                    setLoading(false);
-                    return;
-                }
-         
-               /*** set list** */
-                   setData({
-                    ...data,
-                    skills,
-                  });
-    console.log('skills list ',skills)
+        const user = await res.json();
+        //console.log("Response from /api/candi-skills :", user);
 
-                toast.success(user.message);
-                }
-            } catch (error) {
-                console.error(error);
-                toast.error("Save failed. Please try again.");
-            } finally {
-                setLoading(false);
-            }
- 
+        if (!res.ok) {
+          toast.error(user.message || "Skills update failed");
+          setLoading(false);
+          return;
+        }
 
- 
+        /*** set list** */
+        setData({
+          ...data,
+          skills,
+        });
+        console.log('skills list ', skills)
+
+        toast.success(user.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Save failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+
+
+
   };
 
   const dropdownRef = useRef(null);
@@ -168,14 +200,14 @@ const [loading, setLoading] = useState(false);
             <label>Skills</label>
 
             {/* Selected Skills */}
-            {skills.length > 0 && ( <div className="skill-tags mb-2">
-            {skills.map((skill, i) => (
-              <div key={skill.key} className="skill-chip">
-                {skill.value}
-                <MdClose onClick={() => removeSkill(i)} />
-              </div>
-            ))}
- </div>)}
+            {skills.length > 0 && (<div className="skill-tags mb-2">
+              {skills.map((skill, i) => (
+                <div key={skill.key} className="skill-chip">
+                  {skill.value}
+                  <MdClose onClick={() => removeSkill(i)} />
+                </div>
+              ))}
+            </div>)}
             {/* Search Field */}
             <div className="skill-input-box" ref={dropdownRef}>
               <input
@@ -191,7 +223,7 @@ const [loading, setLoading] = useState(false);
                   {suggestions.map((skill) => (
                     <li
                       key={skill.key}
-                      onClick={() => selectSkill(skill.key,skill.value)}
+                      onClick={() => selectSkill(skill.key, skill.value)}
                     >
                       {skill.value}
                     </li>
@@ -200,17 +232,17 @@ const [loading, setLoading] = useState(false);
               )}
             </div>
           </div>
-<div className="mt-3">
-                        <button
-                            type="button"
-                            className="btn btn-md btn-primary  me-3"
-                             onClick={() => handleSave()}
-                            disabled={loading}
-                        >
-                            {loading ? "Saving....." : "Save"}
-                        </button>
+          <div className="mt-3">
+            <button
+              type="button"
+              className="btn btn-md btn-primary  me-3"
+              onClick={() => handleSave()}
+              disabled={loading}
+            >
+              {loading ? "Saving....." : "Save"}
+            </button>
+          </div>
         </div>
- </div>
       </div>
 
       {/* SAVE */}
