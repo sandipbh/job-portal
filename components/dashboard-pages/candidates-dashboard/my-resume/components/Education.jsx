@@ -650,19 +650,13 @@ const EducationForm = ({
         >
           {education.tenth ? (
             <>
-              <h5>Class X</h5>
-
-              <p>
-                {education.tenth.board} • {education.tenth.passingYear}
-              </p>
-              <small>
-                Marks: {education.tenth.marks}% | Medium: {education.tenth.medium}
-              </small>
+              <h5>  Class X Details  </h5>
+              <p>Board : {education.tenthBoard}  Percentage : {formData.tenthMarks}, Passing Year : {formData.tenthPassingYear}</p>
             </>
           ) : (
             <>
-              <h5>Add Class X Details  </h5>
-              <p>Percentage : {formData.tenthMarks}, Passing Year : {formData.tenthPassingYear}</p>
+              <h5>  Class X Details  </h5>
+              <p>Board : {education.tenthBoard}  Percentage : {formData.tenthMarks}, Passing Year : {formData.tenthPassingYear}</p>
             </>
 
           )}
@@ -849,20 +843,13 @@ const EducationForm = ({
         >
           {education.twelfth ? (
             <>
-              <h5>Class XII</h5>
+              <h5>  Class XII Details</h5>
+              <p>Percentage : {formData.twelfthMarks}, Passing Year : {formData.twelfthPassingYear}</p>
 
-              <p>
-                {education.twelfth.board} • {education.twelfth.passingYear}
-              </p>
-
-              <small>
-                Stream: {education.twelfth.stream} |
-                Marks: {education.twelfth.marks}%
-              </small>
             </>
           ) : (
             <>
-              <h5>Add Class XII Details</h5>
+              <h5>  Class XII Details</h5>
               <p>Percentage : {formData.twelfthMarks}, Passing Year : {formData.twelfthPassingYear}</p>
             </>
           )}
@@ -1059,28 +1046,14 @@ const EducationForm = ({
         >
           {education.graduation ? (
             <>
-              <h5>Graduation</h5>
-
-              <p>
-                {education.graduation.course} -
-                {education.graduation.specialization}
-              </p>
-
-              <small>
-                {education.graduation.university}
-              </small>
-
-              <br />
-
-              <small>
-                {education.graduation.startYear} -
-                {education.graduation.endYear}
-              </small>
+              <h5>  Graduation Details</h5>
+              <p>Course : {formData.graduateCourse},
+                University / Institute : {formData.graduateUniversity},
+                Passing Year : {formData.graduateEndYear}</p>
             </>
           ) : (
             <>
-              <h5>Add Graduation Details</h5>
-
+              <h5>  Graduation Details</h5>
               <p>Course : {formData.graduateCourse},
                 University / Institute : {formData.graduateUniversity},
                 Passing Year : {formData.graduateEndYear}</p>
@@ -1441,27 +1414,14 @@ const EducationForm = ({
         >
           {education.postGraduation ? (
             <>
-              <h5>Post Graduation</h5>
-
-              <p>
-                {education.postGraduation.course} -
-                {education.postGraduation.specialization}
-              </p>
-
-              <small>
-                {education.postGraduation.university}
-              </small>
-
-              <br />
-
-              <small>
-                {education.postGraduation.startYear} -
-                {education.postGraduation.endYear}
-              </small>
+              <h5>  Post Graduation Details</h5>
+              <p>Course : {formData.postgraduateCourse},
+                University / Institute : {formData.postgraduateUniversity},
+                Passing Year : {formData.postgraduateEndYear}</p>
             </>
           ) : (
             <>
-              <h5>Add Post Graduation Details</h5>
+              <h5>  Post Graduation Details</h5>
               <p>Course : {formData.postgraduateCourse},
                 University / Institute : {formData.postgraduateUniversity},
                 Passing Year : {formData.postgraduateEndYear}</p>
@@ -1824,27 +1784,14 @@ const EducationForm = ({
         >
           {education.doctorate ? (
             <>
-              <h5>Doctorate / PhD</h5>
+              <h5>  Doctorate/PhD Details</h5>
+              <p>Course : {formData.doctorateCourse},
+                University / Institute : {formData.doctorateUniversity},  Passing Year : {formData.doctorateEndYear}</p>
 
-              <p>
-                {education.doctorate.course} -
-                {education.doctorate.specialization}
-              </p>
-
-              <small>
-                {education.doctorate.university}
-              </small>
-
-              <br />
-
-              <small>
-                {education.doctorate.startYear} -
-                {education.doctorate.endYear}
-              </small>
             </>
           ) : (
             <>
-              <h5>Add Doctorate Details</h5>
+              <h5>  Doctorate/PhD Details</h5>
               <p>Course : {formData.doctorateCourse},
                 University / Institute : {formData.doctorateUniversity},  Passing Year : {formData.doctorateEndYear}</p>
 

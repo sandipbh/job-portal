@@ -208,7 +208,7 @@ const FormInfoBox = ({ formData,
       });
 
       const data = await response.json();
-      console.log("Languages fetched:", JSON.stringify(data.data));
+      //console.log("Languages fetched:", JSON.stringify(data.data));
 
       setLanguages(data && data.data ? data.data : []);
 
