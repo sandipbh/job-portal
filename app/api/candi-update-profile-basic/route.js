@@ -64,7 +64,7 @@ export async function GET(req) {
     console.error("UPDATE ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to fetch profile details" + error },
+      { message: "Failed to fetch profile details " + responseData },
       { status: 500 }
     );
   }
