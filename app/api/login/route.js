@@ -109,11 +109,7 @@ export async function POST(req) {
       { status: 201 }
     );
 
-    // Remove old cookies if they exist
-    response.cookies.delete("regToken");
-    response.cookies.delete("accessToken");
-    response.cookies.delete("refreshToken");
-    response.cookies.delete("userInfo");
+
 
     // New cookie options
     const cookieOptions = {

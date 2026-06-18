@@ -19,7 +19,7 @@ const FormContent2 = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-   
+
     setError("");
 
     if (!email) {
@@ -31,7 +31,7 @@ const FormContent2 = () => {
       setError("Please enter valid email address");
       return false;
     }
-    if (!password) { 
+    if (!password) {
       setError("Please enter password");
       return false;
 
@@ -42,8 +42,8 @@ const FormContent2 = () => {
     }
 
     try {
-       setLoading(true);
-       
+      setLoading(true);
+
       const res = await fetch("/api/login", {
         method: "POST",
         headers: {
@@ -62,7 +62,7 @@ const FormContent2 = () => {
       }
 
       console.log("Login success:", data.Role);
-     
+
       if (data.roleType === "employer") {
         router.push("/employers-dashboard/dashboard");
       } else if (data.roleType === "candidate") {
@@ -208,16 +208,16 @@ const FormContent2 = () => {
           </button>
 
 
-          {/* <button type="button"
-          onClick={handleLogout}
-          className="btheme-btn btn-style-two"
-         > Logout </button>
+          <button type="button"
+            onClick={handleLogout}
+            className="btheme-btn btn-style-two"
+          > Logout </button>
 
-           <button type="button"
-          onClick={logoutAllDevices}
-          className="btheme-btn btn-style-two"
-         > Logout All Devices </button>
-          */}
+          <button type="button"
+            onClick={logoutAllDevices}
+            className="btheme-btn btn-style-two"
+          > Logout All Devices </button>
+
 
 
 
@@ -229,7 +229,7 @@ const FormContent2 = () => {
       <div className="bottom-box">
         <div className="text">
           Don&apos;t have an account? <Link href="/register">Signup</Link>
-        </div> 
+        </div>
         {/* <div className="divider">
           <span>or</span>
         </div> */}

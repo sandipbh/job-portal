@@ -156,11 +156,11 @@ const ExperienceForm = ({ data, setData, onNext }) => {
   const validateForm = () => {
     let newErrors = {};
 
-    if (!form.designation.trim()) {
+    if (!form.designation.trim() || form.designation.length < 2) {
       newErrors.designation = "Designation is required";
     }
 
-    if (!form.company.trim()) {
+    if (!form.company.trim() || form.company.length < 2) {
       newErrors.company = "Company name is required";
     }
 
