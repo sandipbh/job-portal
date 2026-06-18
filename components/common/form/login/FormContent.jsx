@@ -10,7 +10,7 @@ import { tr } from "@faker-js/faker";
 
 const FormContent = () => {
 
-  
+
 
   const router = useRouter();
   const [role, setRole] = useState("candidate");
@@ -153,7 +153,7 @@ const FormContent = () => {
 
       try {
         const user = await res.json();
- 
+
 
         if (!res.ok) {
           toast.error(user.message || "Login failed");
@@ -161,10 +161,17 @@ const FormContent = () => {
           return;
         }
 
+        if (!user.status) {
+          toast.error(user.message || "Login failed");
+          setLoading(false);
+          return;
+        }
+
         if (user) {
 
-          console.log("Login successful, user role:", user );
+          //console.log("Login successful, user role:", user );
 
+          const roleType = user.roleType?.trim().toLowerCase();
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("userRole", user.roleType);
 
@@ -172,9 +179,9 @@ const FormContent = () => {
           document.cookie.includes("isLoggedIn=true")
 
           document.querySelector(".closed-modal").click();
-          if (user.roleType === "candidate") {
+          if (roleType === "candidate") {
             router.push("/candidates-dashboard/dashboard");
-          } else if (user.roleType === "employer") {
+          } else if (roleType === "employer") {
             router.push("/employers-dashboard/dashboard");
           }
           else {
@@ -299,13 +306,13 @@ const FormContent = () => {
 
         <div className="form-group">
 
-            <button
+          <button
             type="submit"
             disabled={loading}
             className="theme-btn btn-style-one"
           >
             {loading ? "Logging in..." : "Login"}
-          </button> 
+          </button>
 
           {/* <button
             className="theme-btn btn-style-one"
