@@ -35,7 +35,7 @@ const CompetitiveExam = ({
 
     const getExams = async () => {
 
-        console.log("Fetching exams for term:");
+        //console.log("Fetching exams for term:");
         try {
 
             const response = await fetch("/api/list-exams", {

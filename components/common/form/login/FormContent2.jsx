@@ -61,7 +61,7 @@ const FormContent2 = () => {
         return;
       }
 
-      console.log("Login success:", data.Role);
+      console.log("Login success:", JSON.stringify(data));
 
       if (data.roleType === "employer") {
         router.push("/employers-dashboard/dashboard");

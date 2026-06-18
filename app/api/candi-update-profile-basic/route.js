@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { apiFetch } from "../apiFetch";
 
+// GET Method
 export async function GET(req) {
   const headersList = await headers();
   const token = req.cookies.get("regToken")?.value;
@@ -62,12 +63,11 @@ export async function GET(req) {
       return NextResponse.json(
         {
           message: "Invalid JSON response from external API",
-          debug: debugInfo
+          // debug: debugInfo
         },
         { status: 502 }
       );
     }
-
     return NextResponse.json(
       {
         data: responseData || []
@@ -81,7 +81,7 @@ export async function GET(req) {
     return NextResponse.json(
       {
         message: "Failed to fetch profile details",
-        debug: debugInfo,
+        //debug: debugInfo,
         error: error.message,
       },
       { status: 500 }
