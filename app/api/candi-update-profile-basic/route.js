@@ -25,11 +25,11 @@ export async function GET(req) {
     Role: user.external.role,
     Token: user.external.accessToken,
   };
-  responseDatax = loginBody;
+  //responseDatax = loginBody;
 
   try {
 
-
+    responseDatax = "1 ";
     // Allow self-signed certs in local development only.
     if (process.env.NODE_ENV !== "production") {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -48,12 +48,15 @@ export async function GET(req) {
       `${externalApiBaseUrl.replace(/\/+$/, "")}/Candidate/candi/getBasicDetails`;
 
 
+    responseDatax = + externalApiUrl + " " +
+      JSON.stringify(loginBody) + " ___ ";
+
     const externalResponse = await apiFetch(externalApiUrl, {
       method: "POST",
       body: JSON.stringify(loginBody),
     });
 
-    responseDatax = await externalResponse.text();
+    responseDatax = + await externalResponse.text();
 
     const responseData = JSON.parse(await externalResponse.text());
 
@@ -70,7 +73,7 @@ export async function GET(req) {
 
     return NextResponse.json(
       {
-        message: `Failed to fetch profile details ${JSON.stringify(loginBody)}  `
+        message: `Failed to fetch profile details ${responseDatax} `
       },
       { status: 500 }
     );

@@ -110,7 +110,6 @@ export async function POST(req) {
     );
 
 
-
     // New cookie options
     const cookieOptions = {
       httpOnly: true,
