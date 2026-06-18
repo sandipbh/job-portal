@@ -18,7 +18,7 @@ export async function GET(req) {
     console.error("Invalid JSON token:", err);
     user = {};
   }
-
+  let responseDatax = "";
   try {
 
     const loginBody = {
@@ -50,6 +50,8 @@ export async function GET(req) {
       body: JSON.stringify(loginBody),
     });
 
+    responseDatax = await externalResponse.text();
+
     const responseData = JSON.parse(await externalResponse.text());
 
     const response = NextResponse.json(
@@ -64,7 +66,7 @@ export async function GET(req) {
     console.error("UPDATE ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to fetch profile details " + responseData },
+      { message: "Failed to fetch profile details " + responseDatax },
       { status: 500 }
     );
   }
