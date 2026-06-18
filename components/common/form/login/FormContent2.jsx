@@ -63,12 +63,18 @@ const FormContent2 = () => {
 
       console.log("Login success:", JSON.stringify(data));
 
-      if (data.roleType === "employer") {
-        router.push("/employers-dashboard/dashboard");
-      } else if (data.roleType === "candidate") {
-        router.push("/candidates-dashboard/dashboard");
-      } else {
 
+      const roleType = data.roleType?.trim().toLowerCase();
+
+      console.log("Login success roleType:", roleType);
+
+      if (roleType === "employer") {
+        router.push("/employers-dashboard/dashboard");
+        return;
+      } else if (roleType === "candidate") {
+        router.push("/candidates-dashboard/dashboard");
+        return;
+      } else {
         router.push("/home-10");
       }
 
