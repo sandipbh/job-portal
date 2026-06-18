@@ -81,20 +81,17 @@ export async function POST(req) {
     console.log("External API response:", externalData);
 
     if (!externalResponse.ok) {
-      console.error(
-        "External login failed:",
-        externalResponse.status,
-        externalData
-      );
-
       return NextResponse.json(
         {
-          message: externalData.message || "Login failed",
-          external: externalData,
+          success: false,
+          message: externalData.message,
         },
-        { status: externalResponse.status || 500 }
+        {
+          status: externalResponse.status,
+        }
       );
     }
+
 
     console.log("User logged in successfully:", role);
 

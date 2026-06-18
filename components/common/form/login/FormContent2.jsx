@@ -55,7 +55,7 @@ const FormContent2 = () => {
 
       const data = await res.json();
 
-      if (!res.ok) {
+      if (!res.success) {
         setError(data.message || "Login failed");
         setLoading(false);
         return;
