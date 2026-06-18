@@ -116,7 +116,7 @@ export async function POST(req) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge: 5 * 60 * 60,
+      maxAge: 24 * 60 * 60,
     };
 
     const regTokenData = {

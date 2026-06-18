@@ -2,35 +2,28 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { apiFetch } from "../apiFetch";
 
-
-// GET Method
-
 export async function GET(req) {
   const headersList = await headers();
-
   const token = req.cookies.get("regToken")?.value;
-  const url = req.nextUrl.pathname;
 
   let user = {};
   try {
-    user = JSON.parse(token);
+    user = JSON.parse(token || "{}");
   } catch (err) {
     console.error("Invalid JSON token:", err);
     user = {};
   }
-  let responseDatax = "";
 
-  const loginBody = {
-    uqId: user.external.uqId,
-    Role: user.external.role,
-    Token: user.external.accessToken,
-  };
-  //responseDatax = loginBody;
+  let debugInfo = ""; // Better name for debugging
 
   try {
+    const loginBody = {
+      uqId: user.external?.uqId,
+      Role: user.external?.role,
+      Token: user.external?.accessToken,
+    };
 
-    responseDatax = "1 ";
-    // Allow self-signed certs in local development only.
+    // Allow self-signed certs in development
     if (process.env.NODE_ENV !== "production") {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     }
@@ -47,33 +40,49 @@ export async function GET(req) {
       process.env.REGISTER_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/Candidate/candi/getBasicDetails`;
 
-
-    responseDatax = + externalApiUrl + " " +
-      JSON.stringify(loginBody) + " ___ ";
+    debugInfo = `URL: ${externalApiUrl}\nBody: ${JSON.stringify(loginBody)}`;
 
     const externalResponse = await apiFetch(externalApiUrl, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(loginBody),
     });
 
-    responseDatax = + await externalResponse.text();
+    // Read body ONLY ONCE
+    const responseText = await externalResponse.text();
+    debugInfo += `\nResponse Status: ${externalResponse.status}\nResponse Body: ${responseText}`;
 
-    const responseData = JSON.parse(await externalResponse.text());
-
-    const response = NextResponse.json(
-      {
-        data: responseData || [],
-      },
-      { status: 201 }
-    );
-    return response;
-
-  } catch (error) {
-    console.error("UPDATE ERROR:", error);
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (parseErr) {
+      console.error("Failed to parse JSON response:", parseErr);
+      return NextResponse.json(
+        {
+          message: "Invalid JSON response from external API",
+          debug: debugInfo
+        },
+        { status: 502 }
+      );
+    }
 
     return NextResponse.json(
       {
-        message: `Failed to fetch profile details ${responseDatax} `
+        data: responseData || []
+      },
+      { status: 200 } // Changed to 200 (OK) instead of 201
+    );
+
+  } catch (error) {
+    console.error("Profile fetch ERROR:", error);
+
+    return NextResponse.json(
+      {
+        message: "Failed to fetch profile details",
+        debug: debugInfo,
+        error: error.message,
       },
       { status: 500 }
     );
