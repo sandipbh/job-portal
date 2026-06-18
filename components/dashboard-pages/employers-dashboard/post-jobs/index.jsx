@@ -1,3 +1,6 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import MobileMenu from "../../../header/MobileMenu";
 import DashboardHeader from "../../../header/DashboardHeader";
 import LoginPopup from "../../../common/form/login/LoginPopup";
@@ -5,10 +8,26 @@ import DashboardEmployerSidebar from "../../../header/DashboardEmployerSidebar";
 import BreadCrumb from "../../BreadCrumb";
 import CopyrightFooter from "../../CopyrightFooter";
 import PostJobSteps from "./components/PostJobSteps";
-import PostBoxForm from "./components/PostBoxForm";
 import MenuToggler from "../../MenuToggler";
+import PostBoxForm from "./components/PostBoxForm";
 
 const index = () => {
+  const [activeTab, setActiveTab] = useState(0);
+  const router = useRouter();
+
+  const handleJobPostClick = () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if (!isLoggedIn) {
+      // open login popup
+      const modal = new window.bootstrap.Modal(
+        document.getElementById("loginPopupModal")
+      );
+      modal.show();
+    } else {
+      router.push("/employers-dashboard");
+    }
+  };
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
@@ -29,7 +48,7 @@ const index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="Post a New Job!" />
+          <BreadCrumb title="Post a Job" />
           {/* breadCrumb */}
 
           <MenuToggler />
@@ -41,13 +60,14 @@ const index = () => {
               <div className="ls-widget">
                 <div className="tabs-box">
                   <div className="widget-title">
-                    <h4>Post Job</h4>
+                    <h4>Fill the job-post form</h4>
                   </div>
 
                   <div className="widget-content">
-                    <PostJobSteps />
+                    {/* <PostJobSteps /> */}
                     {/* End job steps form */}
-                    <PostBoxForm />
+                    <PostBoxForm activeTab={activeTab} setActiveTab={setActiveTab} />
+                    {/* <Verification activeTab={activeTab} setActiveTab={setActiveTab} /> */}
                     {/* End post box form */}
                   </div>
                 </div>

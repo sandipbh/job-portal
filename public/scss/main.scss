@@ -3079,3 +3079,176 @@ in 2 tab of Company Profile
 }
 
 /***** end preview*********/
+
+/********job post ******/
+.suggestion-title {
+  margin-top: 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.suggestion-chip {
+  padding: 8px 16px;
+  border: 1px solid #d9dce3;
+  border-radius: 30px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.suggestion-chip:hover {
+  border-color: #1967d2;
+  color: #1967d2;
+}
+
+/* TABs 1-5 CSS of Post Job */
+.tabs-wrapper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 40px;
+}
+
+/* LINE (center aligned with circles) */
+.progress-line {
+  position: absolute;
+  top: 18px;
+  left: calc(10%);
+  right: calc(10%);
+  height: 3px;
+  background: #e5e7eb;
+  z-index: 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #22c55e;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.tabs-line {
+  border-radius: 10px;
+  position: absolute;
+  top: 18px;
+  left: 40px;
+  right: 40px;
+  height: 2px;
+  background: #e0e0e0;
+  z-index: 0;
+}
+
+/* EACH STEP */
+.tab-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 20%;
+}
+
+/* CIRCLE */
+.circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+/* ACTIVE STEP */
+.tab-step.active .circle {
+  background: #000;
+  color: #fff;
+}
+
+/* COMPLETED STEP */
+.circle.active {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* COMPLETED */
+.circle.completed {
+  background: #22c55e;
+  color: #fff;
+}
+
+/* LABEL */
+.label {
+  font-size: 13px;
+  text-align: center;
+  color: #555;
+}
+
+
+/* NEXT BUTTON and BACK BUTTON */
+.form-navigation {
+  display: flex;
+
+  /* pushes buttons apart */
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* DAY SELECTOR ON 5TH TAB */
+.day-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.day-chip {
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.day-chip:hover {
+  border-color: #1967d2;
+}
+
+.day-chip.active {
+  background: #1967d2;
+  color: #fff;
+  border-color: #1967d2;
+}
+
+.salary-input {
+  position: relative;
+  width: 100%;
+}
+
+.salary-input .currency {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  color: #555;
+  font-size: 16px;
+}
+
+.salary-input input {
+  padding-left: 32px !important;
+}
+
+/********end job post***********/

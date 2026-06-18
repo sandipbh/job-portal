@@ -71,20 +71,17 @@ export async function POST(req) {
       body: JSON.stringify(loginBody),
     });
 
-    // const externalResponse = await apiFetch(externalApiUrl, {
-    //   method: "POST",
-    //   body: JSON.stringify(loginBody),
-    // });
 
     const externalData = await externalResponse.json();
 
-    console.log("External API response:", externalData);
+    console.log("External API response :", externalData);
 
     if (!externalResponse.ok) {
       return NextResponse.json(
         {
           success: false,
           message: externalData.message,
+          status: externalData.success,
         },
         {
           status: externalResponse.status,
@@ -93,7 +90,7 @@ export async function POST(req) {
     }
 
 
-    console.log("User logged in successfully:", role);
+    //console.log("User logged in successfully:", externalData.success);
 
     // Create response
 
@@ -101,6 +98,7 @@ export async function POST(req) {
       {
         message: externalData.message || "Login successful",
         roleType: role,
+        status: externalData.success,
         external: externalData,
       },
       { status: 201 }

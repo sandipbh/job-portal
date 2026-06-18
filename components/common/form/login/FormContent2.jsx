@@ -55,18 +55,27 @@ const FormContent2 = () => {
 
       const data = await res.json();
 
-      if (!res.success) {
+      if (!res.ok) {
         setError(data.message || "Login failed");
         setLoading(false);
         return;
       }
+      // console.log('data', data)
+      // console.log('data', data.status)
 
-      console.log("Login success:", JSON.stringify(data));
+      if (!data.status) {
+        setError(data.message || "Login failed");
+        setLoading(false);
+        return;
+      }
+      // console.log("Login success:", JSON.stringify(data));
 
+      // console.log("roleType :", data.roleType);
 
       const roleType = data.roleType?.trim().toLowerCase();
+      // console.log("roleType :", data.roleType);
 
-      console.log("Login success roleType:", roleType);
+      // console.log("Login success roleType:", roleType);
 
       if (roleType === "employer") {
         router.push("/employers-dashboard/dashboard");
