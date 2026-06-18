@@ -19,13 +19,16 @@ export async function GET(req) {
     user = {};
   }
   let responseDatax = "";
+
+  const loginBody = {
+    uqId: user.external.uqId,
+    Role: user.external.role,
+    Token: user.external.accessToken,
+  };
+  responseDatax = loginBody;
+
   try {
 
-    const loginBody = {
-      uqId: user.external.uqId,
-      Role: user.external.role,
-      Token: user.external.accessToken,
-    };
 
     // Allow self-signed certs in local development only.
     if (process.env.NODE_ENV !== "production") {
@@ -66,7 +69,9 @@ export async function GET(req) {
     console.error("UPDATE ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to fetch profile details " + responseDatax },
+      {
+        message: `Failed to fetch profile details ${loginBody}  `
+      },
       { status: 500 }
     );
   }
@@ -165,7 +170,7 @@ export async function POST(req) {
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
-      `${externalApiBaseUrl.replace(/\/+$/, "")}/Candidate/candi/UpdateBasicResume`;
+      `${externalApiBaseUrl.replace(/\/+$/, "")} / Candidate / candi / UpdateBasicResume`;
 
     console.log("External API URL :", externalApiUrl);
     console.log("External API Request Body:", loginBody);
