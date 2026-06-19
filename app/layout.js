@@ -62,7 +62,7 @@ export default function RootLayout({ children }) {
               pauseOnHover
               theme="colored"
             /> */}
-        <ToastContainer
+            <ToastContainer
               position="top-right"
               autoClose={3000}
               hideProgressBar={false}
@@ -71,7 +71,7 @@ export default function RootLayout({ children }) {
               pauseOnHover
               draggable
               theme="light"
-               rtl={false}
+              rtl={false}
               pauseOnFocusLoss
             />
             {/* <!-- Scroll To Top --> */}

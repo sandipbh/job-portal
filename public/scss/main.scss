@@ -287,9 +287,9 @@ Global Settings
 .progress-line {
   position: absolute;
   top: 18px;
-  left: calc(10%);
+  left: calc(5%);
   /* 🔥 start from first circle center */
-  right: calc(10%);
+  right: calc(5%);
   /* 🔥 end at last circle center */
   height: 3px;
   background: #e5e7eb;
@@ -322,7 +322,7 @@ Global Settings
   flex-direction: column;
   align-items: center;
   position: relative;
-  width: 20%;
+  width: 15%;
 }
 
 /* CIRCLE */
@@ -2230,8 +2230,9 @@ in 2 tab of Company Profile
 }
 
 .custom-select__option {
-  padding: 10px 14px;
-  font-size: 14px;
+  padding: 5px 5px !important;
+  font-size: 15px !important;
+
 }
 
 .custom-select__option--is-focused {
@@ -2262,6 +2263,7 @@ in 2 tab of Company Profile
   padding: 2px 6px !important;
   cursor: pointer;
 }
+
 
 /****** end select css ************/
 
@@ -3121,8 +3123,8 @@ in 2 tab of Company Profile
 .progress-line {
   position: absolute;
   top: 18px;
-  left: calc(10%);
-  right: calc(10%);
+  left: calc(5%);
+  right: calc(5%);
   height: 3px;
   background: #e5e7eb;
   z-index: 0;
@@ -3152,7 +3154,7 @@ in 2 tab of Company Profile
   flex-direction: column;
   align-items: center;
   position: relative;
-  width: 20%;
+
 }
 
 /* CIRCLE */
@@ -3167,6 +3169,7 @@ in 2 tab of Company Profile
   font-weight: 600;
   margin-bottom: 8px;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 /* ACTIVE STEP */
@@ -3213,9 +3216,9 @@ in 2 tab of Company Profile
 }
 
 .day-chip {
-  padding: 8px 14px;
+  padding: 3px 14px;
   border: 1px solid #ccc;
-  border-radius: 20px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   background: #f8f9fa;
@@ -3249,6 +3252,49 @@ in 2 tab of Company Profile
 
 .salary-input input {
   padding-left: 32px !important;
+}
+
+.experience-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.experience-range .form-select {
+  flex: 1;
+}
+
+.experience-separator {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.salary-input {
+  position: relative;
+  width: 100%;
+}
+
+.salary-input .currency {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  color: #555;
+  font-size: 16px;
+}
+
+.salary-input input {
+  padding-left: 32px !important;
+}
+
+.ql-container.ql-snow {
+  border: 1px solid #b9c6ef !important;
+}
+
+.ql-toolbar.ql-snow {
+  border: 1px solid #b9c6ef !important;
 }
 
 /********end job post***********/

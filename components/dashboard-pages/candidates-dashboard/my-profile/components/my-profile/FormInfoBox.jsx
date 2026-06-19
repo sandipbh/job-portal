@@ -194,7 +194,6 @@ const FormInfoBox = ({ formData,
 
   const getLanguages = async () => {
 
-    //console.log("Fetching languages for term:", term);
     try {
 
       const response = await fetch("/api/list-languages", {

@@ -4,10 +4,10 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "@/lib/auth";
- 
+
 export async function POST(req) {
 
-   const headersList = await headers();
+  const headersList = await headers();
 
   try {
     const {
@@ -38,11 +38,11 @@ export async function POST(req) {
       );
     }
 
-        const LoginIp =
-    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    headersList.get("x-real-ip") ||
-    headersList.get("cf-connecting-ip") ||
-    "Unknown";
+    const LoginIp =
+      headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      headersList.get("x-real-ip") ||
+      headersList.get("cf-connecting-ip") ||
+      "Unknown";
 
     const registrationBody = {
       FullName: name,
@@ -119,7 +119,7 @@ export async function POST(req) {
       sameSite: "strict",
       path: "/",
       maxAge: 5 * 60 * 60, // 5 hours in seconds
-      expires: new Date(Date.now() + 5 * 60 * 60 * 1000),
+      //expires: new Date(Date.now() + 5 * 60 * 60 * 1000),
     };
 
     const regTokenData = {

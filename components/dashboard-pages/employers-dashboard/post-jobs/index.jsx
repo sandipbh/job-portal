@@ -66,7 +66,7 @@ const index = () => {
                   <div className="widget-content">
                     {/* <PostJobSteps /> */}
                     {/* End job steps form */}
-                    <PostBoxForm activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <PostBoxForm activeTab={activeTab} setActiveTab={setActiveTab}></PostBoxForm>
                     {/* <Verification activeTab={activeTab} setActiveTab={setActiveTab} /> */}
                     {/* End post box form */}
                   </div>

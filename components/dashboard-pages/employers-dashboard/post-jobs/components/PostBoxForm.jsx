@@ -1,10 +1,8 @@
 
 'use client'
-
-import Map from "../../../Map";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import JobDescriptionBox from "./JobDescriptionBox";
 import { FaMale, FaFemale, FaUsers } from "react-icons/fa";
 import { FaEnvelope, FaPhoneAlt } from "react-icons/fa";
@@ -14,27 +12,17 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   const handleSubmit = () => {
     console.log("Form Submitted");
   };
-  const incentives = [
-    { value: "Food Allowance", label: "Food Allowance" },
-    { value: "Health Coverage", label: "Health Coverage" },
-    { value: "Insurance", label: "Insurance" },
-    { value: "Annual Bonus", label: "Annual Bonus" },
-    { value: "Management", label: "Management" },
-    { value: "Work Flexibility", label: "Work Flexibility" },
-    { value: "Office cab/shuttle", label: "Office cab/shuttle" },
-    { value: "Provident Fund", label: "Provident Fund" },
-  ];
 
-  const skills = [
-    { value: "Java", label: "Java" },
-    { value: "JavaScript", label: "JavaScript" },
-    { value: "Python", label: "Python" },
-    { value: "React", label: "React" },
-    { value: "Node.js", label: "Node.js" },
-    { value: "MongoDB", label: "MongoDB" },
-    { value: "Full Stack Developer", label: "Full Stack Developer" },
-    { value: "Other", label: "Other" },
-  ];
+  // const skills = [
+  //   { value: "Java", label: "Java" },
+  //   { value: "JavaScript", label: "JavaScript" },
+  //   { value: "Python", label: "Python" },
+  //   { value: "React", label: "React" },
+  //   { value: "Node.js", label: "Node.js" },
+  //   { value: "MongoDB", label: "MongoDB" },
+  //   { value: "Full Stack Developer", label: "Full Stack Developer" },
+  //   { value: "Other", label: "Other" },
+  // ];
 
   const degree = [
     { value: "B.Tech", label: "B.Tech" },
@@ -44,43 +32,264 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     { value: "PhD", label: "PhD" },
   ];
 
-  const industry = [
-    {
-      label: "IT Services",
-      options: [
-        { value: "software_dev", label: "Software Development" },
-        { value: "web_dev", label: "Web Development" },
-        { value: "cloud", label: "Cloud Computing" },
-        { value: "cyber_security", label: "Cyber Security" },
-      ],
-    },
-    {
-      label: "BPM",
-      options: [
-        { value: "customer_support", label: "Customer Support" },
-        { value: "bpo", label: "BPO Operations" },
-        { value: "data_entry", label: "Data Entry" },
-      ],
-    },
-    {
-      label: "Finance",
-      options: [
-        { value: "accounting", label: "Accounting" },
-        { value: "auditing", label: "Auditing" },
-      ],
-    },
-  ];
 
-  const languages = [
-    { value: "English", label: "English" },
-    { value: "Hindi", label: "Hindi" },
-    { value: "Marathi", label: "Marathi" },
-    { value: "Telugu", label: "Telugu" },
-    { value: " Kannada", label: "Kannada" },
-    { value: " Malayalam", label: "Malayalam" },
-    { value: "Other", label: "Other" },
+  const [languages, setLanguages] = useState([]);
+  const [industry, setIndustry] = useState([]);
+  const [incentives, setIncentives] = useState([]);
+  const [incentiveSuggestions, setIncentiveSuggestions] = useState([]);
+  const [selectedIncentives, setSelectedIncentives] = useState([]);
+  const [department, setDepartment] = useState([]);
+  const [groupedDepartments, setGroupedDepartments] = useState([]);
+  const [jobRoleList, setJobRoleList] = useState([]);
 
-  ];
+
+  const [jobTitleList, setJobTitleList] = useState([]);
+  const [showJobTitleList, setShowJobTitleList] = useState(false);
+
+
+
+  const [locationList, setLocationList] = useState([]);
+  const [showLocationList, setShowLocationList] = useState(false);
+
+  const [skills, setSkills] = useState([]);
+
+  useEffect(() => {
+    getIndustry();
+    getLanguages();
+    getBenifits();
+    getDepartment();
+    getSkills();
+  }, []);
+
+  const getSkills = async () => {
+    try {
+      const response = await fetch("/api/list-skills", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          term: '',
+        }),
+      });
+      const data = await response.json();
+      //console.log("skills fetched:", JSON.stringify(data.data));
+      const options = data.data.map((item) => ({
+        value: item.key,
+        label: item.value,
+      }));
+      setSkills(options);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getLocation = async (term) => {
+    if (!term || term.length < 2) {
+      setLocationList([]);
+      return;
+    }
+    //console.log("Fetching universities for term:", term);
+    try {
+
+      const response = await fetch("/api/list-location", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          term: term,
+        }),
+      });
+
+      const data = await response.json();
+      //console.log("location fetched:", JSON.stringify(data));
+
+      const options = data.data.map((item) => ({
+        value: item.key,
+        label: item.value,
+        label2: item.value2
+      }));
+
+      setLocationList(options);
+      setShowLocationList(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getDepartment = async () => {
+    try {
+      const response = await fetch("/api/list-department-sub", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          term: '',
+        }),
+      });
+      const data = await response.json();
+
+      const options = data.data.map((item) => ({
+        value: item.key,
+        label: item.value,
+        label2: item.value2
+      }));
+      //console.log("Department fetched:", JSON.stringify(options));
+      setDepartment(department);
+      const groupedDepartments = options.reduce((acc, item) => {
+        if (!acc[item.label2]) {
+          acc[item.label2] = [];
+        }
+        acc[item.label2].push(item);
+
+        return acc;
+      }, {});
+
+      setGroupedDepartments(groupedDepartments);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getJobRoleByDepartment = async (term) => {
+    if (!term || term.length == 0) {
+      setJobRoleList([]);
+      return;
+    }
+    //console.log("Fetching universities for term:", term);
+    try {
+
+      const response = await fetch("/api/list-job-role", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          term: term,
+        }),
+      });
+
+      const data = await response.json();
+      //console.log("Job Role fetched:", JSON.stringify(data));
+      const options = data.data.map((item) => ({
+        value: item.key,
+        label: item.value,
+      }));
+      setJobRoleList(options);
+
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const getBenifits = async () => {
+    try {
+      const response = await fetch("/api/list-benifits", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          term: '',
+        }),
+      });
+      const data = await response.json();
+      //console.log("Benifits fetched:", JSON.stringify(data.data));
+      const options = data.data.map((item) => ({
+        value: item.key,
+        label: item.value,
+      }));
+      setIncentives(options);
+      const options2 = data.data.slice(0, 5).map((item) => ({
+        value: parseInt(item.key),
+        label: item.value,
+      }));
+      setIncentiveSuggestions(options2)
+      console.log(options2)
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getIndustry = async () => {
+    try {
+      const response = await fetch("/api/list-industry-search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          term: '',
+        }),
+      });
+      const data = await response.json();
+      //console.log("Industry fetched:", JSON.stringify(data.data));
+      const options = data.data.map((item) => ({
+        value: item.key,
+        label: item.value,
+      }));
+      setIndustry(options);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getLanguages = async () => {
+    try {
+
+      const response = await fetch("/api/list-languages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          term: '',
+        }),
+      });
+      const data = await response.json();
+      // console.log("Languages fetched:", JSON.stringify(data.data));
+      const options = data.data.map((item) => ({
+        value: item.key,
+        label: item.value,
+      }));
+      setLanguages(options);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getJobTitle = async (term) => {
+    if (!term || term.length < 2) {
+      setJobTitleList([]);
+      return;
+    }
+    //console.log("Fetching universities for term:", term);
+    try {
+
+      const response = await fetch("/api/list-job-title", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          term: term,
+        }),
+      });
+
+      const data = await response.json();
+      //console.log("Jobtitle fetched:", JSON.stringify(data));
+
+      setJobTitleList(data && data.data ? data.data : []);
+      setShowJobTitleList(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   const [questions, setQuestions] = useState([
     {
@@ -119,7 +328,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     console.log("Current Tab:", activeTab);
     console.log("Job Description State:", jobDesc);
 
-    // Screening Questions
+    // Questions
     if (activeTab === 2) {
       if (!validateQuestions()) {
         return;
@@ -128,7 +337,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
     // Job Description
     if (activeTab === 3) {
-      if (!validateJobDescription()) {
+      if (!validateJobDesc()) {
         return;
       }
     }
@@ -181,17 +390,20 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   const [formData, setFormData] = useState({
     companyName: "",
     jobTitle: "",
+    jobTitleId: "",
     minExperience: "",
     maxExperience: "",
     fresherAllowed: false,
     jobType: "",
     minSalary: "",
     maxSalary: "",
-
     //  step 2 fields
     department: "",
+    departmentId: "",
     jobRole: "",
+    jobRoleId: "",
     jobLocation: "",
+    jobLocationId: "",
     skills: [],
     qualification: "",
     industry: [],
@@ -378,7 +590,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
     if (!formData.department) {
       newErrors.department = "Choose the relevant department for this job";
-
     }
 
     if (!formData.jobRole) {
@@ -419,15 +630,13 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     let newErrors = { ...errors };
 
     if (!text) {
-      newErrors.jobDesc = "Job description is required";
+      newErrors.jobDesc = "Job Description is required";
     } else if (text.length < 20) {
       newErrors.jobDesc = "At least 20 characters required";
     } else {
       delete newErrors.jobDesc;
     }
-
     setErrors(newErrors);
-
     return !newErrors.jobDesc;
   };
 
@@ -492,9 +701,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         newErrors.externalLink = "Enter valid URL";
       }
     }
-
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
@@ -506,16 +713,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     { label: "Male", icon: <FaMale /> },
     { label: "Both", icon: <FaUsers /> }
   ];
-  const [selectedIncentives, setSelectedIncentives] = useState([]);
-  const incentiveSuggestions = [
-    "Office cab/shuttle",
-    "Food allowance",
-    "Health insurance",
-    "Annual bonus",
-    "Provident fund",
-    "Management",
-    "Insurance",
-  ];
+
   return (
     <>
       {/* TABS START */}
@@ -531,10 +729,10 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
         {[
           "Job details",
-          "Candidate preferences",
-          "Screening questions",
-          "Job description",
-          "Communication preferences",
+          "Candidate",
+          "Questions",
+          "Job Description",
+          "Communication",
         ].map((tab, index) => {
           const isCompleted = activeTab > index;
           const isActive = activeTab === index;
@@ -581,25 +779,66 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               </div>
 
               <div className="form-group col-lg-6">
-                <label>Job Title</label>
+                <label>Job Title   </label>
                 <input
+                  placeholder="Start typing to search job title..."
                   type="text"
-                  name="jobTitle"
-                  value={formData.jobTitle}
-                  onChange={handleChange}
-                  placeholder="Enter a clear and specific job title to attract relevant candidates."
+                  value={formData.jobTitle || ""}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      jobTitle: e.target.value,
+                    }));
+
+                    getJobTitle(e.target.value);
+                    setShowJobTitleList(true);
+                  }}
                 />
 
-                {!formData.jobTitle?.trim() && !errors.jobTitle && (
-                  <small className="text-muted">
-                    Ex.: Software Developer, HR Manager, Sales Executive
-                  </small>
-                )}
+                {showJobTitleList && jobTitleList.length > 0 && (
+                  <ul
+                    style={{
+                      position: "absolute",
+                      width: "96%",
+                      background: "#fff",
+                      border: "1px solid rgb(185 198 239)",
+                      listStyle: "none",
+                      padding: 0,
+                      margin: 0,
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      zIndex: 1000,
+                    }}
+                  >
+                    {jobTitleList.map((item) => (
+                      <li
+                        key={item.key}
+                        style={{
+                          padding: "4px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            jobTitle: item.value,
+                            jobTitleId: item.key,
+                          }));
 
+                          setJobTitleList(false);
+                        }}
+                      >
+                        {item.value}
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 {errors.jobTitle && (
-                  <span className="error-text">{errors.jobTitle}</span>
+                  <span className="error-text">
+                    {errors.jobTitle}
+                  </span>
                 )}
               </div>
+
 
               <div className="form-group col-lg-6">
                 <label>Job Type</label>
@@ -615,62 +854,57 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   <option value="Internship">Internship</option>
                   <option value="Remote">Remote</option>
                 </select>
-                {!formData.jobType && !errors.jobType && (
-                  <small className="text-muted">
-                    Select the job type.
-                  </small>
-                )}
+
                 {errors.jobType && (
                   <span className="error-text">{errors.jobType}</span>
                 )}
               </div>
 
-              <div className="form-group col-lg-8">
+              <div className="form-group col-lg-6">
                 <label>Work experience</label>
+                <div className="row">
+                  <div className="col-md-6 col-sm-12">
+                    <select
+                      name="minExperience"
+                      className="form-select"
+                      value={formData.minExperience || ""}
+                      onChange={handleChange}
+                    >
+                      <option value="">Min</option>
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                        <option key={year} value={year}>
+                          {year} year{year !== 1 ? "s" : ""}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.minExperience && (
+                      <span className="error-text">{errors.minExperience}</span>
+                    )}
+                  </div>
+                  <div className="col-md-6 col-sm-12 ">
+                    <select
+                      name="maxExperience"
+                      className="form-select"
+                      value={formData.maxExperience || ""}
+                      onChange={handleChange}
+                    >
+                      <option value="">Max</option>
 
-                <div className="experience-range">
-                  <select
-                    name="minExperience"
-                    className="form-select"
-                    value={formData.minExperience || ""}
-                    onChange={handleChange}
-                  >
-                    <option value="">Min</option>
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                      <option key={year} value={year}>
-                        {year} year{year !== 1 ? "s" : ""}
-                      </option>
-                    ))}
-                  </select>
-
-                  <span className="experience-separator">to</span>
-
-                  <select
-                    name="maxExperience"
-                    className="form-select"
-                    value={formData.maxExperience || ""}
-                    onChange={handleChange}
-                  >
-                    <option value="">Max</option>
-
-                    {Array.from(
-                      { length: 20 - (Number(formData.minExperience) + 1) + 1 },
-                      (_, i) => Number(formData.minExperience || 0) + 1 + i
-                    ).map((year) => (
-                      <option key={year} value={year}>
-                        {year} year{year !== 1 ? "s" : ""}
-                      </option>
-                    ))}
-                  </select>
+                      {Array.from(
+                        { length: 20 - (Number(formData.minExperience) + 1) + 1 },
+                        (_, i) => Number(formData.minExperience || 0) + 1 + i
+                      ).map((year) => (
+                        <option key={year} value={year}>
+                          {year} year{year !== 1 ? "s" : ""}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.maxExperience && (
+                      <span className="error-text">{errors.maxExperience}</span>
+                    )}
+                  </div>
                 </div>
 
-                {errors.minExperience && (
-                  <span className="error-text">{errors.minExperience}</span>
-                )}
-
-                {errors.maxExperience && (
-                  <span className="error-text">{errors.maxExperience}</span>
-                )}
                 <div className="form-check mt-2">
                   <input
                     type="checkbox"
@@ -696,52 +930,56 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               </div>
 
 
-              <div className="form-group col-lg-8">
+              <div className="form-group col-lg-6">
                 <label>Salary per month</label>
 
-                <div className="experience-range">
-                  <div className="salary-input">
-                    <span className="currency">₹</span>
-
-                    <input
-                      type="number"
-                      name="minSalary"
-                      value={formData.minSalary || ""}
-                      onChange={handleChange}
-                      placeholder="Min Salary"
-                    // className="form-control"
-                    />
+                <div className="row">
+                  <div className="col-md-6 col-sm-12">
+                    <div className="">
+                      <input
+                        type="number"
+                        name="minSalary"
+                        value={formData.minSalary || ""}
+                        onChange={handleChange}
+                        placeholder="Min Salary"
+                      // className="form-control"
+                      />
+                    </div>
+                    {errors.minSalary && (
+                      <div className="error-text mt-1">
+                        {errors.minSalary}
+                      </div>
+                    )}
                   </div>
+                  <div className="col-md-6 col-sm-12">
 
-                  <span className="experience-separator">to</span>
-
-                  <div className="salary-input">
-                    <span className="currency">₹</span>
-
-                    <input
-                      type="number"
-                      name="maxSalary"
-                      value={formData.maxSalary || ""}
-                      onChange={handleChange}
-                      placeholder="Max Salary"
-                    // className="form-control"
-                    />
+                    <div className=" ">
+                      <input
+                        type="number"
+                        name="maxSalary"
+                        value={formData.maxSalary || ""}
+                        onChange={handleChange}
+                        placeholder="Max Salary"
+                      // className="form-control"
+                      />
+                    </div>
+                    {errors.maxSalary && (
+                      <div className="error-text mt-1">
+                        {errors.maxSalary}
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {errors.minSalary && (
-                  <div className="error-text mt-1">
-                    {errors.minSalary}
-                  </div>
-                )}
-
-                {errors.maxSalary && (
-                  <div className="error-text mt-1">
-                    {errors.maxSalary}
-                  </div>
-                )}
+                <label
+                  style={{ paddingTop: "10px" }}
+                  className="form-check-label"
+                >
+                  <br></br>
+                </label>
               </div>
-              <div className="form-group col-lg-8 col-md-12">
+
+              <div className="form-group col-lg-12 col-md-12">
                 <label>
                   Incentives
                   <span style={{ fontSize: "12px", color: "#999" }}>
@@ -750,15 +988,14 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 </label>
 
                 <Select
+                  instanceId="select-incentive"   // <-- add this
                   isMulti
+                  classNamePrefix="custom-select"
                   options={incentives}
                   value={selectedIncentives}
-                  onChange={(selected) =>
-                    setSelectedIncentives(selected || [])
-                  }
+                  onChange={(selected) => setSelectedIncentives(selected || [])}
                   placeholder="Search for perks and benefits"
                   className="basic-multi-select"
-                  classNamePrefix="select"
                 />
 
                 <div className="suggestion-title">
@@ -766,27 +1003,27 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 </div>
 
                 <div className="suggestion-chips">
-                  {incentiveSuggestions.map((item) => (
+                  {incentiveSuggestions.map((item, index) => (
                     <div
-                      key={item}
+                      key={item.key}
                       className="suggestion-chip"
                       onClick={() => {
                         const exists = selectedIncentives.some(
-                          (option) => option.value === item
+                          (option) => option.value === item.value
                         );
 
                         if (!exists) {
                           setSelectedIncentives([
                             ...selectedIncentives,
                             {
-                              value: item,
-                              label: item,
+                              value: item.value,
+                              label: item.label,
                             },
                           ]);
                         }
                       }}
                     >
-                      + {item}
+                      + {item.label}
                     </div>
                   ))}
                 </div>
@@ -812,7 +1049,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
             </div>
           )}
 
-        </div>
+        </div >
       </form >
 
       <form className="default-form">
@@ -821,53 +1058,74 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
           {activeTab === 1 && (
             <>
               <div className="form-group col-lg-6 col-md-12">
-                <label>Department</label>
+                <label>Department  </label>
                 <select
                   name="department"
                   value={formData.department}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const selectedOption =
+                      e.target.options[e.target.selectedIndex];
+
+                    setFormData((prev) => ({
+                      ...prev,
+                      departmentId: e.target.value,
+                      department: selectedOption.text, // option label
+                    }));
+
+                    getJobRoleByDepartment(e.target.value);
+                  }}
                   className="chosen-single form-select"
                 >
-                  <option value="">Select</option>
-                  <option value="Software Development">Software Development</option>
-                  <option value="IT Security">IT Security</option>
-                  <option value="Finance & Accounting">Finance & Accounting</option>
-                  <option value="Sales & Business Development">Sales & Business Development</option>
-                  <option value="UI/UX">UI/UX</option>
-                  <option value="Others">Others</option>
+                  <option key="0" value="">Select Department</option>
+                  {Object.entries(groupedDepartments).map(([category, items]) => (
+                    <optgroup key={category} label={category}>
+                      {items.map((item) => (
+                        <option key={item.value} value={item.value}>
+                          {item.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+
+
                 </select>
 
-                {!formData.department?.length && !errors.department && (
-                  <small className="text-muted">
-                    Ex.: Software Development
-                  </small>
-                )}
+
                 {errors.department && (
                   <span className="error-text">{errors.department}</span>
                 )}
               </div>
 
               <div className="form-group col-lg-6 col-md-12">
-                <label>Job Role</label>
+                <label>Job Role  </label>
                 <select
                   name="jobRole"
                   value={formData.jobRole}
-                  onChange={handleChange}
+
+                  onChange={(e) => {
+                    const selectedOption =
+                      e.target.options[e.target.selectedIndex];
+
+                    setFormData((prev) => ({
+                      ...prev,
+                      jobRoleId: e.target.value,
+                      jobRole: selectedOption.text,
+                      // departmentCategory:
+                      //   selectedOption.getAttribute("data-category"),
+                    }));
+
+                    getJobRole(e.target.value);
+                  }}
+
                   className="chosen-single form-select"
                 >
-                  <option>Select</option>
-                  <option>Frontend Developer</option>
-                  <option>BackEnd Developer</option>
-                  <option>Engineering & Technical</option>
-                  <option>Billing & Accounts</option>
-                  <option>Administrative & Support</option>
-                  <option>Others</option>
+                  <option value="">Select job role</option>
+                  {jobRoleList.map((item) =>
+                  (<option key={item.value} value={item.value}> {item.label}
+                  </option>))}
+
                 </select>
-                {!formData.jobRole?.length && !errors.jobRole && (
-                  <small className="text-muted">
-                    Select your preferred Job Role
-                  </small>
-                )}
+
                 {errors.jobRole && (
                   <span className="error-text">{errors.jobRole}</span>
                 )}
@@ -876,25 +1134,64 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
               <div className="form-group col-lg-6 col-md-12">
                 <label>Job Location</label>
-                <select
-                  name="jobLocation"
-                  value={formData.jobLocation}
-                  onChange={handleChange}
-                  className="chosen-single form-select"
-                >
-                  <option value="">Select</option>
-                  <option value="Maharashtra">Maharashtra</option>
-                  <option value="Banglore">Banglore</option>
-                  <option value="Delhi">Delhi</option>
-                  <option value="Kolkata">Kolkata</option>
-                  <option value="Hyderabad">Hyderabad</option>
-                  <option value="Others">Others</option>
-                </select>
-                {!formData.jobLocation?.length && !errors.jobLocation && (
-                  <small className="text-muted">
-                    Select Job Location
-                  </small>
+
+                <input
+                  placeholder="Start typing to search location..."
+                  type="text"
+                  value={formData.jobLocation || ""}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      jobLocation: e.target.value,
+                    }));
+
+                    getLocation(e.target.value);
+                    setShowLocationList(true);
+                  }}
+                />
+
+                {showLocationList && locationList.length > 0 && (
+                  <ul
+                    style={{
+                      position: "absolute",
+                      width: "96%",
+                      background: "#fff",
+                      border: "1px solid rgb(185 198 239)",
+                      listStyle: "none",
+                      padding: 0,
+                      margin: 0,
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      zIndex: 1000,
+                    }}
+                  >
+                    {locationList.map((item) => (
+                      <li
+                        key={item.label}
+                        style={{
+                          padding: "4px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            jobLocation: item.label,
+                            jobLocationId: item.value,
+                          }));
+
+                          setLocationList(false);
+                        }}
+                      >
+                        <div style={{ paddingTop: "0px !important" }}>
+                          {item.label}
+                          <br></br><small className="text-muted ps-2">{item.label2}</small>
+                        </div>
+
+                      </li>
+                    ))}
+                  </ul>
                 )}
+
                 {errors.jobLocation && (
                   <span className="error-text">{errors.jobLocation}</span>
                 )}
@@ -904,8 +1201,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 <label> Add Skills</label>
                 <Select
                   isMulti
-                  className="basic-multi-select"
-                  classNamePrefix="select"
+                  classNamePrefix="custom-select"
                   options={skills}
                   value={selectedSkills}
                   onChange={(selected) => {
@@ -922,17 +1218,11 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   }}
                 />
 
-                {selectedSkills.length === 0 && !errors.skills && (
-                  <small className="text-muted">
-                    Select relevant skills required for this job
-                  </small>
-                )}
+
                 {errors.skills && (
                   <span className="error-text">{errors.skills}</span>
                 )}
               </div>
-
-
               <div className="form-group col-lg-6 col-md-12">
                 <label>Candidate's qualification</label>
                 <select
@@ -942,9 +1232,10 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   className="chosen-single form-select"
                 >
                   <option value="">Select</option>
-                  <option value="12th pass">12th pass</option>
-                  <option value="Bachelor's Degree">Bachelor's Degree</option>
-                  <option value="Master's Degree">Master's Degree</option>
+                  <option value="10th">10th pass</option>
+                  <option value="12th">12th pass</option>
+                  <option value="Graduate">Graduate/Bachelor's Degree</option>
+                  <option value="Masters">Master's Degree</option>
                   <option value="PhD">PhD</option>
                 </select>
                 {errors.qualification && (
@@ -959,8 +1250,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   isMulti
                   options={degree}
                   placeholder="Type or select degree"
-                  className="basic-multi-select"
-                  classNamePrefix="select"
+                  classNamePrefix="custom-select"
                 />
               </div>
 
@@ -969,8 +1259,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 <Select
                   isMulti
                   options={industry}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
+                  classNamePrefix="custom-select"
                   placeholder="Search for candidate industry..."
                   onChange={(selected) => {
                     setFormData((prev) => ({
@@ -1005,8 +1294,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   isMulti
                   name="colors"
                   options={languages}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
+                  classNamePrefix="custom-select"
                 />
               </div>
 
@@ -1067,7 +1355,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
             </>
           )}
         </div>
-      </form>
+      </form >
 
       <form className="default-form">
         <div className="row">
@@ -1089,7 +1377,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                           updateQuestions(updated);
                         }}
                       />
-                      Mandatory
+                      &nbsp;Mandatory
                     </label>
                   </div>
 
@@ -1267,6 +1555,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               <div className="add-question-box">
                 <button
                   type="button"
+                  className="btn btn-sm btn-info"
                   onClick={() => {
                     const updated = [
                       ...questions,
@@ -1281,7 +1570,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     updateQuestions(updated);
                   }}
                 >
-                  + Add a Question
+                  + Add A Question
                 </button>
               </div>
 
@@ -1502,31 +1791,36 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               </div>
 
               {/* Contact Number */}
-              <div className="form-group col-lg-6">
-                <label className="form-label">Contact Number</label>
 
-                <div className={`phone-input ${errors.phone ? "error" : ""}`}>
+              <div className="form-group col-lg-6 col-md-12">
+                <label>Mobile Number</label>
+
+                <div className="phone-input">
                   <span className="country-code">+91</span>
+
                   <input
-                    type="text"
-                    name="phone"
-                    value={contactData.phone}
+                    style={{ border: "0px" }}
+                    type="tel"
+                    readOnly
+                    value={formData.phone || ""}
+                    //onChange={handleChange}
+
                     onChange={(e) => {
                       const value = e.target.value.replace(/\D/g, "");
-                      if (value.length <= 10) {
-                        handleContactChange({
-                          target: { name: "phone", value },
-                        });
-                      }
+                      setFormData({ ...formData, phone: value });
                     }}
-                    placeholder="Enter 10-digit mobile number"
-                  />
-                </div>
 
+                    placeholder="Enter 10-digit mobile number"
+                    maxLength={10}
+
+                  />
+
+                </div>
                 {errors.phone && (
                   <span className="error-text">{errors.phone}</span>
                 )}
               </div>
+
 
               {/* Call Time */}
               <div className="form-group col-lg-6">
