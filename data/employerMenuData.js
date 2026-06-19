@@ -9,11 +9,11 @@ module.exports = [
   {
     id: 2,
     name: "Company Profile",
-     icon: "fa-user-shield",
+    icon: "fa-user-shield",
     routePath: "/employers-dashboard/kyc-verification",
     active: "",
   },
-   {
+  {
     id: 10,
     name: "Change Password",
     icon: "la-lock",
@@ -69,13 +69,13 @@ module.exports = [
     routePath: "/employers-dashboard/resume-alerts",
     active: "",
   },
- 
- 
+
+
   {
     id: 11,
     name: "Logout",
     icon: "la-sign-out",
-    routePath: "/login",
+    routePath: "/logout",
     active: "",
   },
   {

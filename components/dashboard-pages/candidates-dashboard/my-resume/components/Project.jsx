@@ -591,7 +591,6 @@ const Project = ({ data, setData, onNext }) => {
                                     )}
                                 </div>
 
-
                                 {/* SKILLS */}
                                 <div className="form-group col-12">
                                     <label>Skills Developed</label>
