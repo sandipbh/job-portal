@@ -223,10 +223,10 @@ const FormContent2 = () => {
           </button>
 
 
-          {/* <button type="button"
+          <button type="button"
             onClick={handleLogout}
             className="btheme-btn btn-style-two"
-          > Logout </button>*/}
+          > Logout </button>
 
           {/* <button type="button"
             onClick={logoutAllDevices}
