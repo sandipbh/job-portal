@@ -99,11 +99,12 @@ const Basic = ({ formData,
     gender: data.basic?.gender || "",
     currentCtc: data.basic?.currentCtc || "",
     expectedCtc: data.basic?.expectedCtc || "",
+    summary: data.basic?.summary || "",
     languages: "",
     languageString: "",
     country: "India",
     countryCode: "+91",
-    summary: ""
+
   });
 
   useEffect(() => {
@@ -151,7 +152,7 @@ const Basic = ({ formData,
             : [],
 
           languageString: profile.languages || "",
-          summary: profile.summary || "",
+          summary: profile.profileSummary || "",
 
         }));
       }
