@@ -934,6 +934,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
+
   const validationJobDesc = () => {
     const text = (formData.jobDesc || "")
       .replace(/<[^>]+>/g, "")

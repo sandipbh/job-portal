@@ -104,12 +104,13 @@ export async function POST(req) {
       { status: 201 }
     );
 
-
     // New cookie options
+    const isSecure = headersList.get("x-forwarded-proto") === "https";
+
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: isSecure,
+      sameSite: "lax",
       path: "/",
       maxAge: 24 * 60 * 60,
     };

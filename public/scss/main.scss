@@ -2885,7 +2885,7 @@ in 2 tab of Company Profile
 .resume-preview-header {
   background: #2f57b7;
   color: #fff;
-  padding: 25px 30px;
+  padding: 5px 10px;
 }
 
 .resume-preview-header h1 {
@@ -2899,14 +2899,29 @@ in 2 tab of Company Profile
   grid-template-columns: 30% 70%;
 }
 
+.resume-preview-body-full {
+  display: grid;
+}
+
+.resume-preview-body-full {
+  display: grid;
+}
+
 .resume-left-column {
-  padding: 20px;
+  padding-left: 1px;
   background: #fafafa;
   border-right: 1px solid #ddd;
 }
 
+.resume-full-column {
+  border-right: none;
+  border-bottom: 1px solid #ddd;
+  // width: 100%;
+
+}
+
 .resume-right-column {
-  padding: 20px 30px;
+  padding: 5px 10px;
 }
 
 .resume-left-column section,
@@ -2915,6 +2930,7 @@ in 2 tab of Company Profile
 }
 
 .resume-left-column h3,
+.resume-full-column h3,
 .resume-right-column h3 {
   font-size: 15px;
   font-weight: 600;
@@ -2925,7 +2941,7 @@ in 2 tab of Company Profile
 
 .resume-list {
   margin: 0;
-  padding-left: 16px;
+  padding-left: 5px;
 }
 
 .resume-list li {
@@ -2934,8 +2950,25 @@ in 2 tab of Company Profile
   line-height: 1.5;
 }
 
+
+
 .resume-item {
-  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  // margin-bottom: 12px;
+}
+
+.page-break {
+  page-break-before: always;
+  padding: 20px;
+  ;
+}
+
+.resume-item p {
+
+  margin-bottom: 0px !important;
 }
 
 .resume-item strong {
@@ -2946,7 +2979,7 @@ in 2 tab of Company Profile
 .resume-subtitle {
   font-size: 12px;
   font-weight: 600;
-  margin-top: 2px;
+  margin-top: -2px;
 }
 
 .resume-date {
@@ -2966,11 +2999,12 @@ in 2 tab of Company Profile
   grid-template-columns: 90px 1fr;
   gap: 10px;
   font-size: 12px;
-  margin: 2px 0;
+  margin: -3px 0;
 }
 
 .label {
   font-weight: 600;
+  text-align: left !important;
 }
 
 .value {
@@ -3009,6 +3043,13 @@ in 2 tab of Company Profile
     grid-template-columns: 1fr;
   }
 
+  .resume-full-column {
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    // width: 100%;
+
+  }
+
   .resume-left-column {
     border-right: none;
     border-bottom: 1px solid #ddd;
@@ -3029,7 +3070,8 @@ in 2 tab of Company Profile
   }
 
   .resume-left-column h3,
-  .resume-right-column h3 {
+  .resume-right-column h3,
+  .resume-full-column h3 {
     font-size: 14px;
   }
 

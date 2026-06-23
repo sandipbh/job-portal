@@ -19,6 +19,7 @@
     "cookies-next": "^6.1.1",
     "google-map-react": "^2.2.5",
     "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.14.0",
     "i": "^0.3.7",
     "jose": "^6.2.2",
     "js-cookie": "^3.0.8",

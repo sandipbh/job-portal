@@ -104,8 +104,13 @@ export async function POST(req) {
       tw_marks,
 
       gr_university,
+      gr_universityId,
       gr_course,
       gr_specialization,
+
+      gr_courseId,
+      gr_specializationId,
+
       gr_courseType,
       gr_startYear,
       gr_endYear,
@@ -113,8 +118,13 @@ export async function POST(req) {
       gr_score,
 
       pg_university,
+      pg_universityId,
       pg_course,
       pg_specialization,
+
+      pg_courseId,
+      pg_specializationId,
+
       pg_courseType,
       pg_startYear,
       pg_endYear,
@@ -122,8 +132,13 @@ export async function POST(req) {
       pg_score,
 
       ph_university,
+      ph_universityId,
       ph_course,
       ph_specialization,
+
+      ph_courseId,
+      ph_specializationId,
+
       ph_courseType,
       ph_startYear,
       ph_endYear,
@@ -164,8 +179,14 @@ export async function POST(req) {
       tw_marks: tw_marks,
 
       gr_university: gr_university,
+      gr_universityId: gr_universityId,
+
       gr_course: gr_course,
       gr_specialization: gr_specialization,
+
+      gr_courseId: gr_courseId,
+      gr_specializationId: gr_specializationId,
+
       gr_courseType: gr_courseType,
       gr_startYear: gr_startYear,
       gr_endYear: gr_endYear,
@@ -173,8 +194,13 @@ export async function POST(req) {
       gr_score: gr_score,
 
       pg_university: pg_university,
+      pg_universityId: pg_universityId,
       pg_course: pg_course,
       pg_specialization: pg_specialization,
+
+      pg_courseId: pg_courseId,
+      pg_specializationId: pg_specializationId,
+
       pg_courseType: pg_courseType,
       pg_startYear: pg_startYear,
       pg_endYear: pg_endYear,
@@ -182,8 +208,13 @@ export async function POST(req) {
       pg_score: pg_score,
 
       ph_university: ph_university,
+      ph_universityId: ph_universityId,
       ph_course: ph_course,
       ph_specialization: ph_specialization,
+
+      ph_courseId: ph_courseId,
+      ph_specializationId: ph_specializationId,
+
       ph_courseType: ph_courseType,
       ph_startYear: ph_startYear,
       ph_endYear: ph_endYear,

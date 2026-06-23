@@ -97,7 +97,7 @@ const Preview = ({ data }) => {
 
     html2pdf()
       .set({
-        margin: 0,
+        margin: 10,
         filename: "resume.pdf",
         image: { type: "jpeg", quality: 1 },
         html2canvas: {
@@ -193,7 +193,7 @@ const Preview = ({ data }) => {
 
             <section>
               <h3>PROFESSIONAL SUMMARY </h3>
-              <p style={{ wordBreak: "break-word" }}>
+              <p>
                 {personal?.profileSummary}
               </p>
             </section>
@@ -203,7 +203,7 @@ const Preview = ({ data }) => {
               <h3>EDUCATION   </h3>
               <div className="row align-items-start">
 
-                <div className="col-12">
+                <div className="col-6">
                   {PhDData?.university && (
                     <div className="resume-item">
                       <strong>PhD</strong>
@@ -230,7 +230,7 @@ const Preview = ({ data }) => {
                   )}
 
                 </div>
-                <div className="col-12">
+                <div className="col-6">
                   {mastersData?.university && (
                     <div className="resume-item">
                       <strong>Post Graduation</strong>
@@ -255,7 +255,7 @@ const Preview = ({ data }) => {
                     </div>
                   )}
                 </div>
-                <div className="col-12">
+                <div className="col-6">
                   {graduateData?.university && (
                     <div className="resume-item">
                       <strong>Graduation</strong>
@@ -282,7 +282,7 @@ const Preview = ({ data }) => {
                     </div>
                   )}
                 </div>
-                <div className="col-12">
+                <div className="col-6">
                   {twelfthData?.board && (
                     <div className="resume-item">
                       <strong>Class XII</strong>
@@ -308,7 +308,7 @@ const Preview = ({ data }) => {
                   )}
                 </div>
 
-                <div className="col-12">
+                <div className="col-6">
 
                   {tenthData?.board && (
                     <div className="resume-item">
@@ -394,7 +394,7 @@ const Preview = ({ data }) => {
                       </div>
 
                       {exp.workProfile && (
-                        <p style={{ paddingBottom: "5px", marginBottom: "2px" }}>{exp.workProfile}</p>
+                        <p style={{ borderBottom: "1px solid #cecece", paddingBottom: "5px", marginBottom: "2px !important;" }}>{exp.workProfile}</p>
                       )}
                     </div>
                   ))}
@@ -406,7 +406,7 @@ const Preview = ({ data }) => {
 
             {experience.length > 0 && (
               <>
-                <section style={{ padding: "20px", paddingTop: "5px" }}>
+                <section >
                   <h3>PROJECTS</h3>
 
                   {project?.map((proj, i) => (
@@ -425,7 +425,7 @@ const Preview = ({ data }) => {
                         <span>skills:  {proj.skills.replaceAll("^", ",")}</span>
                       </p>
                       {proj.projectDetails && (
-                        <p style={{ marginBottom: "5px", paddingBottom: "5px", paddingBottom: "5px" }} >{proj.projectDetails}</p>
+                        <p style={{ marginBottom: "5px", paddingBottom: "5px", borderBottom: "1px solid #cecece", paddingBottom: "5px" }} >{proj.projectDetails}</p>
                       )}
 
 

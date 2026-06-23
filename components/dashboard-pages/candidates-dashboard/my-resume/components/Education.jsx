@@ -31,93 +31,6 @@ const EducationForm = ({
 
   const [activeForm, setActiveForm] = useState("");
 
-  useEffect(() => {
-    getEducationDetails();
-  }, []);
-
-  const getEducationDetails = async () => {
-    try {
-      const response = await fetch("/api/candi-resume-education", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        }
-      });
-
-      const result = await response.json();
-
-      //console.log("Education Details fetched:", JSON.stringify(result));
-
-      const profile = result?.data;
-
-      if (profile) {
-
-        const educationData = profile;
-
-        const tenthData = educationData.filter(x => x.education === "10th")[0];
-        const twelfthData = educationData.filter(x => x.education === "12th")[0];
-        const graduateData = educationData.filter(x => x.education === "Graduate")[0];
-        const mastersData = educationData.filter(x => x.education === "Masters")[0];
-        const PhDData = educationData.filter(x => x.education === "PhD")[0];
-
-        // console.log(tenthData)
-        // console.log(tenthData.board)
-        setFormData((prev) => ({
-          ...prev,
-
-          tenthBoard: tenthData.board || "",
-          tenthPassingYear: tenthData.passYear || "",
-          tenthMedium: tenthData.medium || "",
-          tenthMarks: tenthData.marks || "",
-
-          twelfthBoard: twelfthData.board || "",
-          twelfthPassingYear: twelfthData.passYear || "",
-          twelfthStream: twelfthData.stream || "",
-          twelfthMarks: twelfthData.marks || "",
-
-          graduateUniversity: graduateData.university || "",
-          graduateUniversityId: graduateData.university || "",
-          graduateCourse: graduateData.course || "",
-          graduateCourseId: graduateData.course || "",
-          graduateSpecialization: graduateData.specialization || "",
-          graduateSpecializationId: graduateData.specialization || "",
-          graduateCourseType: graduateData.courseType || "",
-          graduateStartYear: graduateData.durationFrom || "",
-          graduateEndYear: graduateData.durationTo || "",
-          graduateGradingSystem: graduateData.gradingSystem || "",
-          graduateScore: graduateData.marks || "",
-
-          postgraduateUniversity: mastersData.university || "",
-          postgraduateUniversityId: mastersData.university || "",
-          postgraduateCourse: mastersData.course || "",
-          postgraduateCourseId: mastersData.course || "",
-          postgraduateSpecialization: mastersData.specialization || "",
-          postgraduateSpecializationId: mastersData.specialization || "",
-          postgraduateCourseType: mastersData.courseType || "",
-          postgraduateStartYear: mastersData.durationFrom || "",
-          postgraduateEndYear: mastersData.durationTo || "",
-          postgraduateGradingSystem: mastersData.gradingSystem || "",
-          postgraduateScore: mastersData.marks || "",
-
-          doctorateUniversity: PhDData.university || "",
-          doctorateUniversityId: PhDData.university || "",
-          doctorateCourse: PhDData.course || "",
-          doctorateSpecialization: PhDData.course || "",
-          doctorateCourseId: PhDData.specialization || "",
-          doctorateSpecializationId: PhDData.specialization || "",
-          doctorateCourseType: PhDData.courseType || "",
-          doctorateStartYear: PhDData.durationFrom || "",
-          doctorateEndYear: PhDData.durationTo || "",
-          doctorateGradingSystem: PhDData.gradingSystem || "",
-          doctorateScore: PhDData.marks || "",
-
-        }));
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const [formData, setFormData] = useState({
     tenthBoard: "",
     tenthPassingYear: "",
@@ -166,20 +79,111 @@ const EducationForm = ({
     doctorateScore: "",
   });
 
+  useEffect(() => {
+    getEducationDetails();
+  }, [0]);
+
+  const getEducationDetails = async () => {
+    try {
+      const response = await fetch("/api/candi-resume-education", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const result = await response.json();
+
+      //console.log("Education Details fetched:", JSON.stringify(result));
+
+      const profile = result?.data;
+
+      if (profile) {
+
+        const educationData = profile;
+
+        const tenthData = educationData.filter(x => x.education === "10th")[0];
+        const twelfthData = educationData.filter(x => x.education === "12th")[0];
+        const graduateData = educationData.filter(x => x.education === "Graduate")[0];
+        const mastersData = educationData.filter(x => x.education === "Masters")[0];
+        const PhDData = educationData.filter(x => x.education === "PhD")[0];
+
+        console.log('graduateData ', graduateData)
+        // console.log(tenthData.board)
+
+        setFormData((prev) => ({
+          ...prev,
+
+          tenthBoard: tenthData.board || "",
+          tenthPassingYear: tenthData.passYear || "",
+          tenthMedium: tenthData.medium || "",
+          tenthMarks: tenthData.marks || "",
+
+          twelfthBoard: twelfthData.board || "",
+          twelfthPassingYear: twelfthData.passYear || "",
+          twelfthStream: twelfthData.stream || "",
+          twelfthMarks: twelfthData.marks || "",
+
+          graduateUniversity: graduateData.university || "",
+          graduateUniversityId: graduateData.universityId || "",
+          graduateCourse: graduateData.course || "",
+          graduateCourseId: graduateData.courseId || "",
+          graduateSpecialization: graduateData.specialization || "",
+          graduateSpecializationId: graduateData.specializationId || "",
+          graduateCourseType: graduateData.courseType || "",
+          graduateStartYear: graduateData.durationFrom || "",
+          graduateEndYear: graduateData.durationTo || "",
+          graduateGradingSystem: graduateData.gradingSystem || "",
+          graduateScore: graduateData.marks || "",
+
+          postgraduateUniversity: mastersData.university || "",
+          postgraduateUniversityId: mastersData.universityId || "",
+          postgraduateCourse: mastersData.course || "",
+          postgraduateCourseId: mastersData.courseId || "",
+          postgraduateSpecialization: mastersData.specialization || "",
+          postgraduateSpecializationId: mastersData.specializationId || "",
+          postgraduateCourseType: mastersData.courseType || "",
+          postgraduateStartYear: mastersData.durationFrom || "",
+          postgraduateEndYear: mastersData.durationTo || "",
+          postgraduateGradingSystem: mastersData.gradingSystem || "",
+          postgraduateScore: mastersData.marks || "",
+
+          doctorateUniversity: PhDData.university || "",
+          doctorateUniversityId: PhDData.universityId || "",
+          doctorateCourse: PhDData.course || "",
+          doctorateCourseId: PhDData.courseId || "",
+          doctorateSpecialization: PhDData.specialization || "",
+          doctorateSpecializationId: PhDData.specializationId || "",
+          doctorateCourseType: PhDData.courseType || "",
+          doctorateStartYear: PhDData.durationFrom || "",
+          doctorateEndYear: PhDData.durationTo || "",
+          doctorateGradingSystem: PhDData.gradingSystem || "",
+          doctorateScore: PhDData.marks || "",
+
+        }));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+
   const openForm = (type) => {
     setActiveForm(type);
   };
 
   const handleAdd = async (ttype) => {
     let updated = { ...education };
+    const formType = ttype;
 
     setActiveForm(ttype);
 
-    if (!validateEducationForm()) {
+    if (!validateEducationForm(formType)) {
       return;
     }
 
-    if (activeForm === "10th") {
+    if (formType === "10th") {
       updated.tenth = {
         board: formData.tenthBoard,
         passingYear: formData.tenthPassingYear,
@@ -188,7 +192,7 @@ const EducationForm = ({
       };
     }
 
-    if (activeForm === "12th") {
+    if (formType === "12th") {
       updated.twelfth = {
         board: formData.twelfthBoard,
         passingYear: formData.twelfthPassingYear,
@@ -197,7 +201,7 @@ const EducationForm = ({
       };
     }
 
-    if (activeForm === "Graduate") {
+    if (formType === "Graduate") {
       updated.graduation = {
         university: formData.graduateUniversity,
         universityId: formData.graduateUniversityId,
@@ -213,7 +217,7 @@ const EducationForm = ({
       };
     }
 
-    if (activeForm === "Masters") {
+    if (formType === "Masters") {
       updated.postGraduation = {
         university: formData.postgraduateUniversity,
         course: formData.postgraduateCourse,
@@ -231,7 +235,7 @@ const EducationForm = ({
       };
     }
 
-    if (activeForm === "PhD") {
+    if (formType === "PhD") {
       updated.doctorate = {
         university: formData.doctorateUniversity,
         course: formData.doctorateCourse,
@@ -250,7 +254,7 @@ const EducationForm = ({
     }
 
     const eduData = {
-      eduType: activeForm,
+      eduType: formType,
       te_board: formData.tenthBoard,
       te_passingYear: formData.tenthPassingYear,
       te_medium: formData.tenthMedium,
@@ -262,10 +266,12 @@ const EducationForm = ({
       tw_marks: formData.twelfthMarks,
 
       gr_university: formData.graduateUniversity,
+      gr_universityId: formData.graduateUniversityId,
+
       gr_course: formData.graduateCourse,
       gr_specialization: formData.graduateSpecialization,
 
-      gr_universityId: formData.graduateUniversityId,
+
       gr_courseId: formData.graduateCourseId,
       gr_specializationId: formData.graduateSpecializationId,
 
@@ -306,7 +312,7 @@ const EducationForm = ({
     };
 
     setFormDataSaveApi(eduData);
-    console.log(formDataSaveApi);
+    console.log('setFormDataSaveApi ', eduData);
 
     try {
 
@@ -315,9 +321,7 @@ const EducationForm = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formDataSaveApi,
-        }),
+        body: JSON.stringify(eduData),
       });
 
       const user = await res.json();
@@ -346,10 +350,11 @@ const EducationForm = ({
     return updated;
   };
 
-  const validateEducationForm = () => {
+  const validateEducationForm = (formType) => {
     const newErrors = {};
+    const currentForm = formType || activeForm;
 
-    if (activeForm === "10th") {
+    if (currentForm === "10th") {
       if (!formData.tenthBoard?.trim() || formData.tenthBoard.length < 3) {
         newErrors.tenthBoard = "Board is required";
       }
@@ -365,7 +370,7 @@ const EducationForm = ({
 
     }
 
-    if (activeForm === "12th") {
+    if (currentForm === "12th") {
       if (!formData.twelfthBoard?.trim() || formData.twelfthBoard.length < 3)
         newErrors.twelfthBoard = "Board is required";
 
@@ -648,15 +653,15 @@ const EducationForm = ({
             setActiveForm("10th")
           }
         >
-          {education.tenth ? (
+          {formData.tenth ? (
             <>
               <h5>  Class X Details  </h5>
-              <p>Board : {education.tenthBoard}  Percentage : {formData.tenthMarks}, Passing Year : {formData.tenthPassingYear}</p>
+              <p>Board : {formData.tenthBoard}  Percentage : {formData.tenthMarks}, Passing Year : {formData.tenthPassingYear}</p>
             </>
           ) : (
             <>
               <h5>  Class X Details  </h5>
-              <p>Board : {education.tenthBoard}  Percentage : {formData.tenthMarks}, Passing Year : {formData.tenthPassingYear}</p>
+              <p>Board : {formData.tenthBoard}  Percentage : {formData.tenthMarks}, Passing Year : {formData.tenthPassingYear}</p>
             </>
 
           )}
@@ -820,7 +825,7 @@ const EducationForm = ({
                 <button
                   type="button"
                   className="btn btn-md btn-primary  me-3"
-                  onClick={(e) => { handleAdd("10th"); setActiveForm("10th"); }}
+                  onClick={(e) => { setActiveForm("10th"); handleAdd("10th"); }}
                 >
                   Save
                 </button>
@@ -841,16 +846,16 @@ const EducationForm = ({
             setActiveForm("12th")
           }
         >
-          {education.twelfth ? (
+          {formData.twelfth ? (
             <>
               <h5>  Class XII Details</h5>
-              <p>Percentage : {formData.twelfthMarks}, Passing Year : {formData.twelfthPassingYear}</p>
+              <p> Board : {formData.twelfthBoard}, Percentage : {formData.twelfthMarks}, Passing Year : {formData.twelfthPassingYear}</p>
 
             </>
           ) : (
             <>
               <h5>  Class XII Details</h5>
-              <p>Percentage : {formData.twelfthMarks}, Passing Year : {formData.twelfthPassingYear}</p>
+              <p>Board : {formData.twelfthBoard}, Percentage : {formData.twelfthMarks}, Passing Year : {formData.twelfthPassingYear}</p>
             </>
           )}
 
@@ -1018,7 +1023,7 @@ const EducationForm = ({
                 <button
                   type="button"
                   className="btn btn-md btn-primary  me-3"
-                  onClick={(e) => { handleAdd("12th"); setActiveForm("12th"); }}
+                  onClick={(e) => { setActiveForm("12th"); handleAdd("12th"); }}
                 >
                   Save
                 </button>
@@ -1066,7 +1071,7 @@ const EducationForm = ({
               <div className="row">
                 {/* University */}
                 <div className="form-group col-lg-12">
-                  <label>University / Institute</label>
+                  <label>University / Institute  </label>
                   <input
                     type="text"
                     value={formData.graduateUniversity || ""}
@@ -1075,6 +1080,7 @@ const EducationForm = ({
                       setFormData((prev) => ({
                         ...prev,
                         graduateUniversity: e.target.value,
+                        graduateUniversityId: e.target.key,
                       }));
 
                       getUniversities(e.target.value);
@@ -1136,6 +1142,7 @@ const EducationForm = ({
                       setFormData((prev) => ({
                         ...prev,
                         graduateCourse: e.target.value,
+                        graduateCourseId: e.target.key,
                       }));
 
                       getCourses(e.target.value);
@@ -1196,6 +1203,7 @@ const EducationForm = ({
                       setFormData((prev) => ({
                         ...prev,
                         graduateSpecialization: e.target.value,
+                        graduateSpecializationId: e.target.key,
                       }));
 
                       getSpecialization(e.target.value);
@@ -1384,7 +1392,7 @@ const EducationForm = ({
                 <button
                   type="button"
                   className="btn btn-md btn-primary  me-3"
-                  onClick={(e) => { handleAdd("Graduate"); setActiveForm("Graduate"); }}
+                  onClick={(e) => { setActiveForm("Graduate"); handleAdd("Graduate"); }}
                 >
                   Save
                 </button>
@@ -1442,6 +1450,7 @@ const EducationForm = ({
                       setFormData((prev) => ({
                         ...prev,
                         postgraduateUniversity: e.target.value,
+                        postgraduateUniversityId: e.target.key,
                       }));
 
                       getUniversities(e.target.value);
@@ -1503,6 +1512,7 @@ const EducationForm = ({
                       setFormData((prev) => ({
                         ...prev,
                         postgraduateCourse: e.target.value,
+                        postgraduateCourseId: e.target.key,
                       }));
 
                       getCourses(e.target.value);
@@ -1564,6 +1574,7 @@ const EducationForm = ({
                       setFormData((prev) => ({
                         ...prev,
                         postgraduateSpecialization: e.target.value,
+                        postgraduateSpecializationId: e.target.key,
                       }));
 
                       getSpecialization(e.target.value);
@@ -1758,7 +1769,7 @@ const EducationForm = ({
                   type="button"
                   className="btn btn-md btn-primary  me-3"
 
-                  onClick={(e) => { handleAdd("Masters"); setActiveForm("Masters"); }}
+                  onClick={(e) => { setActiveForm("Masters"); handleAdd("Masters"); }}
                 >
                   Save
                 </button>
@@ -1813,6 +1824,7 @@ const EducationForm = ({
                       setFormData((prev) => ({
                         ...prev,
                         doctorateUniversity: e.target.value,
+                        doctorateUniversityId: e.target.key,
                       }));
 
                       getUniversities(e.target.value);
@@ -1872,6 +1884,7 @@ const EducationForm = ({
                       setFormData((prev) => ({
                         ...prev,
                         doctorateCourse: e.target.value,
+                        doctorateCourseId: e.target.key,
                       }));
 
                       getCourses(e.target.value);
@@ -1932,6 +1945,7 @@ const EducationForm = ({
                       setFormData((prev) => ({
                         ...prev,
                         doctorateSpecialization: e.target.value,
+                        doctorateSpecializationId: e.target.key,
                       }));
 
                       getSpecialization(e.target.value);
@@ -2122,7 +2136,7 @@ const EducationForm = ({
                 <button
                   type="button"
                   className="btn btn-md btn-primary  me-3"
-                  onClick={(e) => { handleAdd("PhD"); setActiveForm("PhD"); }}
+                  onClick={(e) => { setActiveForm("PhD"); handleAdd("PhD"); }}
                 >
                   Save
                 </button>
