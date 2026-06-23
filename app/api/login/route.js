@@ -56,18 +56,7 @@ export async function POST(req) {
     }
     console.log("External API Base URL 00:", externalApiBaseUrl);
 
-    /******************remove old cookies********* */
-    const cookieOptions2 = {
-      path: "/",
-      expires: new Date(0),
-    };
 
-    response.cookies.set("regToken", "", cookieOptions2);
-    response.cookies.set("accessToken", "", cookieOptions2);
-    response.cookies.set("refreshToken", "", cookieOptions2);
-    response.cookies.set("userInfo", "", cookieOptions2);
-
-    /******************remove old cookies********* */
 
 
     const externalApiUrl =
@@ -119,6 +108,20 @@ export async function POST(req) {
 
     // New cookie options
     const isSecure = headersList.get("x-forwarded-proto") === "https";
+
+    /******************remove old cookies********* */
+    const cookieOptions2 = {
+      path: "/",
+      expires: new Date(0),
+    };
+
+    response.cookies.set("regToken", "", cookieOptions2);
+    response.cookies.set("accessToken", "", cookieOptions2);
+    response.cookies.set("refreshToken", "", cookieOptions2);
+    response.cookies.set("userInfo", "", cookieOptions2);
+
+    /******************remove old cookies********* */
+
 
     const cookieOptions = {
       httpOnly: true,
