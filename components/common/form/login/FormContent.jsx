@@ -11,7 +11,6 @@ import { tr } from "@faker-js/faker";
 const FormContent = () => {
 
 
-
   const router = useRouter();
   const [role, setRole] = useState("candidate");
 
@@ -27,6 +26,22 @@ const FormContent = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+
+  // useEffect(() => {
+  //   getlogout();
+  // }, []);
+
+  // const getlogout = async () => {
+  //   try {
+  //     const res = await fetch("/api/logout", {
+  //       method: "POST",
+  //       credentials: "include", // IMPORTANT
+  //     });
+  //   } catch (error) {
+  //   }
+  // };
+
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -342,7 +357,7 @@ const FormContent = () => {
 
 
         <div className="divider">
-          <span>or</span>
+          <span className="text-center">or</span>
         </div>
 
         <LoginWithSocial />

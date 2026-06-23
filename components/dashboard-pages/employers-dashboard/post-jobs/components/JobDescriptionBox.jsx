@@ -1,18 +1,37 @@
 'use client';
 
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import "react-quill-new/dist/quill.snow.css";
+import { toast } from "react-toastify";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
     ssr: false,
 });
 
-const MAX_LENGTH = 350;
+const MAX_LENGTH = 500;
+
 
 const JobDescriptionBox = ({ data, setData, errors }) => {
-    const [charCount, setCharCount] = useState(0);
 
+
+    const [charCount, setCharCount] = useState(0);
+    const quillRef = useRef(null);
+    const formats = [
+        "header",
+        "bold",
+        "color",
+        "background",
+        "italic",
+        "underline",
+        "blockquote",
+        "code-block",
+        "list",
+        "align",
+        "size",
+        "link",
+        "image",
+    ];
     const modules = useMemo(
         () => ({
             toolbar: [
@@ -29,39 +48,28 @@ const JobDescriptionBox = ({ data, setData, errors }) => {
         []
     );
 
-    const formats = [
-        "header",
-        "bold",
-        "color",
-        "background",
-        "italic",
-        "underline",
-        "blockquote",
-        "code-block",
-        "list",
-        "align",
-        "size",
-        "link",
-        "image",
-    ];
+    const validateInput = (value) => {
+        const regex = /^[a-zA-Z0-9\s.,!?()]*$/;
+        return regex.test(value);
+    };
 
-    const handleChange = (value) => {
-        const text = value.replace(/<[^>]+>/g, "").trim();
-        const length = text.length;
+    const handleChange = (content, delta, source, editor) => {
+        const text = editor.getText().trim();
 
-        if (length > MAX_LENGTH) return;
+        if (text.length > MAX_LENGTH + 1) { const quill = quillRef.current.getEditor(); quill.deleteText(MAX_LENGTH, text.length); return; }
+        setCharCount(text.length);
 
-        setCharCount(length);
-
-        // IMPORTANT
-        setData({
-            about: value,
-        });
+        if (validateInput(text)) {
+            setData({
+                about: content, // Save HTML
+            });
+        }
     };
 
     return (
         <div className="form-group col-lg-12">
             <ReactQuill
+                ref={quillRef}
                 theme="snow"
                 value={data?.about || ""}
                 onChange={handleChange}
@@ -69,16 +77,15 @@ const JobDescriptionBox = ({ data, setData, errors }) => {
                 formats={formats}
                 placeholder="Write job description..."
             />
-
             <div
                 style={{
                     textAlign: "right",
                     fontSize: "12px",
                     marginTop: "5px",
-                    color: charCount < 20 ? "red" : "green",
+                    color: charCount < 500 ? "red" : "green",
                 }}
             >
-                {charCount}/20 minimum characters
+                {charCount}/500 minimum characters
             </div>
 
             {errors?.jobDesc && (

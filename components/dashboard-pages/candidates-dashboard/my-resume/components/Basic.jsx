@@ -56,7 +56,7 @@ const Basic = ({ formData,
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [summaryDesc, setSummaryDesc] = useState("");
 
   useEffect(() => {
     const stateList = Object.keys(statesData).sort();
@@ -102,7 +102,8 @@ const Basic = ({ formData,
     languages: "",
     languageString: "",
     country: "India",
-    countryCode: "+91"
+    countryCode: "+91",
+    summary: ""
   });
 
   useEffect(() => {
@@ -150,7 +151,7 @@ const Basic = ({ formData,
             : [],
 
           languageString: profile.languages || "",
-
+          summary: profile.summary || "",
 
         }));
       }
@@ -261,6 +262,10 @@ const Basic = ({ formData,
     if (!form.expectedCtc) {
       newErrors.expectedCtc = "Expected CTC is required";
     }
+    if (!form.summary || form.summary.length < 20) {
+      newErrors.summary = "Enter your professional summary";
+    }
+
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -891,7 +896,34 @@ const Basic = ({ formData,
             </div>
           )}
         </div>
+        {/* About Company */}
+        <div className="form-group col-lg-12 mt-2">
+          <label>
+            Professional Summary
+          </label>
 
+          <textarea
+            className=" about-input-company"
+            maxLength={250}
+            value={form.summary || ""}
+            onChange={(e) => {
+              const value = e.target.value;
+              setForm({ ...form, summary: value });
+              setSummaryDesc(value);
+            }}
+            placeholder="Write about your professional summary..."
+          />
+
+          <div
+            className="text-end text-red mt-1"
+            style={{ fontSize: "12px" }}
+          >
+            {summaryDesc.length} / 250
+          </div>
+          {errors.summary && (
+            <span className="error-text">{errors.summary}</span>
+          )}
+        </div>
       </div>
       <div className="form-group col-12 mt-3 text-end">
         <button type="submit" className="theme-btn btn-style-one" disabled={loading}>

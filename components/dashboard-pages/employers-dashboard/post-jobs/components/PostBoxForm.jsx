@@ -1,57 +1,118 @@
-
 'use client'
+
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import JobDescriptionBox from "./JobDescriptionBox";
-import { FaMale, FaFemale, FaUsers } from "react-icons/fa";
+import { FaMale, FaFemale, FaUsers, FaSadCry } from "react-icons/fa";
 import { FaEnvelope, FaPhoneAlt } from "react-icons/fa";
 import { MdOutlineContactPhone } from "react-icons/md";
+import { toast } from "react-toastify";
+import dynamic from "next/dynamic";
+import "react-quill-new/dist/quill.snow.css";
+
+
+const ReactQuill = dynamic(() => import("react-quill-new"), {
+  ssr: false,
+});
+const MAX_LENGTH = 500;
+
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, false] }],
+    ["bold", "italic", "underline"],
+    [{ color: [] }, { background: [] }],
+    ["blockquote", "code-block"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
+    [{ size: ["small", false, "large", "huge"] }],
+    ["link", "image"],
+  ],
+};
+
+const formats = [
+  "header",
+  "bold",
+  "color",
+  "background",
+  "italic",
+  "underline",
+  "blockquote",
+  "code-block",
+  "list",
+  "align",
+  "size",
+  "link",
+  "image",
+];
 
 const PostBoxForm = ({ activeTab, setActiveTab }) => {
-  const handleSubmit = () => {
-    console.log("Form Submitted");
+  const quillRef = useRef(null);
+  const [charCount, setCharCount] = useState(0);
+
+
+  const [compName, setCompName] = useState("");
+
+  useEffect(() => {
+    getCookiesValue();
+  }, []);
+  const getCookiesValue = async () => {
+    try {
+      const response = await fetch("/api/cookies-details", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      const data = await response.json();
+      let fullname = data.data;
+      console.log(fullname)
+      setFormData((prev) => ({
+        ...prev,
+        companyName: fullname
+      }));
+
+      setCompName(fullname);
+
+    } catch (error) {
+      console.error(error);
+    }
   };
-
-  // const skills = [
-  //   { value: "Java", label: "Java" },
-  //   { value: "JavaScript", label: "JavaScript" },
-  //   { value: "Python", label: "Python" },
-  //   { value: "React", label: "React" },
-  //   { value: "Node.js", label: "Node.js" },
-  //   { value: "MongoDB", label: "MongoDB" },
-  //   { value: "Full Stack Developer", label: "Full Stack Developer" },
-  //   { value: "Other", label: "Other" },
-  // ];
-
-  const degree = [
-    { value: "B.Tech", label: "B.Tech" },
-    { value: "BCA", label: "BCA" },
-    { value: "BSc-It", label: "BSc-It" },
-    { value: "M.Tech", label: "M.Tech" },
-    { value: "PhD", label: "PhD" },
-  ];
-
 
   const [languages, setLanguages] = useState([]);
   const [industry, setIndustry] = useState([]);
   const [incentives, setIncentives] = useState([]);
   const [incentiveSuggestions, setIncentiveSuggestions] = useState([]);
   const [selectedIncentives, setSelectedIncentives] = useState([]);
+
+  const [selectedIndustrys, setselectedIndustrys] = useState([]);
+  const [selectedLanguages, setselectedLanguages] = useState([]);
+
   const [department, setDepartment] = useState([]);
   const [groupedDepartments, setGroupedDepartments] = useState([]);
   const [jobRoleList, setJobRoleList] = useState([]);
 
-
   const [jobTitleList, setJobTitleList] = useState([]);
   const [showJobTitleList, setShowJobTitleList] = useState(false);
 
-
+  const [degree, setDegree] = useState([]);
+  const [subDegree, setSubDegree] = useState([]);
 
   const [locationList, setLocationList] = useState([]);
   const [showLocationList, setShowLocationList] = useState(false);
 
   const [skills, setSkills] = useState([]);
+
+  const [degreeList, setDegreeList] = useState([]);
+  const [showDegreeList, setShowDegreeList] = useState(false);
+
+  const [SpecializationList, setSpecializationList] = useState([]);
+  const [showSpecializationList, setShowSpecializationList] = useState(false);
+
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     getIndustry();
@@ -60,6 +121,81 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     getDepartment();
     getSkills();
   }, []);
+
+
+  const getDegree = async (term) => {
+
+    if (!term || term.length < 2) {
+      setDegreeList([]);
+      return;
+    }
+    if (formData.qualification === "Graduate" || formData.qualification === "Masters" || formData.qualification === "PhD") {
+
+      try {
+
+        const response = await fetch("/api/list-courses-search", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            term: term,
+            eduType: formData.qualification,
+          }),
+        });
+
+        const data = await response.json();
+        //console.log("location fetched:", JSON.stringify(data));
+
+        const options = data.data.map((item) => ({
+          value: item.key,
+          label: item.value
+        }));
+        setDegreeList(options);
+        setShowDegreeList(true);
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const getSpecialization = async (term) => {
+
+
+    if (!term || term.length < 2) {
+      setSpecializationList([]);
+      return;
+    }
+    if (formData.qualification === "Graduate" || formData.qualification === "Masters" || formData.qualification === "PhD") {
+
+      //console.log("Fetching Specialization for term:", term);
+      try {
+
+        const response = await fetch("/api/list-specialization-search", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            term: term,
+            eduType: formData.qualification,
+            id: formData.degreeId,
+          }),
+        });
+
+        const data = await response.json();
+        //console.log("Specializations fetched:", JSON.stringify(data));
+
+        setSpecializationList(data && data.data ? data.data : []);
+        setShowSpecializationList(true);
+      } catch (error) {
+        console.error(error);
+
+      }
+    }
+
+  };
 
   const getSkills = async () => {
     try {
@@ -297,7 +433,8 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       type: "text",
       required: true,
       options: [],
-    },
+      preferredAnswer: "",
+    }
   ]);
 
   const suggestedQuestions = [
@@ -323,27 +460,54 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     },
   ];
 
-
   const handleNext = () => {
     console.log("Current Tab:", activeTab);
     console.log("Job Description State:", jobDesc);
 
-    // Questions
+    // Screening Questions Tab
     if (activeTab === 2) {
       if (!validateQuestions()) {
         return;
       }
+
+      const screeningQuestions = questions.map((q, index) => ({
+        QNo: String(index + 1),
+
+        Que: q.question,
+
+        QType:
+          q.type === "text"
+            ? "Answer"
+            : q.type === "yesno"
+              ? "Yes/No"
+              : "MultiOption",
+
+        QOpt: q.options || [],
+
+        PreferredAnswer: q.preferredAnswer || "",
+
+        IsMandatory: q.required,
+      }));
+
+      console.log("Screening Questions:", screeningQuestions);
+
+      // Save in formData
+      setFormData((prev) => ({
+        ...prev,
+        screeningQuestions,
+      }));
     }
 
     // Job Description
     if (activeTab === 3) {
-      if (!validateJobDesc()) {
+      if (!validationJobDesc()) {
         return;
       }
     }
 
     setActiveTab(activeTab + 1);
   };
+
 
   const [jobDesc, setJobDesc] = useState("");
 
@@ -360,33 +524,88 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     const toggleStar = () => {
       const updated = selectProps.value.map((item) => {
         if (item.value === data.value) {
-          return { ...item, starred: !item.starred };
+          return {
+            ...item,
+            starred: !item.starred,
+          };
         }
         return item;
       });
 
-      selectProps.onChange(updated);
+      setSelectedSkills(updated);
+
+      setFormData((prev) => ({
+        ...prev,
+        skills: updated.map((item) => ({
+          skill: item.value,
+          starred: item.starred,
+        })),
+      }));
+
+      selectProps.onChange(updated, {
+        action: "select-option",
+      });
     };
 
     return (
-      <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "5px",
+        }}
+      >
         <span
           onClick={toggleStar}
           style={{
             cursor: "pointer",
-            color: data.starred ? "#1967d2" : "#ccc", // blue when active
-            fontSize: "20px"
+            color: data.starred ? "#9b9000" : "#ccc",
+            fontSize: "20px",
           }}
         >
           ★
         </span>
 
-        {/* Skill Name */}
         <span>{data.label}</span>
       </div>
     );
   };
+
+  // const CustomMultiValueLabel = (props) => {
+  //   const { data, selectProps } = props;
+
+  //   const toggleStar = () => {
+  //     const updated = selectProps.value.map((item) => {
+  //       if (item.value === data.value) {
+  //         return { ...item, starred: !item.starred };
+  //       }
+  //       return item;
+  //     });
+
+  //     selectProps.onChange(updated);
+  //   };
+
+
+  //   return (
+  //     <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+
+  //       <span
+  //         onClick={toggleStar}
+  //         style={{
+  //           cursor: "pointer",
+  //           color: data.starred ? "#1967d2" : "#ccc", // blue when active
+  //           fontSize: "20px"
+  //         }}
+  //       >
+  //         ★
+  //       </span>
+
+  //       {/* Skill Name */}
+  //       <span>{data.label}</span>
+  //     </div>
+  //   );
+  // };
+
   const [formData, setFormData] = useState({
     companyName: "",
     jobTitle: "",
@@ -394,7 +613,12 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     minExperience: "",
     maxExperience: "",
     fresherAllowed: false,
+
     jobType: "",
+    workMode: "",
+
+    incentives: [],
+
     minSalary: "",
     maxSalary: "",
     //  step 2 fields
@@ -404,21 +628,37 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     jobRoleId: "",
     jobLocation: "",
     jobLocationId: "",
-    skills: [],
     qualification: "",
-    industry: [],
-    gender: "",
-  });
-  const [contactData, setContactData] = useState({
-    contactMethod: "",
-    email: "",
-    phone: "",
+
+    degree: "",
+    degreeId: "",
+
+    specialization: "",
+    specializationId: "",
+    skills: [],
+    industryIds: [],
+
+    languages: [],
+    languagesId: [],
+
+    gender: "Both",
+
+    // step 4 fields
+    contactMethod: "Both",
+    cemail: "",
+    cphone: "",
     callFrom: "",
     callTo: "",
     applicationMethod: "",
     externalLink: "",
-    allowDirectCall: "",
+    allowDirectCall: "No",
+    days: [],
+
+    jobDesc: "",
+    aboutCompany: "",
+    screeningQuestions: []
   });
+
   const callOptions = [
     { label: "Yes" },
     { label: "No" },
@@ -444,12 +684,33 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    if (value === "Graduate" || value === "Masters" || value === "PhD") {
+      setIsEnabled(true)
+    }
+    else {
+      setFormData((prev) => ({
+        ...prev,
+        degree: "",
+        degreeId: "",
+        specialization: "",
+        specializationId: "",
+      }));
+
+      setIsEnabled(false)
+    }
+
     if (name === "minExperience") {
       setFormData((prev) => ({
         ...prev,
         minExperience: value,
         maxExperience: "",
       }));
+
+      setErrors((prev) => ({
+        ...prev,
+        "minExperience": "",
+      }));
+
       return;
     }
 
@@ -462,6 +723,12 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
             ? ""
             : prev.maxSalary,
       }));
+
+      setErrors((prev) => ({
+        ...prev,
+        "minSalary": "",
+      }));
+
       return;
     }
 
@@ -474,13 +741,15 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       ...prev,
       [name]: "",
     }));
+
+
   };
 
 
   const handleContactChange = (e) => {
     const { name, value } = e.target;
 
-    setContactData((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -492,37 +761,52 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   };
 
 
-  const updateQuestions = (updatedQuestions) => {
-    setQuestions(updatedQuestions);
-
-    setFormData((prev) => ({
-      ...prev,
-      questions: updatedQuestions.map((q) => ({
-        question: q.question,
-        type: q.type,
-        required: q.required ? 1 : 0,
-        options: q.options || [],
-      })),
-    }));
-    console.log(updatedQuestions);
-  };
-
   const validateQuestions = () => {
-    const newErrors = {};
+    let newErrors = {};
 
     questions.forEach((q, index) => {
-      if (!q.question.trim()) {
+
+      // Question
+      if (!q.question?.trim()) {
         newErrors[`question_${index}`] =
-          "Question is required";
+          "Please enter a question";
       }
 
+      // Type Answer
+      if (q.type === "text") {
+        if (!q.preferredAnswer?.trim()) {
+          newErrors[`preferred_${index}`] =
+            "Please enter preferred answer";
+        }
+      }
+
+      // Yes No
+      if (q.type === "yesno") {
+        if (!q.preferredAnswer) {
+          newErrors[`preferred_${index}`] =
+            "Please select preferred answer";
+        }
+      }
+
+      // Multiple Choice
       if (q.type === "options") {
+
+        if (q.options.length < 2) {
+          newErrors[`options_${index}`] =
+            "Minimum 2 options required";
+        }
+
         q.options.forEach((opt, i) => {
           if (!opt.trim()) {
             newErrors[`option_${index}_${i}`] =
-              "Option is required";
+              "Please enter option";
           }
         });
+
+        if (!q.preferredAnswer) {
+          newErrors[`preferred_${index}`] =
+            "Please select preferred option";
+        }
       }
     });
 
@@ -531,14 +815,15 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-
-  const validateStep1 = () => {
+  const validationJobDetails = () => {
     let newErrors = {};
 
-    if (!formData.companyName.trim()) {
+    formData.companyName = compName;
+
+    if (!formData.companyName || formData.companyName.length < 3) {
       newErrors.companyName = "Please enter company name";
     }
-    if (!formData.jobTitle.trim()) {
+    if (!formData.jobTitle || formData.jobTitle.length < 3) {
       newErrors.jobTitle = "Please enter job title";
     }
     if (!formData.minExperience && formData.minExperience !== 0) {
@@ -551,7 +836,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     if (formData.maxExperience === "") {
       newErrors.maxExperience = "Select maximum experience";
     }
-
     if (
       formData.minExperience !== "" &&
       formData.maxExperience !== "" &&
@@ -562,6 +846,9 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     }
     if (!formData.jobType) {
       newErrors.jobType = "Select a job type";
+    }
+    if (!formData.workMode) {
+      newErrors.workMode = "Select a work Mode";
     }
     if (!formData.minSalary) {
       newErrors.minSalary = "Enter minimum salary";
@@ -584,8 +871,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-
-  const validateStep2 = () => {
+  const validationCandidateDetails = () => {
     let newErrors = {};
 
     if (!formData.department) {
@@ -608,8 +894,8 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       newErrors.qualification = " Select the required qualification";
     }
 
-    if (!formData.industry || formData.industry.length === 0) {
-      newErrors.industry = "Select at least one industry";
+    if (!formData.industryIds || formData.industryIds.length === 0) {
+      newErrors.industryIds = "Select at least one industry";
     }
 
     if (!formData.gender) {
@@ -622,8 +908,34 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   };
 
 
-  const validateJobDesc = () => {
-    const text = (jobDesc || "")
+  const handleJobDescriptionChange = (
+    content,
+    delta,
+    source,
+    editor
+  ) => {
+    const text = editor.getText().trim();
+
+    if (text.length > MAX_LENGTH + 1) {
+      const quill = quillRef.current.getEditor();
+      quill.deleteText(MAX_LENGTH, text.length);
+      return;
+    }
+
+    setCharCount(text.length);
+
+    if (validateInput(text)) {
+      setFormData((prev) => ({
+        ...prev,
+        jobDesc: content,
+      }));
+    }
+  };
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
+  const validationJobDesc = () => {
+    const text = (formData.jobDesc || "")
       .replace(/<[^>]+>/g, "")
       .trim();
 
@@ -640,7 +952,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     return !newErrors.jobDesc;
   };
 
-  const validateContact = () => {
+  const validationContact = () => {
     let newErrors = {};
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -649,35 +961,35 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
 
     // Preferred Contact Method
-    if (!contactData.contactMethod) {
+    if (!formData.contactMethod) {
       newErrors.contactMethod = "Select contact method";
     }
 
-    if (!contactData.allowDirectCall) {
+    if (!formData.allowDirectCall) {
       newErrors.allowDirectCall =
         "Please select Yes or No";
     }
 
     // Email
-    if (!contactData.email) {
-      newErrors.email = "Enter email address";
-    } else if (!emailRegex.test(contactData.email)) {
-      newErrors.email = "Enter valid email (e.g. name@gmail.com)";
+    if (!formData.cemail) {
+      newErrors.cemail = "Enter email address";
+    } else if (!emailRegex.test(formData.cemail)) {
+      newErrors.cemail = "Enter valid email (e.g. name@gmail.com)";
     }
 
     // Phone
-    if (!contactData.phone) {
-      newErrors.phone = "Enter mobile number";
-    } else if (!phoneRegex.test(contactData.phone)) {
-      newErrors.phone = "Enter valid 10-digit number";
+    if (!formData.cphone) {
+      newErrors.cphone = "Enter mobile number";
+    } else if (!phoneRegex.test(formData.cphone)) {
+      newErrors.cphone = "Enter valid 10-digit contact number";
     }
 
     // Call Time
-    if (!contactData.callFrom) {
+    if (!formData.callFrom) {
       newErrors.callFrom = "Select start time";
     }
 
-    if (!contactData.callTo) {
+    if (!formData.callTo) {
       newErrors.callTo = "Select end time";
     }
 
@@ -687,25 +999,25 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     }
 
     // Application Method
-    if (!contactData.applicationMethod) {
-      newErrors.applicationMethod = "Select application method";
-    }
+    // if (!formData.applicationMethod) {
+    //   newErrors.applicationMethod = "Select application method";
+    // }
 
-    // External Link
-    if (
-      contactData.applicationMethod === "External Link"
-    ) {
-      if (!contactData.externalLink) {
-        newErrors.externalLink = "Enter application link";
-      } else if (!urlRegex.test(contactData.externalLink)) {
-        newErrors.externalLink = "Enter valid URL";
-      }
-    }
+    // // External Link
+    // if (
+    //   formData.applicationMethod === "External Link"
+    // ) {
+    //   if (!formData.externalLink) {
+    //     newErrors.externalLink = "Enter application link";
+    //   } else if (!urlRegex.test(formData.externalLink)) {
+    //     newErrors.externalLink = "Enter valid URL";
+    //   }
+    // }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const [selectedGender, setSelectedGender] = useState("");
+  const [selectedGender, setSelectedGender] = useState("Both");
   const [companyDesc, setCompanyDesc] = useState("");
 
   const genders = [
@@ -714,6 +1026,120 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     { label: "Both", icon: <FaUsers /> }
   ];
 
+  const validateInput = (value) => {
+    const regex = /^[a-zA-Z0-9\s.,!?()&'":;-]*$/;
+    return regex.test(value);
+  };
+  const handleCompanyDescChange = (e) => {
+    const value = e.target.value;
+
+    if (/<[^>]*>/.test(value)) {
+      toast.error("HTML tags are not allowed")
+      return;
+    }
+    if (validateInput(value)) {
+
+      setFormData((prev) => ({
+        ...prev,
+        aboutCompany: value,
+      }));
+      setCompanyDesc(value)
+    }
+  };
+
+
+  const handleSubmit = async () => {
+
+    const screeningQuestions = questions.map((q, index) => ({
+      QNo: String(index + 1),
+
+      Que: q.question,
+
+      QType:
+        q.type === "text"
+          ? "Answer"
+          : q.type === "yesno"
+            ? "Yes/No"
+            : "MultiOption",
+
+      QOpt: q.options || [],
+
+      PreferredAnswer: q.preferredAnswer || "",
+
+      IsMandatory: q.required,
+    }));
+
+
+
+    let haError = true;
+
+    if (!validationJobDetails()) {
+      toast.error("Recheck job details section");
+      haError = false;
+      return;
+    }
+    if (!validationCandidateDetails()) {
+      toast.error("Recheck candidate section");
+      haError = false;
+      return;
+    }
+    if (!validateQuestions()) {
+      toast.error("Recheck questions section");
+      haError = false;
+      return;
+    }
+    if (!validationJobDesc()) {
+      toast.error("Recheck job description section");
+      haError = false;
+      return;
+    }
+    if (!validationContact()) {
+      toast.error("Recheck communication section");
+      haError = false;
+      return;
+    }
+
+    if (haError) {
+
+
+
+      setFormData((prev) => ({
+        ...prev,
+        screeningQuestions: screeningQuestions,
+      }));
+
+      console.log(formData.days)
+      try {
+
+        setLoading(true);
+        const res = await fetch("/api/emp-job-post", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+          }),
+        });
+
+        const user = await res.json();
+        console.log("Response from /api/emp-job-post:", user);
+
+        if (!res.ok) {
+          toast.error(user.message || "Profile update failed");
+          setLoading(false);
+          return;
+        }
+
+        toast.success(user.message);
+      } catch (error) {
+        console.error(error);
+        toast.error("Profile update failed. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
   return (
     <>
       {/* TABS START */}
@@ -765,9 +1191,10 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               <div className="form-group col-lg-12">
                 <label>Your Company Name</label>
                 <input
+                  readOnly
                   type="text"
                   name="companyName"
-                  value={formData.companyName}
+                  value={compName}
                   onChange={handleChange}
                   placeholder="Company name"
                 />
@@ -792,6 +1219,12 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
                     getJobTitle(e.target.value);
                     setShowJobTitleList(true);
+
+                    setErrors((prev) => ({
+                      ...prev,
+                      "jobTitle": "",
+                    }));
+
                   }}
                 />
 
@@ -840,7 +1273,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               </div>
 
 
-              <div className="form-group col-lg-6">
+              <div className="form-group col-lg-3">
                 <label>Job Type</label>
                 <select
                   name="jobType"
@@ -854,12 +1287,28 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   <option value="Internship">Internship</option>
                   <option value="Remote">Remote</option>
                 </select>
-
                 {errors.jobType && (
                   <span className="error-text">{errors.jobType}</span>
                 )}
               </div>
+              <div className="form-group col-lg-3">
+                <label>Work Mode</label>
+                <select
+                  name="workMode"
+                  value={formData.workMode}
+                  onChange={handleChange}
+                  className="form-select"
+                >
+                  <option value="">Select Work Mode</option>
+                  <option value="On-site">On-site</option>
+                  <option value="Remote">Remote</option>
+                  <option value="Hybrid">Hybrid</option>
 
+                </select>
+                {errors.workMode && (
+                  <span className="error-text">{errors.workMode}</span>
+                )}
+              </div>
               <div className="form-group col-lg-6">
                 <label>Work experience</label>
                 <div className="row">
@@ -993,15 +1442,27 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   classNamePrefix="custom-select"
                   options={incentives}
                   value={selectedIncentives}
-                  onChange={(selected) => setSelectedIncentives(selected || [])}
+
+                  onChange={(selected) => {
+                    const selectedOptions = selected || [];
+                    setSelectedIncentives(selectedOptions);
+                    const ids = (selected || []).map((item) => item.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      incentives: ids,
+                    }));
+
+                  }}
+
                   placeholder="Search for perks and benefits"
                   className="basic-multi-select"
                 />
 
-                <div className="suggestion-title">
+
+
+                {/* <div className="suggestion-title">
                   Suggestions
                 </div>
-
                 <div className="suggestion-chips">
                   {incentiveSuggestions.map((item, index) => (
                     <div
@@ -1026,20 +1487,20 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       + {item.label}
                     </div>
                   ))}
-                </div>
+                </div> */}
               </div>
             </>
           )}
 
           {/* NEXT BUTTON */}
           {activeTab === 0 && (
-            <div className="form-group col-lg-12 d-flex justify-content-end">
+            <div className="form-group col-lg-12 d-flex justify-content-end mt-3">
               <button
                 type="button"
                 className="theme-btn btn-style-one"
                 onClick={() => {
                   console.log(formData);
-                  if (validateStep1()) {
+                  if (validationJobDetails()) {
                     setActiveTab(1);
                   }
                 }}
@@ -1061,7 +1522,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 <label>Department  </label>
                 <select
                   name="department"
-                  value={formData.department}
+                  value={formData.departmentId}
                   onChange={(e) => {
                     const selectedOption =
                       e.target.options[e.target.selectedIndex];
@@ -1073,6 +1534,16 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     }));
 
                     getJobRoleByDepartment(e.target.value);
+
+                    setErrors((prev) => ({
+                      ...prev,
+                      "department": "",
+                    }));
+                    setErrors((prev) => ({
+                      ...prev,
+                      "departmentId": "",
+                    }));
+
                   }}
                   className="chosen-single form-select"
                 >
@@ -1100,7 +1571,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 <label>Job Role  </label>
                 <select
                   name="jobRole"
-                  value={formData.jobRole}
+                  value={formData.jobRoleId}
 
                   onChange={(e) => {
                     const selectedOption =
@@ -1110,11 +1581,19 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       ...prev,
                       jobRoleId: e.target.value,
                       jobRole: selectedOption.text,
-                      // departmentCategory:
-                      //   selectedOption.getAttribute("data-category"),
+
                     }));
 
-                    getJobRole(e.target.value);
+                    //getJobRole(e.target.value);
+
+                    setErrors((prev) => ({
+                      ...prev,
+                      "jobRole": "",
+                    }));
+                    setErrors((prev) => ({
+                      ...prev,
+                      "jobRoleId": "",
+                    }));
                   }}
 
                   className="chosen-single form-select"
@@ -1147,6 +1626,11 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
                     getLocation(e.target.value);
                     setShowLocationList(true);
+
+                    setErrors((prev) => ({
+                      ...prev,
+                      "jobLocation": "",
+                    }));
                   }}
                 />
 
@@ -1205,22 +1689,68 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   options={skills}
                   value={selectedSkills}
                   onChange={(selected) => {
-                    const updated = selected.map((item) => ({
+                    const updated = (selected || []).map((item) => ({
                       ...item,
                       starred: item.starred || false,
                     }));
+
                     setSelectedSkills(updated);
 
-                    setErrors((prev) => ({ ...prev, skills: "" }));
+                    setFormData((prev) => ({
+                      ...prev,
+                      skills: updated.map((item) => ({
+                        skill: item.value,
+                        starred: item.starred,
+                      })),
+                    }));
+
+                    setErrors((prev) => ({
+                      ...prev,
+                      skills: "",
+                    }));
                   }}
                   components={{
-                    MultiValueLabel: CustomMultiValueLabel
+                    MultiValueLabel: CustomMultiValueLabel,
                   }}
                 />
+
+                {/* <pre>
+                  {JSON.stringify(formData.skills, null, 2)}
+                </pre> */}
 
 
                 {errors.skills && (
                   <span className="error-text">{errors.skills}</span>
+                )}
+              </div>
+              <div className="form-group col-lg-6 col-md-12">
+                <label> Candidate's industry you want to hire from    </label>
+                <Select
+                  isMulti
+                  options={industry}
+
+                  classNamePrefix="custom-select"
+                  placeholder="Search for candidate industry..."
+
+                  value={selectedIndustrys}
+                  onChange={(selected) => {
+                    const selectedOptions = selected || [];
+                    setselectedIndustrys(selectedOptions);
+                    const ids = (selected || []).map((item) => item.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      industryIds: ids,
+                    }));
+
+                    setErrors((prev) => ({
+                      ...prev,
+                      "industryIds": "",
+                    }));
+                  }}
+
+                />
+                {errors.industryIds && (
+                  <span className="error-text">{errors.industryIds}</span>
                 )}
               </div>
               <div className="form-group col-lg-6 col-md-12">
@@ -1231,7 +1761,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   onChange={handleChange}
                   className="chosen-single form-select"
                 >
-                  <option value="">Select</option>
+                  <option value="">Select qualification</option>
                   <option value="10th">10th pass</option>
                   <option value="12th">12th pass</option>
                   <option value="Graduate">Graduate/Bachelor's Degree</option>
@@ -1244,47 +1774,119 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               </div>
 
               <div className="form-group col-lg-6 col-md-12">
-                <label>Educational Degree  <span style={{ fontSize: "12px", color: "#999" }}>(Optional)</span></label>
-
-                <CreatableSelect
-                  isMulti
-                  options={degree}
-                  placeholder="Type or select degree"
-                  classNamePrefix="custom-select"
-                />
-              </div>
-
-              <div className="form-group col-lg-6 col-md-12">
-                <label> Candidate's industry you want to hire from</label>
-                <Select
-                  isMulti
-                  options={industry}
-                  classNamePrefix="custom-select"
-                  placeholder="Search for candidate industry..."
-                  onChange={(selected) => {
+                <label>Educational Degree {isEnabled} <span style={{ fontSize: "12px", color: "#999" }}>(Optional)</span></label>
+                <input
+                  disabled={isEnabled === false}
+                  placeholder="Start typing to search courses..."
+                  type="text"
+                  value={formData.degree || ""}
+                  onChange={(e) => {
                     setFormData((prev) => ({
                       ...prev,
-                      industry: selected || [],
+                      degree: e.target.value,
                     }));
 
-                    setErrors((prev) => ({ ...prev, industry: "" }));
+                    getDegree(e.target.value);
+                    setShowDegreeList(true);
                   }}
                 />
-                {errors.industry && (
-                  <span className="error-text">{errors.industry}</span>
+
+                {showDegreeList && degreeList.length > 0 && (
+                  <ul
+                    style={{
+                      position: "absolute",
+                      width: "96%",
+                      background: "#fff",
+                      border: "1px solid rgb(185 198 239)",
+                      listStyle: "none",
+                      padding: 0,
+                      margin: 0,
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      zIndex: 1000,
+                    }}
+                  >
+                    {degreeList.map((item) => (
+                      <li
+                        key={item.value}
+                        style={{
+                          padding: "4px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            degree: item.label,
+                            degreeId: item.value,
+                          }));
+
+                          setShowDegreeList(false);
+                        }}
+                      >
+                        {item.label}
+                      </li>
+                    ))}
+                  </ul>
                 )}
+
               </div>
 
               <div className="form-group col-lg-6 col-md-12">
                 <label>Degree Specification <span style={{ fontSize: "12px", color: "#999" }}>(Optional)</span></label>
-                <select className="chosen-single form-select">
-                  <option>Select</option>
-                  <option>Technology</option>
-                  <option>Finance</option>
-                  <option>Healthcare</option>
-                  <option>Management</option>
-                  <option>Other</option>
-                </select>
+                <input
+                  disabled={isEnabled === false}
+                  placeholder="Start typing to search specializations..."
+                  type="text"
+                  value={formData.specialization || ""}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      specialization: e.target.value,
+                    }));
+
+                    getSpecialization(e.target.value);
+                    setShowSpecializationList(true);
+                  }}
+                />
+
+                {showSpecializationList && SpecializationList.length > 0 && (
+                  <ul
+                    style={{
+                      position: "absolute",
+                      width: "96%",
+                      background: "#fff",
+                      border: "1px solid rgb(185 198 239)",
+                      listStyle: "none",
+                      padding: 0,
+                      margin: 0,
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      zIndex: 1000,
+                    }}
+                  >
+                    {SpecializationList.map((item) => (
+                      <li
+                        key={item.key}
+                        style={{
+                          padding: "4px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            specialization: item.value,
+                            specializationId: item.key,
+
+                          }));
+
+                          setShowSpecializationList(false);
+                        }}
+                      >
+                        {item.value}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <div className="form-group col-lg-6 col-md-12">
@@ -1295,6 +1897,22 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   name="colors"
                   options={languages}
                   classNamePrefix="custom-select"
+
+                  value={selectedLanguages}
+                  onChange={(selected) => {
+                    const selectedOptions = selected || [];
+                    setselectedLanguages(selectedOptions);
+
+                    setFormData((prev) => ({
+                      ...prev,
+                      languages: selectedOptions
+                        ? selectedOptions.map((item) => item.label)
+                        : [],
+                      languagesId: selectedOptions
+                        ? selectedOptions.map((item) => item.value)
+                        : [],
+                    }));
+                  }}
                 />
               </div>
 
@@ -1343,7 +1961,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     type="button"
                     className="theme-btn btn-style-one"
                     onClick={() => {
-                      if (validateStep2()) {
+                      if (validationCandidateDetails()) {
                         setActiveTab(2);
                       }
                     }}
@@ -1374,10 +1992,10 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                         onChange={() => {
                           const updated = [...questions];
                           updated[index].required = !updated[index].required;
-                          updateQuestions(updated);
+                          setQuestions(updated);
                         }}
                       />
-                      &nbsp;Mandatory
+                      Mandatory
                     </label>
                   </div>
 
@@ -1398,13 +2016,9 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       onChange={(e) => {
                         const updated = [...questions];
                         updated[index].question = e.target.value;
-                        updateQuestions(updated);
+                        setQuestions(updated);
                       }}
                     />
-
-                    {errors[`question_${index}`] && (
-                      <span className="error-text"> {errors[`question_${index}`]}</span>
-                    )}
 
                     {questions.length > 1 && (
                       <button
@@ -1415,13 +2029,17 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                             (_, i) => i !== index
                           );
 
-                          updateQuestions(updated);
+                          setQuestions(updated);
                         }}
                       >
                         ✕
                       </button>
                     )}
+
                   </div>
+                  {errors[`question_${index}`] && (
+                    <span className="error-text"> {errors[`question_${index}`]}</span>
+                  )}
 
                   {/* Answer Type */}
                   <div className="question-type">
@@ -1433,7 +2051,9 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       value={q.type}
                       onChange={(e) => {
                         const updated = [...questions];
+
                         updated[index].type = e.target.value;
+                        updated[index].preferredAnswer = "";
 
                         if (e.target.value === "options") {
                           updated[index].options = [""];
@@ -1441,22 +2061,100 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                           updated[index].options = [];
                         }
 
-                        updateQuestions(updated);
+                        setQuestions(updated);
                       }}
                     >
-                      <option value="text">
-                        Type Answer
-                      </option>
-
-                      <option value="yesno">
-                        Yes / No
-                      </option>
-
-                      <option value="options">
-                        Multiple Choice
-                      </option>
+                      <option value="text">Type Answer</option>
+                      <option value="yesno">Yes / No</option>
+                      <option value="options">Multiple Choice</option>
                     </select>
                   </div>
+                  {/* Preferred Answer for Text */}
+                  {q.type === "text" && (
+                    <div className="mt-3">
+                      <label>Preferred Answer</label>
+                      <input
+                        type="text"
+                        className={`form-control ${errors[`preferred_${index}`]
+                          ? "is-invalid"
+                          : ""
+                          }`}
+                        placeholder="Enter preferred answer"
+                        value={q.preferredAnswer || ""}
+                        onChange={(e) => {
+                          const updated = [...questions];
+                          updated[index].preferredAnswer = e.target.value;
+                          setQuestions(updated);
+                        }}
+                      />
+                      {errors[`preferred_${index}`] && (
+                        <span className="error-text">
+                          {errors[`preferred_${index}`]}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Preferred Answer for Yes/No */}
+                  {q.type === "yesno" && (
+                    <div className="mt-3">
+                      <label>Preferred Answer</label>
+                      <select
+                        className={`form-select ${errors[`preferred_${index}`]
+                          ? "is-invalid"
+                          : ""
+                          }`}
+                        value={q.preferredAnswer || ""}
+                        onChange={(e) => {
+                          const updated = [...questions];
+                          updated[index].preferredAnswer = e.target.value;
+                          setQuestions(updated);
+                        }}
+                      >
+                        <option value="">Select Preferred Answer</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                      </select>
+                      {errors[`preferred_${index}`] && (
+                        <span className="error-text">
+                          {errors[`preferred_${index}`]}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Preferred Answer for Multi Option */}
+                  {q.type === "options" && (
+                    <div className="mt-3">
+                      <label>Preferred Option</label>
+                      <select
+                        className={`form-select ${errors[`preferred_${index}`]
+                          ? "is-invalid"
+                          : ""
+                          }`}
+                        value={q.preferredAnswer || ""}
+                        onChange={(e) => {
+                          const updated = [...questions];
+                          updated[index].preferredAnswer = e.target.value;
+                          setQuestions(updated);
+                        }}
+                      >
+                        <option value="">Select Preferred Option</option>
+
+                        {q.options.map((opt, i) => (
+                          <option key={i} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                      {errors[`preferred_${index}`] && (
+                        <span className="error-text">
+                          {errors[`preferred_${index}`]}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
 
                   {/* Multiple Choice Options */}
                   {q.type === "options" && (
@@ -1474,18 +2172,14 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                             onChange={(e) => {
                               const updated = [...questions];
                               updated[index].options[i] = e.target.value;
-                              updateQuestions(updated);
+                              setQuestions(updated);
                             }}
                           />
 
-                          {/* {errors[`option_${index}_${i}`] && (
-                            <div className="invalid-feedback d-block">
-                              {errors[`option_${index}_${i}`]}
-                            </div>
-                          )} */}
                           {errors[`option_${index}_${i}`] && (
                             <span className="error-text"> {errors[`option_${index}_${i}`]}</span>
                           )}
+
                         </div>
                       ))}
 
@@ -1495,11 +2189,16 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                         onClick={() => {
                           const updated = [...questions];
                           updated[index].options.push("");
-                          updateQuestions(updated);
+                          setQuestions(updated);
                         }}
                       >
                         + Add Option
                       </button>
+                      {errors[`options_${index}`] && (
+                        <span className="error-text">
+                          {errors[`options_${index}`]}
+                        </span>
+                      )}
                     </div>
                   )}
 
@@ -1555,7 +2254,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               <div className="add-question-box">
                 <button
                   type="button"
-                  className="btn btn-sm btn-info"
                   onClick={() => {
                     const updated = [
                       ...questions,
@@ -1564,13 +2262,14 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                         type: "text",
                         required: true,
                         options: [],
-                      },
+                        preferredAnswer: "",
+                      }
                     ];
 
-                    updateQuestions(updated);
+                    setQuestions(updated);
                   }}
                 >
-                  + Add A Question
+                  + Add a Question
                 </button>
               </div>
 
@@ -1591,10 +2290,11 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                           type: item.type,
                           required: true,
                           options: [],
-                        },
+                          preferredAnswer: "",
+                        }
                       ];
 
-                      updateQuestions(updated);
+                      setQuestions(updated);
                     }}
                   >
                     + {item.question}
@@ -1622,7 +2322,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               </div>
             </>
           )}
-
         </div>
       </form>
 
@@ -1635,26 +2334,37 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               <div className="form-group col-lg-12">
                 <label>Job Description</label>
 
-                <JobDescriptionBox
-                  data={{ about: jobDesc }}
-                  setData={(updated = {}) => {
-                    const value = updated.about || "";
-
-                    setJobDesc(value);
-
-                    const text = value.replace(/<[^>]+>/g, "").trim();
-                  }}
+                <ReactQuill
+                  ref={quillRef}
+                  theme="snow"
+                  value={formData.jobDesc}
+                  onChange={handleJobDescriptionChange}
+                  modules={modules}
+                  formats={formats}
+                  placeholder="Write job description..."
                 />
+                <div
+                  style={{
+                    textAlign: "right",
+                    fontSize: "12px",
+                    marginTop: "5px",
+                    color: charCount < 500 ? "red" : "green",
+                  }}
+                >
+                  {charCount}/500 minimum characters
+                </div>
                 {errors.jobDesc && (
-                  <span className="error-text">{errors.jobDesc}</span>
+                  <span className="text-danger small">
+                    {errors.jobDesc}
+                  </span>
                 )}
-
               </div>
+
 
               {/* About Company */}
               <div className="form-group col-lg-12">
                 <label>
-                  About Company{" "}
+                  About Company
                   <span style={{ fontSize: "12px", color: "#999" }}>
                     (Optional)
                   </span>
@@ -1663,13 +2373,13 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 <textarea
                   className=" about-input-company"
                   maxLength={250}
-                  value={companyDesc}
-                  onChange={(e) => setCompanyDesc(e.target.value)}
+                  value={formData.aboutCompany}
+                  onChange={handleCompanyDescChange}
                   placeholder="Write about your company, culture, values..."
                 />
 
                 <div
-                  className="text-end text-muted mt-1"
+                  className="text-end text-red mt-1"
                   style={{ fontSize: "12px" }}
                 >
                   {companyDesc.length} / 250
@@ -1690,7 +2400,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     type="button"
                     className="theme-btn btn-style-one"
                     onClick={() => {
-                      if (validateJobDesc()) {
+                      if (validationJobDesc()) {
                         setActiveTab(4);
                       }
                     }}
@@ -1702,7 +2412,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
             </>
           )}
         </div>
-      </form>
+      </form >
 
       <form className="default-form">
         <div className="row">
@@ -1716,12 +2426,12 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   {callOptions.map((option) => (
                     <div
                       key={option.label}
-                      className={`chip ${contactData.allowDirectCall === option.label
+                      className={`chip ${formData.allowDirectCall === option.label
                         ? "active"
                         : ""
                         }`}
                       onClick={() => {
-                        setContactData((prev) => ({
+                        setFormData((prev) => ({
                           ...prev,
                           allowDirectCall: option.label,
                         }));
@@ -1749,10 +2459,10 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   {contactMethods.map((method) => (
                     <div
                       key={method.label}
-                      className={`chip ${contactData.contactMethod === method.label ? "active" : ""
+                      className={`chip ${formData.contactMethod === method.label ? "active" : ""
                         }`}
                       onClick={() => {
-                        setContactData((prev) => ({
+                        setFormData((prev) => ({
                           ...prev,
                           contactMethod: method.label,
                         }));
@@ -1778,22 +2488,22 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 <label>Contact Email</label>
                 <input
                   type="email"
-                  name="email"
-                  value={contactData.email}
+                  name="cemail"
+                  value={formData.cemail}
                   onChange={handleContactChange}
-                  className={`form-control ${errors.email ? "error-border" : ""}`}
+                  className={`form-control ${errors.cemail ? "error-border" : ""}`}
                   placeholder="example@gmail.com"
                 />
 
-                {errors.email && (
-                  <span className="error-text">{errors.email}</span>
+                {errors.cemail && (
+                  <span className="error-text">{errors.cemail}</span>
                 )}
               </div>
 
               {/* Contact Number */}
 
               <div className="form-group col-lg-6 col-md-12">
-                <label>Mobile Number</label>
+                <label>Contact Number</label>
 
                 <div className="phone-input">
                   <span className="country-code">+91</span>
@@ -1801,16 +2511,15 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   <input
                     style={{ border: "0px" }}
                     type="tel"
-                    readOnly
-                    value={formData.phone || ""}
+                    value={formData.cphone || ""}
                     //onChange={handleChange}
 
                     onChange={(e) => {
                       const value = e.target.value.replace(/\D/g, "");
-                      setFormData({ ...formData, phone: value });
+                      setFormData({ ...formData, cphone: value });
                     }}
 
-                    placeholder="Enter 10-digit mobile number"
+                    placeholder="Enter 10-digit contact number"
                     maxLength={10}
 
                   />
@@ -1826,31 +2535,31 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               <div className="form-group col-lg-6">
                 <label>Receive Calls Between</label>
                 <div style={{ display: "flex", gap: "10px" }}>
-
-                  <input
-                    type="time"
-                    className={`form-control ${errors.callFrom ? "error-border" : ""}`}
-                    name="callFrom"
-                    value={contactData.callFrom || ""}
-                    onChange={handleContactChange}
-                  />
-
-                  <span style={{ alignSelf: "center" }}>to</span>
-                  <input
-                    type="time"
-                    className={`form-control ${errors.callTo ? "error-border" : ""}`}
-                    name="callTo"
-                    value={contactData.callTo || ""}
-                    onChange={handleContactChange}
-                  />
-
+                  <div className="col-6">
+                    <input
+                      type="time"
+                      className={`form-control ${errors.callFrom ? "error-border" : ""}`}
+                      name="callFrom"
+                      value={formData.callFrom || ""}
+                      onChange={handleContactChange}
+                    />
+                    {errors.callFrom && (
+                      <span className="error-text">{errors.callFrom}</span>
+                    )}
+                  </div ><div className="col-6">
+                    <input
+                      type="time"
+                      className={`form-control ${errors.callTo ? "error-border" : ""}`}
+                      name="callTo"
+                      value={formData.callTo || ""}
+                      onChange={handleContactChange}
+                    />
+                    {errors.callTo && (
+                      <span className="error-text">{errors.callTo}</span>
+                    )}
+                  </div>
                 </div>
-                {errors.callFrom && (
-                  <span className="error-text">{errors.callFrom}</span>
-                )}
-                {errors.callTo && (
-                  <span className="error-text">{errors.callTo}</span>
-                )}
+
 
               </div>
 
@@ -1890,7 +2599,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 <select
                   className="form-select"
                   name="applicationMethod"
-                  value={contactData.applicationMethod || ""}
+                  value={formData.applicationMethod || ""}
                   onChange={handleContactChange}
                 >
                   <option value="">Select</option>
@@ -1907,26 +2616,22 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               </div> */}
 
               {/* External Link */}
-              <div className="form-group col-lg-6">
+              {/* <div className="form-group col-lg-6">
                 <label>
                   External Application Link <span>(Optional)</span>
                 </label>
                 <input
                   type="text"
                   name="externalLink"
-                  value={contactData.externalLink || ""}
+                  value={formData.externalLink || ""}
                   onChange={handleContactChange}
                   className={`form-control ${errors.externalLink ? "error-border" : ""
                     }`}
                   placeholder="https://yourcompany.com/apply"
                 />
 
-                {/* {errors.externalLink && (
-                  <p className="text-danger small">
-                    {errors.externalLink}
-                  </p>
-                )} */}
-              </div>
+                
+            </div> */}
 
               {/* Notifications */}
               <div className="form-group col-lg-12">
@@ -1953,18 +2658,14 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   >
                     Back
                   </button>
-
-                  <button
-                    type="button"
-                    className="theme-btn btn-style-one"
-                    onClick={() => {
-                      if (validateContact()) {
-                        handleSubmit();
-                      }
-                    }}
+                  <button type="button"
+                    className="btn submit-btn"
+                    disabled={loading}
+                    onClick={handleSubmit}
                   >
-                    Submit
+                    {loading ? "Submitting..." : "Submit KYC"}
                   </button>
+
                 </div>
               </div>
             </>

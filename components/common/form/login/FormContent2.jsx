@@ -3,7 +3,7 @@ import Link from "next/link";
 import LoginWithSocial from "./LoginWithSocial";
 import globalData from "@/lib/global";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const FormContent2 = () => {
@@ -16,6 +16,22 @@ const FormContent2 = () => {
   const [role, setRole] = useState("candidate");
 
   const [showPassword, setShowPassword] = useState(false);
+
+  // useEffect(() => {
+  //   getlogout();
+  // }, []);
+
+  // const getlogout = async () => {
+  //   try {
+  //     const res = await fetch("/api/logout", {
+  //       method: "POST",
+  //       credentials: "include", // IMPORTANT
+  //     });
+
+
+  //   } catch (error) {
+  //   }
+  // };
 
   const handleLogin = async (e) => {
     e.preventDefault();

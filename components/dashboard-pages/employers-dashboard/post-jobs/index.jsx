@@ -15,19 +15,7 @@ const index = () => {
   const [activeTab, setActiveTab] = useState(0);
   const router = useRouter();
 
-  const handleJobPostClick = () => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-    if (!isLoggedIn) {
-      // open login popup
-      const modal = new window.bootstrap.Modal(
-        document.getElementById("loginPopupModal")
-      );
-      modal.show();
-    } else {
-      router.push("/employers-dashboard");
-    }
-  };
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>

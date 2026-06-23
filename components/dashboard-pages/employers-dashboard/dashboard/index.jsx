@@ -9,8 +9,23 @@ import Notification from "./components/Notification";
 import Applicants from "./components/Applicants";
 import CopyrightFooter from "../../CopyrightFooter";
 import MenuToggler from "../../MenuToggler";
+import { cookies } from "next/headers";
 
 const Index = () => {
+
+  const cookieStore = cookies();
+  const token = cookieStore.get("regToken")?.value;
+  let user = {};
+  try {
+    user = JSON.parse(token);
+    console.log(user.external.fullName);
+
+  } catch (err) {
+    console.error("Invalid JSON token:", err);
+    user = {};
+  }
+
+
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
@@ -31,7 +46,7 @@ const Index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="Dashboard Home!" />
+          <BreadCrumb title="Dashboard Home!!" />
           {/* breadCrumb */}
 
           <MenuToggler />

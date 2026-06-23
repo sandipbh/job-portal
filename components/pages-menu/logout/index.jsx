@@ -43,10 +43,7 @@ const Index = () => {
   return (
 
     <div className="form-inner">
-
-      <h3>Logout {process.env.NEXT_PUBLIC_APP_NAME} </h3>
-
-
+      <span>Logout...</span>
     </div>
   );
 };
