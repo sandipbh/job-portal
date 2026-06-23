@@ -1,10 +1,15 @@
 'use client';
 
 import { useRef, useState, useEffect } from "react";
-import html2canvas from "html2canvas";
-import html2pdf from "html2pdf.js";
+
+import dynamic from "next/dynamic";
 
 const Preview = ({ data }) => {
+
+  const Preview = dynamic(
+    () => import("./Preview"),
+    { ssr: false }
+  );
 
   const resumeRef = useRef(null);
 
@@ -85,15 +90,16 @@ const Preview = ({ data }) => {
         setProject(data.project);
 
 
-
       }
     } catch (error) {
       console.error(error);
     }
   };
 
-  const downloadPDF = () => {
-    const element = resumeRef.current;
+  const downloadPDF = async () => {
+    if (!resumeRef.current) return;
+
+    const html2pdf = (await import("html2pdf.js")).default;
 
     html2pdf()
       .set({
@@ -113,10 +119,9 @@ const Preview = ({ data }) => {
           mode: ["css", "legacy"],
         },
       })
-      .from(element)
+      .from(resumeRef.current)
       .save();
   };
-
   return (
 
     <>
