@@ -52,9 +52,7 @@ const FormContent = () => {
       setErrors({ email: "", password: "" });
       setShowPassword(false);
     };
-
     modalEl?.addEventListener("show.bs.modal", handleModalShow);
-
     return () => {
       modalEl?.removeEventListener("show.bs.modal", handleModalShow);
     };
