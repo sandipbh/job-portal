@@ -194,12 +194,12 @@ const FormContent = () => {
 
           document.querySelector(".closed-modal").click();
           if (roleType === "candidate") {
-            router.push("/candidates-dashboard/dashboard");
+            window.location.href = "/candidates-dashboard/dashboard";
           } else if (roleType === "employer") {
-            router.push("/employers-dashboard/dashboard");
+            window.location.href = "/employers-dashboard/dashboard";
           }
           else {
-            router.push("/");
+            window.location.href = "/";
           }
           return;
         }

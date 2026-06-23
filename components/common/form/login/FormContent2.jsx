@@ -95,13 +95,13 @@ const FormContent2 = () => {
       // console.log("Login success roleType:", roleType);
 
       if (roleType === "employer") {
-        router.push("/employers-dashboard/dashboard");
+        window.location.href = "/employers-dashboard/dashboard";
         return;
       } else if (roleType === "candidate") {
-        router.push("/candidates-dashboard/dashboard");
+        window.location.href = "/candidates-dashboard/dashboard";
         return;
       } else {
-        router.push("/home-10");
+        window.location.href = "/home-10";
       }
 
     } catch (err) {
