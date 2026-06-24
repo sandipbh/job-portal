@@ -2957,7 +2957,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         onClose={() => setShowJobPostedModal(false)}
         jobTitle={formData.jobTitle}
         companyName={formData.companyName}
-        jobLink={window.location.href}
+        jobLink={""}
       />
 
     </>
