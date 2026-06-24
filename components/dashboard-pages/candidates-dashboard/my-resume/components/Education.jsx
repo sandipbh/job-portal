@@ -987,6 +987,8 @@ const EducationForm = ({
                     <option value="Science">Science</option>
                     <option value="Commerce">Commerce</option>
                     <option value="Arts">Arts</option>
+                    <option value="PCM">PCM</option>
+                    <option value="PCB">PCB</option>
                     <option value="Vocational">Vocational</option>
                   </select>
                   {errors.twelfthStream && (

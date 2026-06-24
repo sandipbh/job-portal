@@ -3340,4 +3340,169 @@ in 2 tab of Company Profile
   border: 1px solid #b9c6ef !important;
 }
 
+.collaborator-box {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 9px;
+  background: #fff;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.member-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #eef2ff;
+  color: #1967d2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.member-input {
+  margin-top: 10px;
+}
+
+.job-success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.job-success-modal {
+  width: 550px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.share-text {
+  margin-top: 10px;
+  color: #696969;
+}
+
+.job-card {
+  margin-top: 20px;
+  border: 1px solid #e4e5e8;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.job-icon {
+  width: 50px;
+  height: 50px;
+  background: #f5f7fc;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-icons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 35px 0;
+}
+
+.share-icons a,
+.share-icons button {
+  border: none;
+  background: transparent;
+  text-decoration: none;
+  color: #202124;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Circle */
+.share-icons i {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+}
+
+.share-icons span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #202124;
+}
+
+/* Hover */
+.share-icons a:hover i,
+.share-icons button:hover i {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.bottom-note {
+  background: #f7f7f7;
+  padding: 8px;
+  border-radius: 50px;
+  text-align: center;
+}
+
+.success-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.success-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #e8f7ed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-circle i {
+  font-size: 28px;
+  color: #28a745;
+}
+
+.success-header h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
 /********end job post***********/

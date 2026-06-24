@@ -4,7 +4,7 @@ import { apiFetch } from "../apiFetch";
 
 
 export async function POST(req) {
-    const headersList = await headers();
+  const headersList = await headers();
 
   const token = req.cookies.get("regToken")?.value;
   const url = req.nextUrl.pathname;
@@ -16,37 +16,38 @@ export async function POST(req) {
     console.error("Invalid JSON token:", err);
     user = {};
   }
-    console.log("dashboard user User Role :", user.external.role);
+  console.log("dashboard user User Role :", user.external.role);
 
   try {
     const {
-        companyName,
-        contactPerson,
-        email,
-        phone,
-        address,
-        state,
-        city,
-        pincode,
+      companyName,
+      contactPerson,
+      email,
+      phone,
+      address,
+      state,
+      city,
+      pincode,
 
-      countryCode ,   
-        country ,
+      countryCode,
+      country,
 
-        website,
-        companyType,
-        companySize,
- 
-        logo,
-        docType,
-        docNumber,
-        industry,
-        industryId,
-        aadhaarFront,
-        aadhaarBack, 
-        gstFile,
-        udyam,
+      website,
+      companyType,
+      companySize,
+      aboutCompany,
 
-        compPhoto,
+      logo,
+      docType,
+      docNumber,
+      industry,
+      industryId,
+      aadhaarFront,
+      aadhaarBack,
+      gstFile,
+      udyam,
+
+      compPhoto,
     } = await req.json();
 
     console.log("Login attempt email:", user.external.uqId);
@@ -59,48 +60,49 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-  
-     const LoginIp =
-    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    headersList.get("x-real-ip") ||
-    headersList.get("cf-connecting-ip") ||
-    "Unknown";
+
+    const LoginIp =
+      headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      headersList.get("x-real-ip") ||
+      headersList.get("cf-connecting-ip") ||
+      "Unknown";
 
     const loginBody = {
- 
-        companyName:companyName,
-        contactPerson:contactPerson,
-        email:email,
-        phone:phone,
-        address:address,
-        state:state,
-        city:city,
-        pincode:pincode,
 
-        countryCode:countryCode ,   
-        country :country,
+      companyName: companyName,
+      contactPerson: contactPerson,
+      email: email,
+      phone: phone,
+      address: address,
+      state: state,
+      city: city,
+      pincode: pincode,
 
-        website:website,
-        companyType:companyType,
-        companySize:companySize,
-         logo:logo,
-        docType:docType,
-        docNumber:docNumber,
-        industry:industry,
-        industryId:industryId,
-        
-        aadhaarFront: aadhaarFront,
-        aadhaarBack: aadhaarBack, 
-        gstFile: gstFile,
-        udyam: udyam,
+      countryCode: countryCode,
+      country: country,
 
-        compPhoto:compPhoto, 
-        
-        uqId: user.external.uqId, 
-        LoginIp: LoginIp,
-        Role: user.external.role,
-        Token: user.external.accessToken,
-    };    
+      website: website,
+      companyType: companyType,
+      companySize: companySize,
+      aboutCompany: aboutCompany,
+      logo: logo,
+      docType: docType,
+      docNumber: docNumber,
+      industry: industry,
+      industryId: industryId,
+
+      aadhaarFront: aadhaarFront,
+      aadhaarBack: aadhaarBack,
+      gstFile: gstFile,
+      udyam: udyam,
+
+      compPhoto: compPhoto,
+
+      uqId: user.external.uqId,
+      LoginIp: LoginIp,
+      Role: user.external.role,
+      Token: user.external.accessToken,
+    };
     console.log("body Data:", loginBody);
 
     // Allow self-signed certs in local development only.
@@ -116,14 +118,14 @@ export async function POST(req) {
       );
     }
     console.log("External API Base URL 00:", externalApiBaseUrl);
- 
-     const externalApiUrl =
+
+    const externalApiUrl =
       process.env.REGISTER_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/Employer/employer/UpdateProfile`;
 
-      console.log("External API URL :", externalApiUrl);
-      console.log("External API Request Body:", loginBody);
- 
+    console.log("External API URL :", externalApiUrl);
+    console.log("External API Request Body:", loginBody);
+
     const externalResponse = await apiFetch(externalApiUrl, {
       method: "POST",
       body: JSON.stringify(loginBody),
@@ -133,13 +135,13 @@ export async function POST(req) {
 
     console.log("External Candi API response:", responseData);
     console.log("External API Response Status:", responseData.message || externalResponse.status);
- 
+
 
     if (!externalResponse.ok) {
       console.error(
         "External UpdateProfile failed:",
         responseData.success,
-       responseData.message
+        responseData.message
       );
 
       return NextResponse.json(
@@ -159,7 +161,7 @@ export async function POST(req) {
       },
       { status: 201 }
     );
- 
+
     return response;
   } catch (error) {
     console.error("UPDATE ERROR:", error);

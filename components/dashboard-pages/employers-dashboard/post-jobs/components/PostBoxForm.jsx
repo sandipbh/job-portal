@@ -10,7 +10,7 @@ import { MdOutlineContactPhone } from "react-icons/md";
 import { toast } from "react-toastify";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
-
+import JobPostedModal from "./JobPostedModal";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
@@ -113,6 +113,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
   const [loading, setLoading] = useState(false);
 
+  const [showJobPostedModal, setShowJobPostedModal] = useState(false);
 
   useEffect(() => {
     getIndustry();
@@ -571,40 +572,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     );
   };
 
-  // const CustomMultiValueLabel = (props) => {
-  //   const { data, selectProps } = props;
-
-  //   const toggleStar = () => {
-  //     const updated = selectProps.value.map((item) => {
-  //       if (item.value === data.value) {
-  //         return { ...item, starred: !item.starred };
-  //       }
-  //       return item;
-  //     });
-
-  //     selectProps.onChange(updated);
-  //   };
-
-
-  //   return (
-  //     <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-
-  //       <span
-  //         onClick={toggleStar}
-  //         style={{
-  //           cursor: "pointer",
-  //           color: data.starred ? "#1967d2" : "#ccc", // blue when active
-  //           fontSize: "20px"
-  //         }}
-  //       >
-  //         ★
-  //       </span>
-
-  //       {/* Skill Name */}
-  //       <span>{data.label}</span>
-  //     </div>
-  //   );
-  // };
 
   const [formData, setFormData] = useState({
     companyName: "",
@@ -656,7 +623,20 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
     jobDesc: "",
     aboutCompany: "",
-    screeningQuestions: []
+    screeningQuestions: [],
+
+    isWalkIn: "No",
+    walkInStartDate: "",
+    walkInEndDate: "",
+    walkInTiming: "",
+    recruiterName: "",
+    walkInPhone: "",
+    venueAddress: "",
+    googleMapsUrl: "",
+    collaborators: [],
+    newCollaborator: "",
+    dailyDigest: "No"
+
   });
 
   const callOptions = [
@@ -1050,6 +1030,8 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
 
   const handleSubmit = async () => {
+    // setShowJobPostedModal(true);
+    // return;
 
     const screeningQuestions = questions.map((q, index) => ({
       QNo: String(index + 1),
@@ -1103,7 +1085,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     if (haError) {
 
 
-
       setFormData((prev) => ({
         ...prev,
         screeningQuestions: screeningQuestions,
@@ -1138,7 +1119,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
           setLoading(false);
           return;
         }
-
+        setShowJobPostedModal(true);
         toast.success(user.message);
       } catch (error) {
         console.error(error);
@@ -1167,6 +1148,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
           "Questions",
           "Job Description",
           "Communication",
+
         ].map((tab, index) => {
           const isCompleted = activeTab > index;
           const isActive = activeTab === index;
@@ -2661,7 +2643,288 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   </label>
                 </div>
               </div> */}
+              <div>
+                <p className="mt-2" style={{ borderTop: "1px solid #cecece" }}></p>
+                <h5 className="mt-1" >Advance Option</h5>
+                <div className="form-group col-lg-12">
 
+                  <label>Is this a walk-in job?</label>
+
+                  <div className="chip-container">
+                    {["Yes", "No"].map((option) => (
+                      <div
+                        key={option}
+                        className={`chip ${formData.isWalkIn === option ? "active" : ""
+                          }`}
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            isWalkIn: option,
+                          }))
+                        }
+                      >
+                        {option}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {formData.isWalkIn === "Yes" && (
+                  <>
+                    {/* Walk-in Duration */}
+                    <div className="form-group col-lg-6">
+                      <label>Walk-in Duration</label>
+                      <div className="row">
+                        <div className="col-lg-6">
+                          <input
+                            type="text"
+                            placeholder="Choose start date"
+                            className="form-control"
+                            value={formData.walkInStartDate || ""}
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => {
+                              if (!e.target.value) e.target.type = "text";
+                            }}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                walkInStartDate: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+
+                        {/* <div className="col-lg-2 text-center align-self-center">
+                        To
+                      </div> */}
+
+                        <div className="col-lg-6">
+                          <input
+                            type="text"
+                            placeholder="Choose end date"
+                            className="form-control"
+                            value={formData.walkInEndDate || ""}
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => {
+                              if (!e.target.value) e.target.type = "text";
+                            }}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                walkInEndDate: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Walk-in Timing */}
+                    {/* <div className="form-group col-lg-6">
+                    <label>Walk-in Timing</label>
+
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="9:30 AM - 5:30 PM"
+                      value={formData.walkInTiming || ""}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          walkInTiming: e.target.value,
+                        })
+                      }
+                    />
+                  </div> */}
+
+                    <div className="form-group col-lg-6">
+                      <label>Receive Calls Between</label>
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <div className="col-6">
+                          <input
+                            type="time"
+                            className={`form-control ${errors.callFrom ? "error-border" : ""}`}
+                            name="callFrom"
+                            value={formData.callFrom || ""}
+                            onChange={handleContactChange}
+                          />
+                          {errors.callFrom && (
+                            <span className="error-text">{errors.callFrom}</span>
+                          )}
+                        </div ><div className="col-6">
+                          <input
+                            type="time"
+                            className={`form-control ${errors.callTo ? "error-border" : ""}`}
+                            name="callTo"
+                            value={formData.callTo || ""}
+                            onChange={handleContactChange}
+                          />
+                          {errors.callTo && (
+                            <span className="error-text">{errors.callTo}</span>
+                          )}
+                        </div>
+                      </div>
+
+
+                    </div>
+
+                    {/* Recruiter Name */}
+                    <div className="form-group col-lg-6">
+                      <label>Recruiter Name</label>
+
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Recruiter Name"
+                        value={formData.recruiterName || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            recruiterName: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    {/* Contact Number */}
+                    <div className="form-group col-lg-6">
+                      <label>Mobile Number</label>
+
+                      <div className="phone-input">
+                        <span className="country-code">+91</span>
+
+                        <input
+                          style={{ border: "0px" }}
+                          type="tel"
+                          maxLength={10}
+                          value={formData.walkInPhone || ""}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              walkInPhone: e.target.value.replace(/\D/g, ""),
+                            })
+                          }
+                          placeholder="Mobile Number"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Venue Address */}
+                    <div className="form-group col-lg-12">
+                      <label>Venue Address</label>
+
+                      <textarea
+                        rows={2}
+                        style={{ height: "100px" }}
+
+                        placeholder="Type address here"
+                        value={formData.venueAddress || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            venueAddress: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="form-group col-lg-12">
+                      <label>Google Maps URL</label>
+
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Google Maps URL of venue"
+                        value={formData.googleMapsUrl || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            googleMapsUrl: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="form-group col-lg-12">
+                      <label>
+                        Collaborate with team members to manage responses
+                      </label>
+
+                      <div className="collaborator-box">
+                        {formData.collaborators?.map((member, index) => (
+                          <div className="member-item" key={index}>
+                            <div className="member-avatar">
+                              {member.name?.substring(0, 2).toUpperCase()}
+                            </div>
+
+                            <span>{member.email}</span>
+                          </div>
+                        ))}
+
+                        <input
+                          type="email"
+                          className="form-control member-input"
+                          placeholder="Add members"
+                          value={formData.newCollaborator || ""}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              newCollaborator: e.target.value,
+                            })
+                          }
+                        />
+
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-primary mt-2"
+                          onClick={() => {
+                            if (!formData.newCollaborator) return;
+
+                            setFormData((prev) => ({
+                              ...prev,
+                              collaborators: [
+                                ...(prev.collaborators || []),
+                                {
+                                  name: prev.newCollaborator.split("@")[0],
+                                  email: prev.newCollaborator,
+                                },
+                              ],
+                              newCollaborator: "",
+                            }));
+                          }}
+                        >
+                          + Add Member
+                        </button>
+                      </div>
+                    </div>
+
+
+                    <div className="form-group col-lg-12">
+                      <label>
+                        Receive a daily digest of applies on email?
+                      </label>
+
+                      <div className="chip-container">
+                        {["Yes", "No"].map((option) => (
+                          <div
+                            key={option}
+                            className={`chip ${formData.dailyDigest === option ? "active" : ""
+                              }`}
+                            onClick={() =>
+                              setFormData({
+                                ...formData,
+                                dailyDigest: option,
+                              })
+                            }
+                          >
+                            {option}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
               {/* Buttons */}
               <div className="form-group col-lg-12 mt-3">
                 <div className="d-flex justify-content-between">
@@ -2687,6 +2950,15 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
         </div>
       </form >
+
+
+      <JobPostedModal
+        isOpen={showJobPostedModal}
+        onClose={() => setShowJobPostedModal(false)}
+        jobTitle={formData.jobTitle}
+        companyName={formData.companyName}
+        jobLink={window.location.href}
+      />
 
     </>
   );

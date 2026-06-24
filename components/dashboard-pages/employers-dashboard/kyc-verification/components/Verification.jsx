@@ -15,6 +15,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
         companyName: "", contactPerson: "", email: "", phone: "", address: "", state: "", city: "", pincode: "",
         countryCode: "+91", country: "India", website: "", companyType: "", companySize: "",
         docType: "", docNumber: "", industry: "", industryId: "",
+        aboutCompany: "",
         //documents attachment 
         logo: null, aadhaarFront: null, aadhaarBack: null, gstFile: null, udyam: null, compPhoto: null,
         //documents end 
@@ -34,7 +35,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
     const [errors, setErrors] = useState({});
 
     const [kycStatus, setKycStatus] = useState("pending");
-
+    const [aboutComp, setAboutComp] = useState("");
 
     const getProfileDetails = async () => {
         try {
@@ -59,35 +60,38 @@ const Verification = ({ activeTab, setActiveTab }) => {
                 setKycData((prev) => ({
                     ...prev,
 
-                    companyName: profile.companyName || "",
-                    contactPerson: profile.contactPerson || "",
-                    email: profile.email || "",
-                    phone: profile.phone || "",
-                    address: profile.address || "",
-                    state: profile.state || "",
-                    city: profile.city || "",
-                    pincode: profile.pincode || "",
+                    companyName: profile?.companyName || "",
+                    contactPerson: profile?.contactPerson || "",
+                    email: profile?.email || "",
+                    phone: profile?.phone || "",
+                    address: profile?.address || "",
+                    state: profile?.state || "",
+                    city: profile?.city || "",
+                    pincode: profile?.pincode || "",
 
-                    countryCode: profile.countryCode || "",
-                    country: profile.country || "",
+                    countryCode: profile?.countryCode || "",
+                    country: profile?.country || "",
 
-                    website: profile.website || "",
-                    companyType: profile.companyType || "",
-                    companySize: profile.companySize || "",
-                    logo: imageUrl + "" + profile.logo || "",
-                    docType: profile.docType || "",
-                    docNumber: profile.docNumber || "",
-                    industry: profile.industry || "",
-                    industryId: profile.industryId || "",
+                    website: profile?.website || "",
+                    companyType: profile?.companyType || "",
+                    companySize: profile?.companySize || "",
+                    logo: imageUrl + "" + profile?.logo || "",
+                    docType: profile?.docType || "",
+                    docNumber: profile?.docNumber || "",
+                    industry: profile?.industry || "",
+                    industryId: profile?.industryId || "",
+                    aboutCompany: profile?.aboutCompany || "",
 
-                    aadhaarFront: imageUrl + "" + profile.aadhaarFront || "",
-                    aadhaarBack: imageUrl + "" + profile.aadhaarBack || "",
-                    gstFile: imageUrl + "" + profile.gstFile || "",
-                    udyam: imageUrl + "" + profile.udyam || "",
+                    aadhaarFront: imageUrl + "" + profile?.aadhaarFront || "",
+                    aadhaarBack: imageUrl + "" + profile?.aadhaarBack || "",
+                    gstFile: imageUrl + "" + profile?.gstFile || "",
+                    udyam: imageUrl + "" + profile?.udyam || "",
 
-                    compPhoto: imageUrl + "" + profile.compPhoto || "",
+                    compPhoto: imageUrl + "" + profile?.compPhoto || "",
 
                 }));
+
+                setKycStatus(profile?.kycStatus);
             }
         } catch (error) {
             console.error(error);
@@ -160,7 +164,9 @@ const Verification = ({ activeTab, setActiveTab }) => {
         if (!kycData.industryId || kycData.industryId == "0") {
             newErrors.industryId = "Search your industry";
         }
-
+        if (!kycData.aboutCompany || kycData.aboutCompany.length < 10) {
+            newErrors.aboutCompany = "Enter about your company";
+        }
 
         if (!kycData.logo || kycData.logo.length < 5) {
             newErrors.logo = "Select company logo";
@@ -412,7 +418,27 @@ const Verification = ({ activeTab, setActiveTab }) => {
             }
         }
     };
+    const validateInput = (value) => {
+        const regex = /^[a-zA-Z0-9\s.,!?()&'":;-]*$/;
+        return regex.test(value);
+    };
+    const handleAboutCompany = (e) => {
+        const value = e.target.value;
 
+        if (/<[^>]*>/.test(value)) {
+            toast.error("HTML tags are not allowed")
+            return;
+        }
+        if (validateInput(value)) {
+
+            setKycData((prev) => ({
+                ...prev,
+                aboutCompany: value,
+            }));
+            setAboutComp(value)
+
+        }
+    };
     return (
         <>
             {/* 🔥 TABS START */}
@@ -698,6 +724,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                 <option value="Company/Partnership">Company/Partnership</option>
                                 <option value="Proprietorship">Proprietorship</option>
                                 <option value="Individual">Individual</option>
+                                <option value="Other">Other</option>
 
                             </select>
                             {errors.companyType && (
@@ -788,7 +815,6 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                 <span className="error-text">{errors.companySize}</span>
                             )}
                         </div>
-
                         {/* 🔹 LEFT PANEL → LOGO */}
                         <div className="form-group col-lg-6 col-md-12">
                             <>
@@ -825,6 +851,38 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                 )}
                             </>
                         </div>
+                        {/* About Company */}
+                        <div className="form-group col-lg-6">
+                            <label>
+                                About Company
+                                <span style={{ fontSize: "12px", color: "#999" }}>
+                                    (Optional)
+                                </span>
+                            </label>
+
+                            <textarea
+
+                                className=" about-input-company"
+                                maxLength={250}
+                                value={kycData.aboutCompany}
+                                onChange={handleAboutCompany}
+                                placeholder="Write about your company, culture, values..."
+                            />
+
+                            <div className="d-flex justify-content-between">
+                                <div>
+                                    {errors.aboutCompany && (
+                                        <span className="text-danger small mt-2">{errors.aboutCompany}</span>
+                                    )}</div>
+                                <div
+                                    className="text-end text-red mt-1"
+                                    style={{ fontSize: "12px" }}
+                                >
+                                    {aboutComp.length} / 250
+                                </div>
+                            </div></div>
+
+
                         {/* Navigation Buttons */}
                         <div className="form-group col-lg-12 mt-3">
                             <div className="d-flex justify-content-end">
@@ -866,7 +924,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                 }
                             >
                                 <option value="">Select Document</option>
-                                <option value="aadhaar">Aadhaar Card</option>
+                                {/* <option value="aadhaar">Aadhaar Card</option> */}
                                 <option value="gst">GST Certificate</option>
                                 <option value="ud">Udyam Aadhaar</option>
                             </select>
@@ -1393,13 +1451,15 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                         <small className="text-muted">Industry</small>
                                         <p className="mb-1 fw-medium">{kycData.industry}</p>
                                     </div>
+                                    <div className="col-md-12">
+                                        <small className="text-muted">About Company</small>
+                                        <p className="mb-1 fw-medium">{kycData.aboutCompany}</p>
+                                    </div>
                                     <div className="col-md-4">
                                         <small className="text-muted">Logo</small>
-
                                         {kycData.logo && (
                                             <div className="col-md-12">
                                                 <div className="doc-card" onClick={() => openPreview(kycData.logo)}>
-                                                    <p className="mt-2 mb-1 small text-muted">Logo</p>
                                                     <img src={kycData.logo} width={100} height={100} />
                                                 </div>
                                             </div>
