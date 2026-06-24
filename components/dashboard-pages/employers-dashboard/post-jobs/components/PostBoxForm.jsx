@@ -644,7 +644,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     gender: "Both",
 
     // step 4 fields
-    contactMethod: "Both",
+    contactMethod: "",
     cemail: "",
     cphone: "",
     callFrom: "",
@@ -2635,7 +2635,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
             </div> */}
 
               {/* Notifications */}
-              <div className="form-group col-lg-12">
+              {/* <div className="form-group col-lg-12">
                 <label>Notifications</label>
 
                 <div className="d-flex gap-3">
@@ -2647,7 +2647,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     <input type="checkbox" id="smsNotify" /> SMS Notifications
                   </label>
                 </div>
-              </div>
+              </div> */}
 
               {/* Buttons */}
               <div className="form-group col-lg-12">

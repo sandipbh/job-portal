@@ -1284,7 +1284,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
 
             <form className="default-form">
                 {activeTab === 3 && (
-                    <div className="row">
+                    <div className="row align-items-start" >
 
                         {/* 🔹 LEFT PANEL → SELFIE */}
                         <div className="col-lg-3">

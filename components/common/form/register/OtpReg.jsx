@@ -1,11 +1,11 @@
 "use client";
- 
+
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 const OtpReg = () => {
-    const router = useRouter();
+  const router = useRouter();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [otpMail, setOtpMail] = useState(["", "", "", "", "", ""]);
   const inputsRef = useRef([]);
@@ -18,7 +18,7 @@ const OtpReg = () => {
 
   const [timeLeft, setTimeLeft] = useState(30);
   const [canResend, setCanResend] = useState(false);
- 
+
   const fetchOtpUserData = async () => {
     if (typeof window === "undefined") return null;
 
@@ -152,7 +152,7 @@ const OtpReg = () => {
       inputsRef.current[index + 1].focus();
     }
   };
- 
+
   const handleChangeMail = (value, index) => {
     if (!/^[0-9]?$/.test(value)) return;
 
@@ -212,17 +212,17 @@ const OtpReg = () => {
     const mobileOtp = otp.join("");
     const emailOtp = otpMail.join("");
 
-    if (mobileOtp.length !== 6  ) {
+    if (mobileOtp.length !== 6) {
       toast.error("Enter both 6-digit Mobile OTP codes.");
       return;
     }
- if ( emailOtp.length !== 6) {
+    if (emailOtp.length !== 6) {
       toast.error("Enter both 6-digit Email OTP codes.");
       return;
     }
 
     setLoading(true);
- 
+
 
     try {
       const response = await fetch("/api/verify-otp", {
@@ -238,7 +238,7 @@ const OtpReg = () => {
       if (!response.ok) {
         toast.error(data.message || "OTP verification failed.");
         return;
-      } 
+      }
       if (response.ok) {
         toast.success(data.message || "OTP verified successfully.");
         router.push("/regsuccess");
@@ -255,73 +255,73 @@ const OtpReg = () => {
 
   return (
     <>
-    <div className="otp-container">
-      <div className="otp-card">
- 
-        <h2>Verify Mobile Number</h2>
-        <p className="sub-text" style={{ marginBottom: "5px" }}>Your code was sent to your mobile <b>+91 {userMobile} {userUqId} </b></p>
+      <div className="otp-container">
+        <div className="otp-card">
 
-        <div className="otp-boxes">
-          {otp.map((val, i) => (
-            <input
-              key={i}
-              ref={(el) => (inputsRef.current[i] = el)}
-              value={val}
-              maxLength={1}
-              onChange={(e) => handleChange(e.target.value, i)}
-            />
-          ))}
+          <h2>Verify Mobile Number</h2>
+          <p className="sub-text" style={{ marginBottom: "5px" }}>Your code was sent to your mobile <b>+91 {userMobile}  </b></p>
+
+          <div className="otp-boxes">
+            {otp.map((val, i) => (
+              <input
+                key={i}
+                ref={(el) => (inputsRef.current[i] = el)}
+                value={val}
+                maxLength={1}
+                onChange={(e) => handleChange(e.target.value, i)}
+              />
+            ))}
+          </div>
+
+          <h2>Verify Email</h2>
+          <p className="sub-text" style={{ marginBottom: "5px" }}>Your code was sent to your email <b>{userEmail}</b></p>
+
+          <div className="otp-boxes">
+            {otpMail.map((val, i) => (
+              <input
+                key={i}
+                ref={(el) => (inputsRefMail.current[i] = el)}
+                value={val}
+                maxLength={1}
+                onChange={(e) => handleChangeMail(e.target.value, i)}
+              />
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="verify-btn"
+            disabled={loading}
+            onClick={handleVerify}
+          >
+            {loading ? "Verifying..." : "Verify"}
+          </button>
+
+          <p className="resend">
+            {canResend ? (
+              <>
+                Didn’t receive code?{" "}
+                <span onClick={handleResend}>
+                  {resendLoading ? "Resending..." : "Request again"}
+                </span>
+              </>
+            ) : (
+              <>Resend code in <b>{timeLeft}</b></>
+            )}
+          </p>
+
+          <div className="divider"></div>
+
+          <h3>Great, now you can</h3>
+
+          <ul>
+            <li>✔ Build your profile and let recruiters find you</li>
+            <li>✔ Get job postings delivered right to your email</li>
+            <li>✔ Find a job and grow your career</li>
+          </ul>
+
         </div>
-
-         <h2>Verify Email</h2>
-        <p className="sub-text" style={{ marginBottom: "5px" }}>Your code was sent to your email <b>{userEmail}</b></p>
-
-        <div className="otp-boxes">
-          {otpMail.map((val, i) => (
-            <input
-              key={i}
-              ref={(el) => (inputsRefMail.current[i] = el)}
-              value={val}
-              maxLength={1}
-              onChange={(e) => handleChangeMail(e.target.value, i)}
-            />
-          ))}
-        </div>
-
-        <button
-          type="button"
-          className="verify-btn"
-          disabled={loading}
-          onClick={handleVerify}
-        >
-          {loading ? "Verifying..." : "Verify"}
-        </button>
-
-        <p className="resend">
-          {canResend ? (
-            <>
-              Didn’t receive code?{" "}
-              <span onClick={handleResend}>
-                {resendLoading ? "Resending..." : "Request again"}
-              </span>
-            </>
-          ) : (
-            <>Resend code in <b>{timeLeft}</b></>
-          )}
-        </p>
-
-        <div className="divider"></div>
-
-        <h3>Great, now you can</h3>
-
-        <ul>
-          <li>✔ Build your profile and let recruiters find you</li>
-          <li>✔ Get job postings delivered right to your email</li>
-          <li>✔ Find a job and grow your career</li>
-        </ul>
-
       </div>
-    </div>
     </>
   );
 };
