@@ -494,7 +494,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       // Save in formData
       setFormData((prev) => ({
         ...prev,
-        screeningQuestions,
+        screeningQuestions: screeningQuestions,
       }));
     }
 
@@ -1110,6 +1110,13 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       }));
 
       console.log(formData.days)
+      setFormData((prev) => ({
+        ...prev,
+        days: selectedDays,
+      }));
+
+
+
       try {
 
         setLoading(true);
