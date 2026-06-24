@@ -512,7 +512,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   const [jobDesc, setJobDesc] = useState("");
 
   const [selectedDays, setSelectedDays] = useState([]);
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const daysName = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 
   {/* STAR IN ADD SKILL*/ }
@@ -2575,23 +2575,29 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               <div className="form-group col-lg-6">
                 <label>Available Days</label>
                 <div className="day-selector">
-                  {days.map((day) => (
+                  {daysName.map((day) => (
                     <div
                       key={day}
                       className={`day-chip ${selectedDays.includes(day) ? "active" : ""
                         }`}
                       onClick={() => {
+                        let updatedDays;
+
                         if (selectedDays.includes(day)) {
-                          setSelectedDays(
-                            selectedDays.filter((d) => d !== day)
-                          );
+                          updatedDays = selectedDays.filter((d) => d !== day);
                         } else {
-                          setSelectedDays([...selectedDays, day]);
+                          updatedDays = [...selectedDays, day];
                         }
+
+                        setSelectedDays(updatedDays);
+
+                        setFormData((prev) => ({
+                          ...prev,
+                          days: updatedDays,
+                        }));
                       }}
                     >
                       {day}
-
                     </div>
                   ))}
 
@@ -2671,7 +2677,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     disabled={loading}
                     onClick={handleSubmit}
                   >
-                    {loading ? "Submitting..." : "Submit KYC"}
+                    {loading ? "Submitting..." : "Post Job"}
                   </button>
 
                 </div>
