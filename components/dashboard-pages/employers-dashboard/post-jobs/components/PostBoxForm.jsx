@@ -2663,7 +2663,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               </div> */}
 
               {/* Buttons */}
-              <div className="form-group col-lg-12">
+              <div className="form-group col-lg-12 mt-3">
                 <div className="d-flex justify-content-between">
                   <button
                     type="button"
