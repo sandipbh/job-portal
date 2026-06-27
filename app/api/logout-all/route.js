@@ -15,17 +15,6 @@ export async function POST(req) {
     return NextResponse.json({ message: "Invalid token" }, { status: 401 });
   }
 
-  const db = await getDb();
-
-  // 🔥 Revoke ALL sessions
-  await db
-    .request()
-    .input("userId", user.id)
-    .query(`
-      UPDATE CANDIDATE_REFRESH_TOKENS 
-      SET IsRevoked = 1 
-      WHERE UserId = @userId
-    `);
 
   const res = NextResponse.json({ message: "Logged out from all devices" });
 

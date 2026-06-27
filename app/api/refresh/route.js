@@ -9,23 +9,6 @@ export async function POST(req) {
     return NextResponse.json({ message: "No token" }, { status: 401 });
   }
 
-  const db = await getDb();
-
-  const result = await db
-    .request()
-    .input("token", refreshToken)
-    .query(`
-      SELECT rt.*, u.Email, u.Role, u.Id
-      FROM CANDIDATE_REFRESH_TOKENS rt
-      JOIN CANDIDATE u ON u.Id = rt.UserId
-      WHERE rt.Token=@token AND rt.IsRevoked=0
-    `);
-
-  const data = result.recordset[0];
-
-  if (!data || new Date(data.ExpiryDate) < new Date()) {
-    return NextResponse.json({ message: "Invalid token" }, { status: 401 });
-  }
 
   const newAccessToken = generateAccessToken(data);
 
@@ -40,4 +23,3 @@ export async function POST(req) {
   return response;
 }
 
- 

@@ -1,4 +1,4 @@
-'use client'
+
 
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
@@ -11,6 +11,8 @@ import { toast } from "react-toastify";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import JobPostedModal from "./JobPostedModal";
+import { useSearchParams } from "next/navigation";
+import { Alert } from "bootstrap";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
@@ -47,8 +49,18 @@ const formats = [
 ];
 
 const PostBoxForm = ({ activeTab, setActiveTab }) => {
+
   const quillRef = useRef(null);
   const [charCount, setCharCount] = useState(0);
+
+  const searchParams = useSearchParams();
+  const jobId = searchParams.get("jobid");
+
+  useEffect(() => {
+    if (!jobId) return;
+
+
+  }, [jobId]);
 
 
   const [compName, setCompName] = useState("");
@@ -80,11 +92,12 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   };
 
   const [languages, setLanguages] = useState([]);
-  const [industry, setIndustry] = useState([]);
+
   const [incentives, setIncentives] = useState([]);
   const [incentiveSuggestions, setIncentiveSuggestions] = useState([]);
   const [selectedIncentives, setSelectedIncentives] = useState([]);
 
+  const [industry, setIndustry] = useState([]);
   const [selectedIndustrys, setselectedIndustrys] = useState([]);
   const [selectedLanguages, setselectedLanguages] = useState([]);
 
@@ -110,10 +123,78 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   const [showSpecializationList, setShowSpecializationList] = useState(false);
 
   const [isEnabled, setIsEnabled] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const [showJobPostedModal, setShowJobPostedModal] = useState(false);
+
+
+  const [formData, setFormData] = useState({
+    jobpostId: 0,
+    companyName: "",
+    jobTitle: "",
+    jobTitleId: "",
+    minExperience: "",
+    maxExperience: "",
+    fresherAllowed: false,
+
+    jobType: "",
+    workMode: "",
+
+    incentives: [],
+
+    minSalary: "",
+    maxSalary: "",
+    //  step 2 fields
+    department: "",
+    departmentId: "",
+    jobRole: "",
+    jobRoleId: "",
+    jobLocation: "",
+    jobLocationId: "",
+    qualification: "",
+
+    degree: "",
+    degreeId: "",
+
+    specialization: "",
+    specializationId: "",
+    skills: [],
+    industryIds: [],
+
+    languages: [],
+    languagesId: [],
+
+    gender: "Both",
+
+    // step 4 fields
+    contactMethod: "",
+    cemail: "",
+    cphone: "",
+    callFrom: "",
+    callTo: "",
+    applicationMethod: "",
+    externalLink: "",
+    allowDirectCall: "No",
+    days: [],
+
+    jobDesc: "",
+    aboutCompany: "",
+    screeningQuestions: [],
+
+    isWalkIn: "No",
+    walkInStartDate: "",
+    walkInEndDate: "",
+    walkInTimingFrom: "",
+    walkInTimingTo: "",
+    recruiterName: "",
+    walkInPhone: "",
+    venueAddress: "",
+    googleMapsUrl: "",
+    collaborators: [],
+    newCollaborator: "",
+    dailyDigest: "No"
+
+  });
 
   useEffect(() => {
     getIndustry();
@@ -124,7 +205,213 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   }, []);
 
 
+  useEffect(() => {
+    getProfileDetails();
+    getQuestionDetails();
+  }, [0]);
+
+  const getQuestionDetails = async () => {
+    try {
+      const response = await fetch(`/api/emp-job-post-questions?JobPostId=${jobId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const result = await response.json();
+      console.log("Job Details fetched:", result?.data?.questions);
+      const details = result?.data?.questions;
+
+      //console.log(' questions ', details)
+      if (details) {
+        const updatedQuestions = details.map(item => ({
+          ...item,
+          options:
+            item.options && item.options.length > 0
+              ? item.options[0].split(",").map(opt => opt.replace(/'/g, "").trim())
+              : []
+        }));
+        setQuestions(updatedQuestions);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getProfileDetails = async () => {
+    try {
+      const response = await fetch(`/api/emp-job-post?JobPostId=${jobId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const result = await response.json();
+      console.log("Job Details fetched:", result?.data?.jobDetails);
+      const details = result?.data?.jobDetails;
+
+      if (details) {
+
+        setFormData((prev) => ({
+          ...prev,
+
+          jobpostId: details?.joB_POST_ID || "0",
+          //companyName: details?.languages || "",
+          jobTitle: details?.joB_TITLE || "",
+          jobTitleId: details?.joB_TITLE_ID || "",
+          minExperience: details?.exP_FROM || "",
+          maxExperience: details?.exP_TO || "",
+
+          fresherAllowed: details?.fresheR_APPLY || "",
+
+          jobType: details?.joB_TYPE || "",
+          workMode: details?.worK_MODE || "",
+
+          incentives: details?.beN_ID
+            ? String(details.beN_ID).split(",")
+            : [],
+
+          minSalary: details?.salarY_FROM || "",
+          maxSalary: details?.salarY_TO || "",
+
+          //  step 2 fields
+
+          department: details?.departmenT_NAME || "",
+          departmentId: details?.depT_SUB_CAT_ID || "",
+          jobRole: details?.joB_ROLE_NAME || "",
+          jobRoleId: details?.joB_ROLE_ID || "",
+          jobLocation: details?.locatioN_NAME || "",
+          jobLocationId: details?.loC_ID || "",
+          qualification: details?.edU_QUALIFICATION || "",
+
+          degree: details?.degreE_NAME || "",
+          degreeId: details?.deG_ID || "",
+
+          specialization: details?.suB_DEGREE_NAME || "",
+          specializationId: details?.deG_SUB_ID || "",
+          skills: details?.skilL_IDS ? details?.skilL_IDS.split(",") : [],
+
+          industryIds: details?.inD_ID ? details?.inD_ID.split(",") : [],
+
+          languages: details?.lanG_NAME ? details?.lanG_NAME.split(",") : [],
+          languagesId: details?.lanG_ID ? details?.lanG_ID.split(",") : [],
+
+          gender: details?.gendeR_PREFERENCE || "",
+
+          // step 4 fields
+          contactMethod: details?.calL_ON || "",
+          cemail: details?.contacT_EMAIL || "",
+          cphone: details?.contacT_MOBILE || "",
+          callFrom: details?.calL_TIME_FROM || "",
+          callTo: details?.calL_TIME_TO || "",
+          //applicationMethod: details?.languages || "",
+          //externalLink: details?.languages || "",
+          allowDirectCall: details?.caN_CALL || "",
+          days: details?.calL_DAYS ? details?.calL_DAYS.split(",") : [],
+
+          jobDesc: details?.joB_DESC || "",
+          aboutCompany: details?.abouT_COMP || "",
+          // screeningQuestions: details?.screeningQuestions ? details?.screeningQuestions.split(",") : [],
+
+          isWalkIn: details?.walK_IN || "No",
+          walkInStartDate: details?.walK_F_DATE || "",
+          walkInEndDate: details?.walK_T_DATE || "",
+          walkInTimingFrom: details?.walK_F_TIME || "",
+          walkInTimingTo: details?.walK_T_TIME || "",
+
+          recruiterName: details?.recuiteR_NAME,
+          walkInPhone: details?.recuiteR_MOBILE,
+          venueAddress: details?.walK_IN_ADDRESS,
+          googleMapsUrl: details?.walK_IN_ADDRESS_URL,
+          collaborators: details?.wailK_IN_TEAM ? details?.wailK_IN_TEAM.split(",") : [],
+          //newCollaborator: details?.wailK_IN_TEAM ? details?.wailK_IN_TEAM.split(",") : [],
+          dailyDigest: details?.wailK_IN_DAILY_DIGEST
+
+
+          // languages: profile.languages
+          //   ? profile.languages.split(",")
+          //   : [],
+
+          // languageString: profile.languages || "",
+          // summary: profile.profileSummary || "",
+
+        }));
+
+        setSelectedGender(details?.gendeR_PREFERENCE || "");
+        if (details?.edU_QUALIFICATION === "Graduate" || details?.edU_QUALIFICATION === "Masters" || details?.edU_QUALIFICATION === "PhD") {
+          // getDegree(details?.edU_QUALIFICATION);
+          // getSpecialization(details?.deG_ID);
+          setIsEnabled(true);
+        }
+        else { setIsEnabled(false) }
+
+
+        setIncentives(
+          details?.beN_ID
+            ? String(details.beN_ID).split(",")
+            : []
+        );
+        getBenifits(details?.beN_ID
+          ? String(details.beN_ID).split(",")
+          : [])
+
+
+        getJobRoleByDepartment(details?.depT_SUB_CAT_ID, details?.joB_ROLE_ID)
+        var optionsIds = details?.inD_ID ? details?.inD_ID.split(",") : [];
+        var optionsName = details?.indistrY_NAME ? details?.indistrY_NAME.split(",") : [];
+        const indList = optionsIds.map((id, index) => ({
+          value: id,
+          label: optionsName[index],
+        }));
+        setselectedIndustrys(indList);
+
+
+        var langIds = details?.lanG_ID ? details?.lanG_ID.split(",") : [];
+        var langName = details?.lanG_NAME ? details?.lanG_NAME.split(",") : [];
+        const langList = langIds.map((id, index) => ({
+          value: id,
+          label: langName[index],
+        }));
+        setselectedLanguages(langList);
+
+
+        bindSkills(details?.skilL_IDS, details?.skilL_NAME)
+        setSelectedDays(
+          details?.calL_DAYS
+            ? String(details.calL_DAYS).split(",")
+            : []
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const bindSkills = (dbSkills, dbSkillNames) => {
+    const names = dbSkillNames.split(",");
+    const selectedSkills = dbSkills.split("#").map((item, index) => {
+      const [id, starred] = item.split("^");
+      return {
+        value: Number(id),
+        label: names[index],
+        starred: starred === "true",
+      };
+    });
+
+    setSelectedSkills(selectedSkills);
+
+    setFormData(prev => ({
+      ...prev,
+      skills: selectedSkills.map(item => ({
+        skill: item.value,
+        starred: item.starred,
+      })),
+    }));
+  };
+
   const getDegree = async (term) => {
+
 
     if (!term || term.length < 2) {
       setDegreeList([]);
@@ -148,7 +435,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         const data = await response.json();
         //console.log("location fetched:", JSON.stringify(data));
 
-        const options = data.data.map((item) => ({
+        const options = (data?.data ?? []).map((item) => ({
           value: item.key,
           label: item.value
         }));
@@ -211,7 +498,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       });
       const data = await response.json();
       //console.log("skills fetched:", JSON.stringify(data.data));
-      const options = data.data.map((item) => ({
+      const options = (data?.data ?? []).map((item) => ({
         value: item.key,
         label: item.value,
       }));
@@ -242,7 +529,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       const data = await response.json();
       //console.log("location fetched:", JSON.stringify(data));
 
-      const options = data.data.map((item) => ({
+      const options = (data?.data ?? []).map((item) => ({
         value: item.key,
         label: item.value,
         label2: item.value2
@@ -268,7 +555,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       });
       const data = await response.json();
 
-      const options = data.data.map((item) => ({
+      const options = (data?.data ?? []).map((item) => ({
         value: item.key,
         label: item.value,
         label2: item.value2
@@ -291,38 +578,42 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     }
   };
 
-  const getJobRoleByDepartment = async (term) => {
-    if (!term || term.length == 0) {
+  const getJobRoleByDepartment = async (term, selectedValue = null) => {
+    if (!term) {
       setJobRoleList([]);
       return;
     }
-    //console.log("Fetching universities for term:", term);
-    try {
 
+    const body = {
+      term: term,
+    };
+
+    if (selectedValue) {
+      body.selectedValue = selectedValue;
+    }
+
+    try {
       const response = await fetch("/api/list-job-role", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          term: term,
-        }),
+        body: JSON.stringify(body),
       });
 
       const data = await response.json();
-      //console.log("Job Role fetched:", JSON.stringify(data));
-      const options = data.data.map((item) => ({
+
+      const options = (data?.data ?? []).map((item) => ({
         value: item.key,
         label: item.value,
       }));
+
       setJobRoleList(options);
-
-
     } catch (error) {
       console.error(error);
     }
   };
-  const getBenifits = async () => {
+  const getBenifits = async (selectedBenefits = null) => {
     try {
       const response = await fetch("/api/list-benifits", {
         method: "POST",
@@ -330,22 +621,38 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          term: '',
+          term: "",
         }),
       });
+
       const data = await response.json();
-      //console.log("Benifits fetched:", JSON.stringify(data.data));
-      const options = data.data.map((item) => ({
-        value: item.key,
+
+      const options = (data?.data ?? []).map((item) => ({
+        value: item.key.toString(),
         label: item.value,
       }));
+
       setIncentives(options);
-      const options2 = data.data.slice(0, 5).map((item) => ({
+
+      const options2 = (data?.data ?? []).slice(0, 5).map((item) => ({
         value: parseInt(item.key),
         label: item.value,
       }));
-      setIncentiveSuggestions(options2)
-      console.log(options2)
+
+      setIncentiveSuggestions(options2);
+
+      // Select passed benefits if available
+      if (selectedBenefits) {
+        const ids = Array.isArray(selectedBenefits)
+          ? selectedBenefits.map(String)
+          : selectedBenefits.split(",").map(x => x.trim());
+
+        const selected = options.filter(option =>
+          ids.includes(option.value)
+        );
+
+        setSelectedIncentives(selected); // react-select selected values
+      }
 
     } catch (error) {
       console.error(error);
@@ -365,15 +672,19 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       });
       const data = await response.json();
       //console.log("Industry fetched:", JSON.stringify(data.data));
-      const options = data.data.map((item) => ({
+      const options = (data?.data ?? []).map((item) => ({
         value: item.key,
         label: item.value,
       }));
+      //console.log("Industry fetched:", JSON.stringify(options));
+
       setIndustry(options);
+
     } catch (error) {
       console.error(error);
     }
   };
+
 
   const getLanguages = async () => {
     try {
@@ -389,7 +700,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       });
       const data = await response.json();
       // console.log("Languages fetched:", JSON.stringify(data.data));
-      const options = data.data.map((item) => ({
+      const options = (data?.data ?? []).map((item) => ({
         value: item.key,
         label: item.value,
       }));
@@ -431,7 +742,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   const [questions, setQuestions] = useState([
     {
       question: "",
-      type: "text",
+      type: "Answer",
       required: true,
       options: [],
       preferredAnswer: "",
@@ -477,9 +788,9 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         Que: q.question,
 
         QType:
-          q.type === "text"
+          q.type === "Answer"
             ? "Answer"
-            : q.type === "yesno"
+            : q.type === "Yes/No"
               ? "Yes/No"
               : "MultiOption",
 
@@ -572,72 +883,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     );
   };
 
-
-  const [formData, setFormData] = useState({
-    companyName: "",
-    jobTitle: "",
-    jobTitleId: "",
-    minExperience: "",
-    maxExperience: "",
-    fresherAllowed: false,
-
-    jobType: "",
-    workMode: "",
-
-    incentives: [],
-
-    minSalary: "",
-    maxSalary: "",
-    //  step 2 fields
-    department: "",
-    departmentId: "",
-    jobRole: "",
-    jobRoleId: "",
-    jobLocation: "",
-    jobLocationId: "",
-    qualification: "",
-
-    degree: "",
-    degreeId: "",
-
-    specialization: "",
-    specializationId: "",
-    skills: [],
-    industryIds: [],
-
-    languages: [],
-    languagesId: [],
-
-    gender: "Both",
-
-    // step 4 fields
-    contactMethod: "",
-    cemail: "",
-    cphone: "",
-    callFrom: "",
-    callTo: "",
-    applicationMethod: "",
-    externalLink: "",
-    allowDirectCall: "No",
-    days: [],
-
-    jobDesc: "",
-    aboutCompany: "",
-    screeningQuestions: [],
-
-    isWalkIn: "No",
-    walkInStartDate: "",
-    walkInEndDate: "",
-    walkInTiming: "",
-    recruiterName: "",
-    walkInPhone: "",
-    venueAddress: "",
-    googleMapsUrl: "",
-    collaborators: [],
-    newCollaborator: "",
-    dailyDigest: "No"
-
-  });
 
   const callOptions = [
     { label: "Yes" },
@@ -785,7 +1030,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
         if (!q.preferredAnswer) {
           newErrors[`preferred_${index}`] =
-            "Please select preferred option";
+            "Please select answer";
         }
       }
     });
@@ -1051,8 +1296,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
       IsMandatory: q.required,
     }));
-
-
+    console.log('screeningQuestions  ', screeningQuestions)
 
     let haError = true;
 
@@ -1179,7 +1423,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
           {activeTab === 0 && (
             <>
               <div className="form-group col-lg-12">
-                <label>Your Company Name</label>
+                <label>Your Company Name   </label>
                 <input
                   readOnly
                   type="text"
@@ -1196,7 +1440,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               </div>
 
               <div className="form-group col-lg-6">
-                <label>Job Title   </label>
+                <label>Job Title  </label>
                 <input
                   placeholder="Start typing to search job title..."
                   type="text"
@@ -1432,7 +1676,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   classNamePrefix="custom-select"
                   options={incentives}
                   value={selectedIncentives}
-
                   onChange={(selected) => {
                     const selectedOptions = selected || [];
                     setSelectedIncentives(selectedOptions);
@@ -1714,30 +1957,26 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 )}
               </div>
               <div className="form-group col-lg-6 col-md-12">
-                <label> Candidate's industry you want to hire from    </label>
+                <label>Candidate's industry you want to hire from</label>
                 <Select
                   isMulti
-                  options={industry}
 
+                  options={industry}
+                  value={selectedIndustrys}
                   classNamePrefix="custom-select"
                   placeholder="Search for candidate industry..."
-
-                  value={selectedIndustrys}
                   onChange={(selected) => {
                     const selectedOptions = selected || [];
+
                     setselectedIndustrys(selectedOptions);
-                    const ids = (selected || []).map((item) => item.value);
+
+                    console.log(selectedOptions)
+
                     setFormData((prev) => ({
                       ...prev,
-                      industryIds: ids,
-                    }));
-
-                    setErrors((prev) => ({
-                      ...prev,
-                      "industryIds": "",
+                      industryIds: selectedOptions.map(x => x.value),
                     }));
                   }}
-
                 />
                 {errors.industryIds && (
                   <span className="error-text">{errors.industryIds}</span>
@@ -1764,7 +2003,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
               </div>
 
               <div className="form-group col-lg-6 col-md-12">
-                <label>Educational Degree {isEnabled} <span style={{ fontSize: "12px", color: "#999" }}>(Optional)</span></label>
+                <label>Educational Degree {isEnabled}  <span style={{ fontSize: "12px", color: "#999" }}>(Optional)</span></label>
                 <input
                   disabled={isEnabled === false}
                   placeholder="Start typing to search courses..."
@@ -1994,22 +2233,22 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     <span className="question-number">
                       {index + 1}.
                     </span>
-
-                    <input
-                      type="text"
-                      className={`question-input ${errors[`question_${index}`]
-                        ? "is-invalid"
-                        : ""
-                        }`}
-                      placeholder="Enter screening question"
-                      value={q.question}
-                      onChange={(e) => {
-                        const updated = [...questions];
-                        updated[index].question = e.target.value;
-                        setQuestions(updated);
-                      }}
-                    />
-
+                    <div className="form-group col-11">
+                      <input
+                        type="text"
+                        className={` ${errors[`question_${index}`]
+                          ? "is-invalid"
+                          : ""
+                          }`}
+                        placeholder="Enter screening question"
+                        value={q.question}
+                        onChange={(e) => {
+                          const updated = [...questions];
+                          updated[index].question = e.target.value;
+                          setQuestions(updated);
+                        }}
+                      />
+                    </div>
                     {questions.length > 1 && (
                       <button
                         type="button"
@@ -2037,7 +2276,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       Candidate Answer Type
                     </label>
 
-                    <select
+                    <select className="form-group"
                       value={q.type}
                       onChange={(e) => {
                         const updated = [...questions];
@@ -2045,22 +2284,24 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                         updated[index].type = e.target.value;
                         updated[index].preferredAnswer = "";
 
-                        if (e.target.value === "options") {
+                        if (e.target.value === "MultiOption") {
                           updated[index].options = [""];
                         } else {
                           updated[index].options = [];
                         }
 
                         setQuestions(updated);
+                        console.log(questions)
                       }}
                     >
-                      <option value="text">Type Answer</option>
-                      <option value="yesno">Yes / No</option>
-                      <option value="options">Multiple Choice</option>
+                      <option value="">Select Type</option>
+                      <option value="Answer">Type Answer</option>
+                      <option value="Yes/No">Yes / No</option>
+                      <option value="MultiOption">Multiple Choice</option>
                     </select>
                   </div>
                   {/* Preferred Answer for Text */}
-                  {q.type === "text" && (
+                  {q.type === "Answer" && (
                     <div className="mt-3">
                       <label>Preferred Answer</label>
                       <input
@@ -2086,7 +2327,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   )}
 
                   {/* Preferred Answer for Yes/No */}
-                  {q.type === "yesno" && (
+                  {q.type === "Yes/No" && (
                     <div className="mt-3">
                       <label>Preferred Answer</label>
                       <select
@@ -2113,42 +2354,11 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     </div>
                   )}
 
-                  {/* Preferred Answer for Multi Option */}
-                  {q.type === "options" && (
-                    <div className="mt-3">
-                      <label>Preferred Option</label>
-                      <select
-                        className={`form-select ${errors[`preferred_${index}`]
-                          ? "is-invalid"
-                          : ""
-                          }`}
-                        value={q.preferredAnswer || ""}
-                        onChange={(e) => {
-                          const updated = [...questions];
-                          updated[index].preferredAnswer = e.target.value;
-                          setQuestions(updated);
-                        }}
-                      >
-                        <option value="">Select Preferred Option</option>
-
-                        {q.options.map((opt, i) => (
-                          <option key={i} value={opt}>
-                            {opt}
-                          </option>
-                        ))}
-                      </select>
-                      {errors[`preferred_${index}`] && (
-                        <span className="error-text">
-                          {errors[`preferred_${index}`]}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
 
                   {/* Multiple Choice Options */}
-                  {q.type === "options" && (
+                  {q.type === "MultiOption" && (
                     <div className="options-box">
+                      <span>{q.options}</span>
                       {q.options.map((opt, i) => (
                         <div key={i}>
                           <input
@@ -2192,13 +2402,14 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     </div>
                   )}
 
+
                   {/* Candidate Preview */}
                   <div className="candidate-preview mt-3">
                     <small className="text-muted">
                       Candidate Preview
                     </small>
 
-                    {q.type === "text" && (
+                    {q.type === "Answer" && (
                       <input
                         type="text"
                         disabled
@@ -2207,7 +2418,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       />
                     )}
 
-                    {q.type === "yesno" && (
+                    {q.type === "Yes/No" && (
                       <div className="mt-2">
                         <label className="me-3">
                           <input type="radio" disabled />
@@ -2221,7 +2432,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       </div>
                     )}
 
-                    {q.type === "options" && (
+                    {q.type === "MultiOption" && (
                       <div className="mt-2">
                         {q.options.map((opt, i) => (
                           <div key={i}>
@@ -2237,6 +2448,38 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       </div>
                     )}
                   </div>
+
+                  {/* Preferred Answer for Multi Option Answer */}
+                  {q.type === "MultiOption" && (
+                    <div className="mt-3">
+                      <label>Preferred Option</label>
+                      <select
+                        className={`form-select ${errors[`preferred_${index}`]
+                          ? "is-invalid"
+                          : ""
+                          }`}
+                        value={q.preferredAnswer || ""}
+                        onChange={(e) => {
+                          const updated = [...questions];
+                          updated[index].preferredAnswer = e.target.value;
+                          setQuestions(updated);
+                        }}
+                      >
+                        <option value="">Select Preferred Option</option>
+
+                        {q.options.map((opt, i) => (
+                          <option key={i} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                      {errors[`preferred_${index}`] && (
+                        <span className="error-text">
+                          {errors[`preferred_${index}`]}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
 
@@ -2249,7 +2492,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       ...questions,
                       {
                         question: "",
-                        type: "text",
+                        type: "Answer",
                         required: true,
                         options: [],
                         preferredAnswer: "",
@@ -2523,7 +2766,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
               {/* Call Time */}
               <div className="form-group col-lg-6">
-                <label>Receive Calls Between</label>
+                <label>Receive Calls Between  </label>
                 <div style={{ display: "flex", gap: "10px" }}>
                   <div className="col-6">
                     <input
@@ -2643,7 +2886,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   </label>
                 </div>
               </div> */}
-              <div>
+              <div className="row">
                 <p className="mt-2" style={{ borderTop: "1px solid #cecece" }}></p>
                 <h5 className="mt-1" >Advance Option</h5>
                 <div className="form-group col-lg-12">
@@ -2673,18 +2916,19 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   <>
                     {/* Walk-in Duration */}
                     <div className="form-group col-lg-6">
-                      <label>Walk-in Duration</label>
+                      <label>Walk-in Duration  </label>
                       <div className="row">
                         <div className="col-lg-6">
                           <input
-                            type="text"
+                            type="date"
                             placeholder="Choose start date"
                             className="form-control"
-                            value={formData.walkInStartDate || ""}
-                            onFocus={(e) => (e.target.type = "date")}
-                            onBlur={(e) => {
-                              if (!e.target.value) e.target.type = "text";
-                            }}
+                            min={new Date().toISOString().split("T")[0]}
+                            value={formData.walkInStartDate.split("T")[0] || ""}
+                            // onFocus={(e) => (e.target.type = "date")}
+                            // onBlur={(e) => {
+                            //   if (!e.target.value) e.target.type = "text";
+                            // }}
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
@@ -2700,14 +2944,15 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
                         <div className="col-lg-6">
                           <input
-                            type="text"
+                            type="date"
                             placeholder="Choose end date"
                             className="form-control"
-                            value={formData.walkInEndDate || ""}
-                            onFocus={(e) => (e.target.type = "date")}
-                            onBlur={(e) => {
-                              if (!e.target.value) e.target.type = "text";
-                            }}
+                            min={new Date().toISOString().split("T")[0]}
+                            value={formData.walkInEndDate.split("T")[0] || ""}
+                            // onFocus={(e) => (e.target.type = "date")}
+                            // onBlur={(e) => {
+                            //   if (!e.target.value) e.target.type = "text";
+                            // }}
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
@@ -2744,27 +2989,26 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                           <input
                             type="time"
                             className={`form-control ${errors.callFrom ? "error-border" : ""}`}
-                            name="callFrom"
-                            value={formData.callFrom || ""}
+                            name="walkInTimingFrom"
+                            value={formData.walkInTimingFrom || ""}
                             onChange={handleContactChange}
                           />
-                          {errors.callFrom && (
-                            <span className="error-text">{errors.callFrom}</span>
+                          {errors.walkInTimingFrom && (
+                            <span className="error-text">{errors.walkInTimingFrom}</span>
                           )}
                         </div ><div className="col-6">
                           <input
                             type="time"
-                            className={`form-control ${errors.callTo ? "error-border" : ""}`}
-                            name="callTo"
-                            value={formData.callTo || ""}
+                            className={`form-control ${errors.walkInTimingTo ? "error-border" : ""}`}
+                            name="walkInTimingTo"
+                            value={formData.walkInTimingTo || ""}
                             onChange={handleContactChange}
                           />
-                          {errors.callTo && (
-                            <span className="error-text">{errors.callTo}</span>
+                          {errors.walkInTimingTo && (
+                            <span className="error-text">{errors.walkInTimingTo}</span>
                           )}
                         </div>
                       </div>
-
 
                     </div>
 
@@ -2853,24 +3097,38 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       <div className="collaborator-box">
                         {formData.collaborators?.map((member, index) => (
                           <div className="member-item" key={index}>
-                            <div className="member-avatar">
-                              {member.name?.substring(0, 2).toUpperCase()}
-                            </div>
+                            <div className="d-flex align-items-center">
+                              <div className="member-avatar me-2">
+                                {member?.substring(0, 2).toUpperCase()}
+                              </div>
 
-                            <span>{member.email}</span>
+                              <span>{member}</span>
+                            </div>
+                            <button
+                              type="button"
+                              className="ms-2"
+                              onClick={() => {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  collaborators: prev.collaborators.filter((_, i) => i !== index),
+                                }));
+                              }}
+                            >
+                              ×
+                            </button>
                           </div>
                         ))}
 
                         <input
-                          type="email"
+                          type="text"
                           className="form-control member-input"
                           placeholder="Add members"
                           value={formData.newCollaborator || ""}
                           onChange={(e) =>
-                            setFormData({
-                              ...formData,
+                            setFormData((prev) => ({
+                              ...prev,
                               newCollaborator: e.target.value,
-                            })
+                            }))
                           }
                         />
 
@@ -2878,17 +3136,21 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                           type="button"
                           className="btn btn-sm btn-outline-primary mt-2"
                           onClick={() => {
-                            if (!formData.newCollaborator) return;
+                            const newMember = formData.newCollaborator
+                              .split("@")[0]
+                              .trim();
+
+                            if (!newMember) return;
+
+                            // Prevent duplicates (optional)
+                            if (formData.collaborators.includes(newMember)) {
+                              alert("Member already added");
+                              return;
+                            }
 
                             setFormData((prev) => ({
                               ...prev,
-                              collaborators: [
-                                ...(prev.collaborators || []),
-                                {
-                                  name: prev.newCollaborator.split("@")[0],
-                                  email: prev.newCollaborator,
-                                },
-                              ],
+                              collaborators: [...prev.collaborators, newMember],
                               newCollaborator: "",
                             }));
                           }}
@@ -2901,7 +3163,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
                     <div className="form-group col-lg-12">
                       <label>
-                        Receive a daily digest of applies on email?
+                        Receive a daily digest of applies on email? {formData.dailyDigest}
                       </label>
 
                       <div className="chip-container">

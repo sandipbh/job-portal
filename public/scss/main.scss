@@ -479,7 +479,7 @@ Global Settings
 
 .add-question-box button {
   width: 100%;
-  padding: 10px;
+  padding: 3px;
   border: 1px dashed #1967d2;
   background: #f5f9ff;
   color: #1967d2;
@@ -3352,6 +3352,7 @@ in 2 tab of Company Profile
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
+  justify-content: space-between;
 }
 
 .member-avatar {

@@ -3,6 +3,76 @@ import { headers } from "next/headers";
 import { apiFetch } from "../apiFetch";
 
 
+// GET Method 
+export async function GET(req) {
+  const headersList = await headers();
+
+  const token = req.cookies.get("regToken")?.value;
+  const url = req.nextUrl.pathname;
+
+  const JobPostId = req.nextUrl.searchParams.get("JobPostId");
+
+  let user = {};
+  try {
+    user = JSON.parse(token);
+  } catch (err) {
+    console.error("Invalid JSON token:", err);
+    user = {};
+  }
+
+  try {
+
+    const loginBody = {
+      JobPostId: JobPostId,
+      uqId: user.external.uqId,
+      Role: user.external.role,
+      Token: user.external.accessToken,
+    };
+
+    // Allow self-signed certs in local development only.
+    if (process.env.NODE_ENV !== "production") {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+    }
+
+    const externalApiBaseUrl = process.env.API_BASE_URL;
+    if (!externalApiBaseUrl) {
+      return NextResponse.json(
+        { message: "API_BASE_URL is not configured." },
+        { status: 500 }
+      );
+    }
+
+    const externalApiUrl =
+      process.env.REGISTER_API_URL ||
+      `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/getJobDetails`;
+
+
+    const externalResponse = await apiFetch(externalApiUrl, {
+      method: "POST",
+      body: JSON.stringify(loginBody),
+    });
+
+    const responseData = JSON.parse(await externalResponse.text());
+
+    const response = NextResponse.json(
+      {
+        data: responseData || [],
+      },
+      { status: 201 }
+    );
+    return response;
+
+  } catch (error) {
+    console.error("UPDATE ERROR:", error);
+
+    return NextResponse.json(
+      { message: "Failed to fetch profile details" },
+      { status: 500 }
+    );
+  }
+}
+
+
 export async function POST(req) {
   const headersList = await headers();
 
@@ -20,6 +90,7 @@ export async function POST(req) {
 
   try {
     const {
+      jobpostId,
       companyName,
       jobTitle,
       jobTitleId,
@@ -67,12 +138,23 @@ export async function POST(req) {
       days,
       jobDesc,
       aboutCompany,
-      screeningQuestions
+      screeningQuestions,
+
+      isWalkIn,
+      walkInStartDate,
+      walkInEndDate,
+      walkInTimingFrom,
+      walkInTimingTo,
+      recruiterName,
+      walkInPhone,
+      venueAddress,
+      googleMapsUrl,
+      collaborators,
+      newCollaborator,
+      dailyDigest
+
 
     } = await req.json();
-
-    console.log("Login attempt email:", user.external.uqId);
-    console.log("Login attempt role:", user.external.role);
 
     // 1. Basic validation
     if (!user.external.uqId || !user.external.role) {
@@ -90,6 +172,7 @@ export async function POST(req) {
 
     const loginBody = {
 
+      jobpostId: jobpostId,
       companyName: companyName,
       jobTitle: jobTitle,
       jobTitleId: jobTitleId,
@@ -138,6 +221,20 @@ export async function POST(req) {
       jobDesc: jobDesc,
       aboutCompany: aboutCompany,
       screeningQuestions: screeningQuestions,
+
+
+      isWalkIn: isWalkIn,
+      walkInStartDate: walkInStartDate,
+      walkInEndDate: walkInEndDate,
+      walkInTimingFrom: walkInTimingFrom,
+      walkInTimingTo: walkInTimingTo,
+      recruiterName: recruiterName,
+      walkInPhone: walkInPhone,
+      venueAddress: venueAddress,
+      googleMapsUrl: googleMapsUrl,
+      collaborators: collaborators,
+      newCollaborator: newCollaborator,
+      dailyDigest: dailyDigest,
 
       uqId: user.external.uqId,
       LoginIp: LoginIp,
