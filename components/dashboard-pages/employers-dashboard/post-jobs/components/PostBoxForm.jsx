@@ -3,7 +3,7 @@
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { useState, useEffect, useRef } from "react";
-import JobDescriptionBox from "./JobDescriptionBox";
+
 import { FaMale, FaFemale, FaUsers, FaSadCry } from "react-icons/fa";
 import { FaEnvelope, FaPhoneAlt } from "react-icons/fa";
 import { MdOutlineContactPhone } from "react-icons/md";
@@ -12,7 +12,7 @@ import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import JobPostedModal from "./JobPostedModal";
 import { useSearchParams } from "next/navigation";
-import { Alert } from "bootstrap";
+
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
