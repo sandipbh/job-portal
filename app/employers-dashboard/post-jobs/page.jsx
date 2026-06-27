@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import PostJob from "@/components/dashboard-pages/employers-dashboard/post-jobs";
 
 export const metadata = {
@@ -8,7 +9,9 @@ export const metadata = {
 const index = () => {
   return (
     <>
-      <PostJob />
+      <Suspense fallback={<div>Loading...</div>}>
+        <PostJob />
+      </Suspense>
     </>
   );
 };
