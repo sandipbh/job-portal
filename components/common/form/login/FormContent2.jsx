@@ -5,6 +5,8 @@ import globalData from "@/lib/global";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import OtpReg from "./OtpReg";
+
 
 const FormContent2 = () => {
 
@@ -17,24 +19,72 @@ const FormContent2 = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  // useEffect(() => {
-  //   getlogout();
-  // }, []);
 
-  // const getlogout = async () => {
-  //   try {
-  //     const res = await fetch("/api/logout", {
-  //       method: "POST",
-  //       credentials: "include", // IMPORTANT
-  //     });
+  const openOtpModal = () => {
+    if (typeof window === "undefined") return;
 
+    const registerModalEl = document.getElementById("loginPopupModal");
+    const otpModalEl = document.getElementById("otpModal");
+    const otpTrigger = document.querySelector(
+      '[data-bs-toggle="modal"][data-bs-target="#otpModal"]'
+    );
 
-  //   } catch (error) {
-  //   }
-  // };
+    const showOtpModal = () => {
+      if (window.bootstrap && otpModalEl) {
+        const otpModal =
+          window.bootstrap.Modal.getInstance(otpModalEl) ||
+          new window.bootstrap.Modal(otpModalEl);
+        otpModal.show();
+        return;
+      }
 
+      if (otpTrigger) {
+        otpTrigger.click();
+        return;
+      }
+
+      if (otpModalEl) {
+        otpModalEl.classList.add("show");
+        otpModalEl.style.display = "block";
+        otpModalEl.setAttribute("aria-modal", "true");
+        otpModalEl.removeAttribute("aria-hidden");
+      }
+    };
+
+    if (window.bootstrap && registerModalEl) {
+      const registerModal =
+        window.bootstrap.Modal.getInstance(registerModalEl) ||
+        new window.bootstrap.Modal(registerModalEl);
+
+      const onHidden = () => {
+        registerModalEl.removeEventListener("hidden.bs.modal", onHidden);
+        showOtpModal();
+      };
+
+      registerModalEl.addEventListener("hidden.bs.modal", onHidden);
+      registerModal.hide();
+      return;
+    }
+
+    const registerClose = registerModalEl?.querySelector(
+      '[data-bs-dismiss="modal"]'
+    );
+    if (registerClose) {
+      registerClose.click();
+      setTimeout(showOtpModal, 300);
+      return;
+    }
+
+    if (registerModalEl) {
+      registerModalEl.classList.remove("show");
+      registerModalEl.style.display = "none";
+      registerModalEl.setAttribute("aria-hidden", "true");
+    }
+    showOtpModal();
+  };
   const handleLogin = async (e) => {
     e.preventDefault();
+
 
     setError("");
 
@@ -77,17 +127,26 @@ const FormContent2 = () => {
         setLoading(false);
         return;
       }
-      // console.log('data', data)
-      // console.log('data', data.status)
+
 
       if (!data.status) {
         setError(data.message || "Login failed");
         setLoading(false);
         return;
       }
-      // console.log("Login success:", JSON.stringify(data));
 
-      // console.log("roleType :", data.roleType);
+      //check is verified or not
+      if (!data.isVefity) {
+
+        openOtpModal();
+        return;
+      }
+
+      if (!data.isActive) {
+        setError("Contact to support team");
+        setLoading(false);
+        return;
+      }
 
       const roleType = data.roleType?.trim().toLowerCase();
       // console.log("roleType :", data.roleType);
@@ -222,7 +281,7 @@ const FormContent2 = () => {
               </label>
             </div>
             <a href="/getPassword" className="pwd">
-              Forgot password?
+              Forgot password?.
             </a>
           </div>
         </div>
@@ -236,14 +295,14 @@ const FormContent2 = () => {
             disabled={loading}
             className="theme-btn btn-style-one"
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Logging in..." : "Signin"}
           </button>
 
 
-          <button type="button"
+          {/* <button type="button"
             onClick={handleLogout}
             className="btheme-btn btn-style-two"
-          > Logout </button>
+          > Logout </button> */}
 
           {/* <button type="button"
             onClick={logoutAllDevices}
@@ -261,13 +320,15 @@ const FormContent2 = () => {
         <div className="text">
           Don&apos;t have an account? <Link href="/register">Signup</Link>
         </div>
-        {/* <div className="divider">
+        <div className="divider" style={{ width: "100%" }}>
           <span>or</span>
-        </div> */}
+        </div>
 
-        {/* <LoginWithSocial /> */}
+        <LoginWithSocial />
       </div>
       {/* End bottom-box LoginWithSocial */}
+
+
     </div>
   );
 };

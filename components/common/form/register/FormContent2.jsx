@@ -263,7 +263,7 @@ const FormContent2 = () => {
   // ✅ HANDLE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
- 
+
     let newErrors = {};
 
     // FINAL VALIDATION CHECK
@@ -606,7 +606,7 @@ const FormContent2 = () => {
         <div className="form-group" style={{ marginTop: "20px !important" }}>
           <button
             type="button"
-            onclick={handleSubmit}
+            onClick={handleSubmit}
             disabled={loading}
             className="theme-btn btn-style-one"
           >
@@ -618,7 +618,7 @@ const FormContent2 = () => {
       </form>
 
       <div>
-        <div className="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" style={{background: "#212529a3"}}>
+        <div className="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" style={{ background: "#212529a3" }}>
           <div className="modal-dialog modal-lg modal-dialog-centered login-modal  ">
             <div className="modal-content">
               <button
@@ -627,7 +627,6 @@ const FormContent2 = () => {
                 data-bs-dismiss="modal"
               ></button>
               {/* End close modal btn */}
-
               <div className="modal-body">
                 {/* <!-- Login modal --> */}
                 <div id="login-modal">

@@ -2593,7 +2593,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 )}
               </div>
 
-
               {/* About Company */}
               <div className="form-group col-lg-12">
                 <label>
@@ -3160,10 +3159,9 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       </div>
                     </div>
 
-
                     <div className="form-group col-lg-12">
                       <label>
-                        Receive a daily digest of applies on email? {formData.dailyDigest}
+                        Receive a daily digest of applies on email?
                       </label>
 
                       <div className="chip-container">

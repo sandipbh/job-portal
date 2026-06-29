@@ -54,7 +54,7 @@ const officialPrefixes = [
 
 const Register = () => {
 
-      const router = useRouter();
+  const router = useRouter();
   const [role, setRole] = useState("candidate");
 
   const [formData, setFormData] = useState({
@@ -77,7 +77,7 @@ const Register = () => {
 
 
   const [showPassword, setShowPassword] = useState(false);
- const [accepted, setAccepted] = useState(false);
+  const [accepted, setAccepted] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -263,7 +263,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-   
+
 
     let newErrors = {};
 
@@ -400,8 +400,8 @@ const Register = () => {
     }));
 
     if (!accepted) {
-    
-       toast.error("All fields are required and must be valid");
+
+      toast.error("All fields are required and must be valid");
       setLoading(false);
       return;
     }
@@ -587,20 +587,20 @@ const Register = () => {
 
 
         <div className="form-group">
-         
+
           <label htmlFor="register-terms-and-conditions">
             <input
               type="checkbox"
               name="terms_and_conditions"
               value="on"
               id="register-terms-and-conditions"
-               
-                checked={accepted}
-              onChange={(e) => setAccepted(e.target.checked)} 
+
+              checked={accepted}
+              onChange={(e) => setAccepted(e.target.checked)}
             />
-         &nbsp;  You accept our{" "}
+            &nbsp;  You accept our{" "}
             <a href="#">
-             Terms and Conditions and Privacy Policy
+              Terms and Conditions and Privacy Policy
             </a>
           </label>
         </div>
@@ -628,11 +628,11 @@ const Register = () => {
             data-bs-dismiss="modal"
             data-bs-target="#loginPopupModal"
           >
-            LogIn
+            Signin
           </Link>
         </div>
 
-        <div className="divider">
+        <div className="divider" style={{ width: "100%" }}>
           <span>or</span>
         </div>
 

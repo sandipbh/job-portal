@@ -11,8 +11,8 @@ const Register2 = () => {
     <div className="form-inner">
       <h3>Create a Free {process.env.NEXT_PUBLIC_APP_NAME} Account  </h3>
 
-      <div> 
-          <FormContent2 /> 
+      <div>
+        <FormContent2 />
       </div>
       {/* End form-group */}
 
@@ -20,10 +20,10 @@ const Register2 = () => {
         <div className="text">
           Already have an account?{" "}
           <Link href="/login" className="call-modal login">
-            LogIn
+            Signin
           </Link>
         </div>
-        <div className="divider">
+        <div className="divider" style={{ width: "100%" }}>
           <span>or</span>
         </div>
         <LoginWithSocial />

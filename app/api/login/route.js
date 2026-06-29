@@ -57,8 +57,6 @@ export async function POST(req) {
     console.log("External API Base URL 00:", externalApiBaseUrl);
 
 
-
-
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/auth/login`;
@@ -84,6 +82,8 @@ export async function POST(req) {
           success: false,
           message: externalData.message,
           status: externalData.success,
+          isVefity: externalData.isVefity,
+          isActive: externalData.isActive,
         },
         {
           status: externalResponse.status,
@@ -102,6 +102,8 @@ export async function POST(req) {
         roleType: role,
         status: externalData.success,
         external: externalData,
+        isVefity: externalData.isVefity,
+        isActive: externalData.isActive,
       },
       { status: 201 }
     );

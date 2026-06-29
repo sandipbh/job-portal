@@ -1,15 +1,52 @@
+'use client'
 import Link from "next/link";
-import jobFeatured from "../../data/job-featured";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+
 
 const RecentJobs = () => {
+
+  const [jobList, setJobList] = useState([]);
+
+  useEffect(() => {
+    getJobList();
+  }, []);
+
+  const getJobList = async () => {
+    try {
+      const response = await fetch("/api/home-job-recent", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const result = await response.json();
+
+      const listData = result?.data;
+      console.log('listData  recent ', listData)
+
+      if (listData) {
+
+
+        setJobList(listData);
+
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
-      {jobFeatured.slice(20, 22).map((item) => (
+      {jobList.map((item) => (
         <div className="job-block-four" key={item.id}>
           <div className="inner-box">
+            <span>{item.jobType.length}</span>
             <ul className="job-other-info">
+
               {item.jobType.map((val, i) => (
+
                 <li key={i} className={`${val.styleClass}`}>
                   {val.type}
                 </li>
@@ -23,7 +60,7 @@ const RecentJobs = () => {
                 alt="featured job"
               />
             </span>
-            <span className="company-name">Catalyst</span>
+            <span className="company-name">{item.company}</span>
             <h4>
               <Link href={`/job-single-v3/${item.id}`}>{item.jobTitle}</Link>
             </h4>

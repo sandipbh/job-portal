@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { tr } from "@faker-js/faker";
 
+import OtpReg from "./OtpReg";
+
 const FormContent = () => {
 
 
@@ -118,7 +120,68 @@ const FormContent = () => {
       }));
     }
   };
+  const openOtpModal = () => {
+    if (typeof window === "undefined") return;
 
+    const registerModalEl = document.getElementById("registerModal");
+    const otpModalEl = document.getElementById("otpModal");
+    const otpTrigger = document.querySelector(
+      '[data-bs-toggle="modal"][data-bs-target="#otpModal"]'
+    );
+
+    const showOtpModal = () => {
+      if (window.bootstrap && otpModalEl) {
+        const otpModal =
+          window.bootstrap.Modal.getInstance(otpModalEl) ||
+          new window.bootstrap.Modal(otpModalEl);
+        otpModal.show();
+        return;
+      }
+
+      if (otpTrigger) {
+        otpTrigger.click();
+        return;
+      }
+
+      if (otpModalEl) {
+        otpModalEl.classList.add("show");
+        otpModalEl.style.display = "block";
+        otpModalEl.setAttribute("aria-modal", "true");
+        otpModalEl.removeAttribute("aria-hidden");
+      }
+    };
+
+    if (window.bootstrap && registerModalEl) {
+      const registerModal =
+        window.bootstrap.Modal.getInstance(registerModalEl) ||
+        new window.bootstrap.Modal(registerModalEl);
+
+      const onHidden = () => {
+        registerModalEl.removeEventListener("hidden.bs.modal", onHidden);
+        showOtpModal();
+      };
+
+      registerModalEl.addEventListener("hidden.bs.modal", onHidden);
+      registerModal.hide();
+      return;
+    }
+
+    const registerClose = registerModalEl?.querySelector(
+      '[data-bs-dismiss="modal"]'
+    );
+    if (registerClose) {
+      registerClose.click();
+      setTimeout(showOtpModal, 300);
+      return;
+    }
+
+    if (registerModalEl) {
+      registerModalEl.classList.remove("show");
+      registerModalEl.style.display = "none";
+      registerModalEl.setAttribute("aria-hidden", "true");
+    }
+    showOtpModal();
+  };
   // ✅ HANDLE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -168,15 +231,29 @@ const FormContent = () => {
       try {
         const user = await res.json();
 
+        console.log(user)
 
         if (!res.ok) {
-          toast.error(user.message || "Login failed");
+          toast.error(user.message || "Login failed1");
           setLoading(false);
           return;
         }
 
         if (!user.status) {
-          toast.error(user.message || "Login failed");
+          toast.error(user.message || "Login failed2");
+          setLoading(false);
+          return;
+        }
+
+
+        //check is verified or not
+        if (!user.isVefity) {
+          openOtpModal();
+          return;
+        }
+
+        if (!user.isActive) {
+          toast.error("Contact to support team");
           setLoading(false);
           return;
         }
@@ -325,7 +402,7 @@ const FormContent = () => {
             disabled={loading}
             className="theme-btn btn-style-one"
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Logging in..." : "Signin"}
           </button>
 
           {/* <button
@@ -355,13 +432,41 @@ const FormContent = () => {
 
 
 
-        <div className="divider">
-          <span className="text-center">or</span>
+        <div className="divider" style={{ width: "100%" }}>
+          <span className="text-center">or  </span>
         </div>
 
         <LoginWithSocial />
       </div>
       {/* End bottom-box LoginWithSocial */}
+      <div>
+        <div className="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" style={{ background: "#212529a3" }}>
+          <div className="modal-dialog modal-lg modal-dialog-centered login-modal  ">
+            <div className="modal-content">
+              <button
+                type="button"
+                className="closed-modal"
+                data-bs-dismiss="modal"
+              ></button>
+              {/* End close modal btn */}
+              <div className="modal-body">
+                {/* <!-- Login modal --> */}
+                <div id="login-modal">
+                  {/* <!-- Login Form --> */}
+                  <div className="login-form default-form">
+                    <OtpReg />
+                  </div>
+                  {/* <!--End Login Form --> */}
+                </div>
+                {/* <!-- End Login Module --> */}
+              </div>
+              {/* En modal-body */}
+            </div>
+            {/* End modal-content */}
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };

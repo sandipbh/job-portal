@@ -1,12 +1,56 @@
+'use client'
 import Link from "next/link";
 import jobs from "../../../../../data/job-featured.js";
 import Image from "next/image.js";
+import { useState, useEffect } from "react";
 
 const JobListingsTable = () => {
+
+
+  const [jobList, setJobList] = useState([]);
+
+  useEffect(() => {
+    getJobList();
+  }, []);
+
+  const getJobList = async () => {
+    try {
+      const response = await fetch("/api/emp-job-post-list", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const result = await response.json();
+
+      const listData = result?.data;
+      console.log('listData  ', listData)
+
+      if (listData) {
+
+        setJobList(listData);
+
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+
+
   return (
     <div className="tabs-box">
       <div className="widget-title">
-        <h4>My Job Listings</h4>
+        <h4>My Job Listings </h4>
 
         <div className="chosen-outer">
           {/* <!--Tabs Box--> */}
@@ -36,7 +80,7 @@ const JobListingsTable = () => {
             </thead>
 
             <tbody>
-              {jobs.slice(0, 4).map((item) => (
+              {jobList.map((item) => (
                 <tr key={item.id}>
                   <td>
                     {/* <!-- Job Block --> */}
@@ -59,11 +103,11 @@ const JobListingsTable = () => {
                           <ul className="job-info">
                             <li>
                               <span className="icon flaticon-briefcase"></span>
-                              Segment
+                              {item.company}
                             </li>
                             <li>
                               <span className="icon flaticon-map-locator"></span>
-                              London, UK
+                              {item.location}
                             </li>
                           </ul>
                         </div>
@@ -71,13 +115,13 @@ const JobListingsTable = () => {
                     </div>
                   </td>
                   <td className="applied">
-                    <a href="#">3+ Applied</a>
+                    <a href="#">{item.applyCount} Applied</a>
                   </td>
                   <td>
-                    October 27, 2017 <br />
-                    April 25, 2011
+                    {formatDate(item.created_at)} <br />
+                    {formatDate(item.expire_at)}
                   </td>
-                  <td className="status">Active</td>
+                  <td className="status">{item.status} </td>
                   <td>
                     <div className="option-box">
                       <ul className="option-list">
@@ -87,9 +131,14 @@ const JobListingsTable = () => {
                           </button>
                         </li>
                         <li>
-                          <button data-text="Reject Aplication">
-                            <span className="la la-pencil"></span>
-                          </button>
+                          <Link
+                            href={`/employers-dashboard/post-jobs?jobid=${item.id}`}
+                          >
+                            <button data-text="Edit Job">
+                              <span className="la la-pencil"></span>
+                            </button>
+                          </Link>
+
                         </li>
                         <li>
                           <button data-text="Delete Aplication">

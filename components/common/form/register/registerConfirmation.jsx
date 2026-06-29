@@ -52,10 +52,10 @@ export default function RegistrationConfirmation() {
         <div className="text">
           Already have an account?{" "}
           <Link href="/login" className="call-modal login">
-            LogIn
+            Signin
           </Link>
         </div>
-        <div className="divider">
+        <div className="divider" style={{ width: "100%" }}>
           <span>or</span>
         </div>
         <LoginWithSocial />

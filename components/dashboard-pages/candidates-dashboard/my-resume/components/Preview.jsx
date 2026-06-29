@@ -198,9 +198,13 @@ const Preview = ({ data }) => {
 
             <section>
               <h3>PROFESSIONAL SUMMARY </h3>
-              <p style={{ wordBreak: "break-word" }}>
+              <span style={{
+                wordBreak: "break-word",
+                fontSize: 14,
+                lineHeight: 1.5
+              }}>
                 {personal?.profileSummary}
-              </p>
+              </span>
             </section>
 
             {/* EDUCATION */}
