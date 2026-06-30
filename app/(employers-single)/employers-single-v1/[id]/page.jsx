@@ -168,7 +168,7 @@ const EmployersSingleV1 = ({ params }) => {
                       {/*  compnay-info */}
                       <ul className="company-info mt-0">
                         <li>
-                          Primary industry: <span>Software</span>
+                          Primary industry : <span>Software</span>
                         </li>
                         <li>
                           Company size: <span>501-1,000</span>

@@ -97,9 +97,11 @@ const Verification = ({ activeTab, setActiveTab }) => {
             console.error(error);
         }
     };
-
     useEffect(() => {
         getProfileDetails();
+    }, [0])
+    useEffect(() => {
+
 
         handleStateChange(kycData.state);
         setSelectedCity(kycData.city);

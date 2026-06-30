@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 
 const JobListingsTable = () => {
 
-
   const [jobList, setJobList] = useState([]);
 
   useEffect(() => {
@@ -96,7 +95,7 @@ const JobListingsTable = () => {
                             />
                           </span>
                           <h4>
-                            <Link href={`/job-single-v3/${item.id}`}>
+                            <Link href={`/job-single-v2/${item.id}`}>
                               {item.jobTitle}
                             </Link>
                           </h4>

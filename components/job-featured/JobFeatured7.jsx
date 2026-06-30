@@ -95,7 +95,7 @@ const JobFeatured7 = () => {
                 />
               </span>
               <h4>
-                <Link href={`/job-single-v5/${item.id}`}>{item.jobTitle}</Link>
+                <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
 
               </h4>
               <ul className="job-info">
@@ -128,7 +128,7 @@ const JobFeatured7 = () => {
               ))}
             </ul>
             <Link
-              href={`/job-single-v5/${item.id}`}
+              href={`/job-single-v2/${item.id}`}
               className="theme-btn btn-style-four"
             >
               Apply Job
