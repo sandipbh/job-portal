@@ -51,7 +51,7 @@ const JobSingleDynamicV1 = ({ params }) => {
                       alt="logo"
                     />
                   </span>
-                  <h4>{company?.jobTitle}</h4>
+                  <h4>{company?.jobTitle} 001</h4>
 
                   <ul className="job-info">
                     <li>

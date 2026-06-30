@@ -186,6 +186,7 @@ const FormContent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
     let newErrors = {};
 
     if (!formData.email) newErrors.email = "Email is required";
@@ -247,12 +248,12 @@ const FormContent = () => {
 
 
         //check is verified or not
-        if (!user.isVefity) {
+        if (user.isVefity == false) {
           openOtpModal();
           return;
         }
 
-        if (!user.isActive) {
+        if (user.isActive == false) {
           toast.error("Contact to support team");
           setLoading(false);
           return;
@@ -326,7 +327,7 @@ const FormContent = () => {
           </div>
         </div>
         <div className="form-group">
-          <label>Email</label>
+          <label>Email </label>
           <input
             type="text"
             name="email"

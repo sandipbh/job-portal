@@ -83,6 +83,9 @@ const FormContent2 = () => {
     showOtpModal();
   };
   const handleLogin = async (e) => {
+
+
+
     e.preventDefault();
 
 
@@ -122,6 +125,8 @@ const FormContent2 = () => {
 
       const data = await res.json();
 
+      console.log(data)
+
       if (!res.ok) {
         setError(data.message || "Login failed");
         setLoading(false);
@@ -136,13 +141,14 @@ const FormContent2 = () => {
       }
 
       //check is verified or not
-      if (!data.isVefity) {
+      console.log(data.isVefity)
 
+      if (data.isVefity == false) {
         openOtpModal();
         return;
       }
 
-      if (!data.isActive) {
+      if (data.isActive == false) {
         setError("Contact to support team");
         setLoading(false);
         return;
@@ -327,7 +333,33 @@ const FormContent2 = () => {
         <LoginWithSocial />
       </div>
       {/* End bottom-box LoginWithSocial */}
-
+      <div>
+        <div className="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" style={{ background: "#212529a3" }}>
+          <div className="modal-dialog modal-lg modal-dialog-centered login-modal  ">
+            <div className="modal-content">
+              <button
+                type="button"
+                className="closed-modal"
+                data-bs-dismiss="modal"
+              ></button>
+              {/* End close modal btn */}
+              <div className="modal-body">
+                {/* <!-- Login modal --> */}
+                <div id="login-modal">
+                  {/* <!-- Login Form --> */}
+                  <div className="login-form default-form">
+                    <OtpReg />
+                  </div>
+                  {/* <!--End Login Form --> */}
+                </div>
+                {/* <!-- End Login Module --> */}
+              </div>
+              {/* En modal-body */}
+            </div>
+            {/* End modal-content */}
+          </div>
+        </div>
+      </div>
 
     </div>
   );
