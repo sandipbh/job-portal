@@ -3,45 +3,21 @@ import { headers } from "next/headers";
 import { apiFetch } from "../apiFetch";
 
 
-export async function POST(req) {
+// GET Method 
+export async function GET(req) {
     const headersList = await headers();
 
-    const token = req.cookies.get("regToken")?.value;
     const url = req.nextUrl.pathname;
 
-    let user = {};
-    try {
-        user = JSON.parse(token);
-    } catch (err) {
-        console.error("Invalid JSON token:", err);
-        user = {};
-    }
-    //console.log("dashboard user User Role :", user.external.role);
+    const JobPostId = req.nextUrl.searchParams.get("JobPostId");
 
 
-    const {
-        term
-    } = await req.json();
-    //const term = req.nextUrl.searchParams.get("term") || "";
-
-    //console.log("Search term:", term);
 
     try {
-
-
-        const LoginIp =
-            headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-            headersList.get("x-real-ip") ||
-            headersList.get("cf-connecting-ip") ||
-            "Unknown";
 
         const loginBody = {
-            uqId: user.external.uqId,
-            LoginIp: LoginIp,
-            Role: user.external.role,
-            Token: user.external.accessToken,
+            JobPostId: JobPostId,
         };
-        //console.log("body Data:", loginBody);
 
         // Allow self-signed certs in local development only.
         if (process.env.NODE_ENV !== "production") {
@@ -55,14 +31,11 @@ export async function POST(req) {
                 { status: 500 }
             );
         }
-        console.log("External API Base URL 00:", externalApiBaseUrl);
 
         const externalApiUrl =
             process.env.REGISTER_API_URL ||
-            `${externalApiBaseUrl.replace(/\/+$/, "")}/Employer/employer/CompanyData`;
+            `${externalApiBaseUrl.replace(/\/+$/, "")}/api/Public/getJobListRelated`;
 
-        // console.log("External API URL :", externalApiUrl);
-        // console.log("External API Request Body:", loginBody);
 
         const externalResponse = await apiFetch(externalApiUrl, {
             method: "POST",
@@ -88,5 +61,3 @@ export async function POST(req) {
         );
     }
 }
-
-

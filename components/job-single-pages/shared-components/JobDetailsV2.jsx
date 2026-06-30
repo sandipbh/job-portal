@@ -1,18 +1,22 @@
 'use client'
+
 import { useState, useEffect } from "react";
-import jobs from "@/data/job-featured";
-import JobOverView from "@/components/job-single-pages/job-overview/JobOverView";
-import JobSkills from "@/components/job-single-pages/shared-components/JobSkills";
+
 import RelatedJobs3 from "@/components/job-single-pages/related-jobs/RelatedJobs3";
 import ApplyJobModalContent from "@/components/job-single-pages/shared-components/ApplyJobModalContent";
 import Image from "next/image";
-import CompanyInfo from "./CompanyInfo";
+
 
 const JobDetailsV2 = ({ id }) => {
 
     let jobId = id ?? 0;
     const [jobDetails, setJobDetails] = useState({});
-    const [jobType, setJobType] = useState();
+
+
+    const [shareUrl, setShareUrl] = useState("");
+    useEffect(() => {
+        setShareUrl(window.location.href);
+    }, []);
 
     useEffect(() => {
         getJobDetails();
@@ -31,17 +35,19 @@ const JobDetailsV2 = ({ id }) => {
             const result = await response.json();
 
             const listData = result?.data;
-            //console.log('Job Details  ', JSON.stringify(listData))
+            console.log('Job Details  ', JSON.stringify(listData))
 
             if (listData) {
 
                 setJobDetails(listData);
+
             }
 
         } catch (error) {
             console.error(error);
         }
     };
+
 
     const getTimeAgo = (date) => {
         const now = new Date();
@@ -85,6 +91,13 @@ const JobDetailsV2 = ({ id }) => {
         return `${years} year${years > 1 ? "s" : ""} ago`;
     };
 
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+        });
+    };
     return (
         <>
             {/* <!-- Job Detail Section --> */}
@@ -149,62 +162,18 @@ const JobDetailsV2 = ({ id }) => {
 
                                 <div className="job-detail">
                                     <h4>Job Description</h4>
-                                    <p>
-                                        As a Product Designer, you will work within a Product Delivery Team
-                                        fused with UX, engineering, product and data talent. You will help the
-                                        team design beautiful interfaces that solve business challenges for our
-                                        clients. We work with a number of Tier 1 banks on building web-based
-                                        applications for AML, KYC and Sanctions List management workflows. This
-                                        role is ideal if you are looking to segue your career into the FinTech
-                                        or Big Data arenas.
-                                    </p>
-                                    <h4>Key Responsibilities</h4>
-                                    <ul className="list-style-three">
-                                        <li>
-                                            Be involved in every step of the product design cycle from discovery
-                                            to developer handoff and user acceptance testing.
-                                        </li>
-                                        <li>
-                                            Work with BAs, product managers and tech teams to lead the Product
-                                            Design
-                                        </li>
-                                        <li>
-                                            Maintain quality of the design process and ensure that when designs
-                                            are translated into code they accurately reflect the design
-                                            specifications.
-                                        </li>
-                                        <li>Accurately estimate design tickets during planning sessions.</li>
-                                        <li>
-                                            Contribute to sketching sessions involving non-designersCreate,
-                                            iterate and maintain UI deliverables including sketch files, style
-                                            guides, high fidelity prototypes, micro interaction specifications and
-                                            pattern libraries.
-                                        </li>
-                                        <li>
-                                            Ensure design choices are data led by identifying assumptions to test
-                                            each sprint, and work with the analysts in your team to plan moderated
-                                            usability test sessions.
-                                        </li>
-                                        <li>
-                                            Design pixel perfect responsive UI’s and understand that adopting
-                                            common interface patterns is better for UX than reinventing the wheel
-                                        </li>
-                                        <li>
-                                            Present your work to the wider business at Show & Tell sessions.
-                                        </li>
-                                    </ul>
-                                    <h4>Skill & Experience</h4>
-                                    <ul className="list-style-three">
-                                        <li>
-                                            You have at least 3 years’ experience working as a Product Designer.
-                                        </li>
-                                        <li>You have experience using Sketch and InVision or Framer X</li>
-                                        <li>
-                                            You have some previous experience working in an agile environment –
-                                            Think two-week sprints.
-                                        </li>
-                                        <li>You are familiar using Jira and Confluence in your workflow</li>
-                                    </ul>
+
+
+
+                                    <div className="ql-snow">
+                                        <div
+                                            className="ql-editor"
+                                            dangerouslySetInnerHTML={{ __html: jobDetails?.jobDesc || "" }}
+                                        />
+                                    </div>
+
+
+
                                 </div>
                                 {/* End jobdetails content */}
 
@@ -212,7 +181,7 @@ const JobDetailsV2 = ({ id }) => {
                                     <div className="social-share">
                                         <h5>Share this job</h5>
                                         <a
-                                            href="https://www.facebook.com/"
+                                            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
                                             className="facebook"
                                             target="_blank"
                                             rel="noopener noreferrer"
@@ -221,7 +190,8 @@ const JobDetailsV2 = ({ id }) => {
                                             <i className='fab fa-facebook-f'></i>Facebook
                                         </a>
                                         <a
-                                            href="https://www.twitter.com/"
+                                            href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl
+                                            )}&text=${encodeURIComponent(jobDetails?.jobTitle || "Check out this job!")}`}
                                             className="twitter"
                                             target="_blank"
                                             rel="noopener noreferrer"
@@ -230,7 +200,7 @@ const JobDetailsV2 = ({ id }) => {
                                             <i className='fab fa-twitter'></i>Twitter
                                         </a>
                                         <a
-                                            href="https://www.likedin.com/"
+                                            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
                                             className="linkedin"
                                             target="_blank"
                                             rel="noopener noreferrer"
@@ -242,17 +212,18 @@ const JobDetailsV2 = ({ id }) => {
                                 </div>
                                 {/* <!-- Other Options --> */}
 
+
                                 <div className="related-jobs">
                                     <div className="title-box">
                                         <h3>Related Jobs</h3>
-                                        <div className="text">
+                                        {/* <div className="text">
                                             2020 jobs live - 293 added today.
-                                        </div>
+                                        </div> */}
                                     </div>
                                     {/* End title box */}
 
                                     <div className="row">
-                                        <RelatedJobs3 />
+                                        <RelatedJobs3 id={jobDetails?.indistryList} />
                                     </div>
                                     {/* End .row */}
                                 </div>
@@ -318,7 +289,7 @@ const JobDetailsV2 = ({ id }) => {
                                                 <li>
                                                     <i className="icon icon-expiry"></i>
                                                     <h5>Expiration date:</h5>
-                                                    <span>{jobDetails?.expire_at} </span>
+                                                    <span>{formatDate(jobDetails?.expire_at)} </span>
                                                 </li>
                                                 <li>
                                                     <i className="icon icon-location"></i>
@@ -346,7 +317,9 @@ const JobDetailsV2 = ({ id }) => {
                                                 {(jobDetails?.skills ?? "").split(", ").map((item, index, arr) => (
                                                     <li key={index}>
                                                         {item.replace("*", "")}
-                                                        {item.includes("*") && <i className="fa fa-star ms-1"></i>}
+                                                        {item.includes("*") && <sup className="fa fa-star" style={{
+                                                            fontSize: "xx-small", color: "#d66a22", top: "-0.9em"
+                                                        }}></sup>}
                                                         {index < arr.length - 1 && ", "}
                                                     </li>
                                                 ))}
@@ -369,24 +342,57 @@ const JobDetailsV2 = ({ id }) => {
                                                     />
                                                 </div>
                                                 <h5 className="company-name">{jobDetails.company}</h5>
-                                                <a href="#" className="profile-link">
+                                                {/* <a href="#" className="profile-link">
                                                     View company profile
-                                                </a>
+                                                </a> */}
+
+
                                             </div>
                                             {/* End company title */}
+                                            <div>
+                                                <ul className="company-info">
+                                                    <li>
+                                                        Primary industry: <span>{jobDetails?.indistry}</span>
+                                                    </li>
+                                                    <li>
+                                                        Company size: <span>{jobDetails?.compSize}</span>
+                                                    </li>
 
-                                            <CompanyInfo />
+                                                    {/* <li>
+                                                        Phone: <span>123 456 7890</span>
+                                                    </li>
+                                                    <li>
+                                                        Email: <span>info@joio.com</span>
+                                                    </li> */}
+                                                    <li>
+                                                        Location: <span>{jobDetails?.compCity}, {jobDetails?.compState}</span>
+                                                    </li>
+                                                    {/* <li>
+                                                        Social media:
+                                                        <Social />
+                                                    </li> */}
+                                                </ul>
+                                                {
 
-                                            <div className="btn-box">
-                                                <a
-                                                    href={jobDetails?.link}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="theme-btn btn-style-three"
-                                                >
-                                                    {jobDetails?.link}
-                                                </a>
+                                                    jobDetails?.compWebsite && (
+                                                        <div className="btn-box">
+                                                            <a
+                                                                href={jobDetails?.compWebsite}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="btn btn-sm btn-outline-primary w-100"
+
+                                                            >
+                                                                {jobDetails?.compWebsite}
+                                                            </a>
+                                                        </div>
+                                                    )
+                                                }
+
                                             </div>
+
+
+
                                             {/* End btn-box */}
                                         </div>
                                     </div>

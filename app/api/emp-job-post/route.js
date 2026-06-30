@@ -66,7 +66,7 @@ export async function GET(req) {
     console.error("UPDATE ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to fetch profile details" },
+      { message: "Failed to fetch details" },
       { status: 500 }
     );
   }
@@ -285,6 +285,7 @@ export async function POST(req) {
       return NextResponse.json(
         {
           message: responseData.message || "Job Post Failed",
+          jobpostid: responseData.data.jobPostId
         },
         { status: responseData.status || 500 }
       );
@@ -296,6 +297,7 @@ export async function POST(req) {
     const response = NextResponse.json(
       {
         message: responseData.message || "Job Posted successfully",
+        jobpostid: responseData.data.jobPostId
       },
       { status: 201 }
     );

@@ -9,6 +9,8 @@ import { store } from "../store/store";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import "rc-slider/assets/index.css";
+import "quill/dist/quill.snow.css";
+
 
 export default function RootLayout({ children }) {
   useEffect(() => {
@@ -42,6 +44,7 @@ export default function RootLayout({ children }) {
         <meta name="ibthemes" content="ATFN" />
 
         <link rel="icon" href="./favicon.ico" />
+        <link rel="stylesheet" href="/css/quill.snow.css"></link>
       </head>
 
       <body>
@@ -73,6 +76,7 @@ export default function RootLayout({ children }) {
               theme="light"
               rtl={false}
               pauseOnFocusLoss
+              style={{ zIndex: 999999 }}
             />
             {/* <!-- Scroll To Top --> */}
             <ScrollToTop />

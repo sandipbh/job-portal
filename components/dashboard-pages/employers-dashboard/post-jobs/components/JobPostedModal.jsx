@@ -1,4 +1,9 @@
-import React from "react";
+'use client'
+import { useState, useEffect } from "react";
+import { useSearchParams, usePathname } from "next/navigation";
+import { toast } from "react-toastify";
+import { FaCheckCircle, FaTimesCircle, FaInfoCircle, FaExclamationTriangle } from "react-icons/fa";
+
 
 const JobPostedModal = ({
     isOpen,
@@ -7,12 +12,24 @@ const JobPostedModal = ({
     companyName,
     jobLink,
 }) => {
+
+
+    const pathname = usePathname();
+
+
+    const shareLink =
+        typeof window !== "undefined"
+            ? `${window.location.origin}${jobLink}`
+            : "";
+
     if (!isOpen) return null;
 
     const handleCopyLink = () => {
-        navigator.clipboard.writeText(jobLink);
-        alert("Link copied!");
+        navigator.clipboard.writeText(shareLink);
+
+        toast.success("Link copied!");
     };
+
 
     return (
         <div className="job-success-overlay">
@@ -40,7 +57,7 @@ const JobPostedModal = ({
 
                     <div>
                         <h4>{jobTitle}</h4>
-                        <p>{companyName}</p>
+                        <p style={{ marginBottom: "0" }}>{companyName}</p>
                     </div>
                 </div>
                 <div className="share-icons">
@@ -50,7 +67,7 @@ const JobPostedModal = ({
                     </button>
 
                     <a
-                        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(jobLink)}`}
+                        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareLink)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -59,7 +76,7 @@ const JobPostedModal = ({
                     </a>
 
                     <a
-                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(jobLink)}`}
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                     >

@@ -28,7 +28,7 @@ export async function POST(req) {
 
     try {
 
- 
+
         const LoginIp =
             headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
             headersList.get("x-real-ip") ||
@@ -83,11 +83,10 @@ export async function POST(req) {
         console.error("UPDATE ERROR:", error);
 
         return NextResponse.json(
-            { message: "Failed to fetch profile details" },
+            { message: "Failed to fetch details" },
             { status: 500 }
         );
     }
 }
 
 
- 

@@ -80,7 +80,7 @@ export async function GET(req) {
 
     return NextResponse.json(
       {
-        message: "Failed to fetch profile details",
+        message: "Failed to fetch details",
         //debug: debugInfo,
         error: error.message,
       },

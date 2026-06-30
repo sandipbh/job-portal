@@ -11,13 +11,13 @@ import { toast } from "react-toastify";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import JobPostedModal from "./JobPostedModal";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
 });
-const MAX_LENGTH = 500;
+const MAX_LENGTH = 1000;
 
 const modules = {
   toolbar: [
@@ -54,15 +54,17 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   const [charCount, setCharCount] = useState(0);
 
   const searchParams = useSearchParams();
-  const jobId = searchParams.get("jobid");
+  const jobId = searchParams.get("jobid") ?? 0;
+
+  const pathname = usePathname();
+
 
   useEffect(() => {
     if (!jobId) return;
-
-
   }, [jobId]);
 
 
+  const [jobpostid, setJobpostid] = useState(jobId);
   const [compName, setCompName] = useState("");
 
   useEffect(() => {
@@ -1363,6 +1365,8 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
           setLoading(false);
           return;
         }
+
+        setJobpostid(user.jobpostid);
         setShowJobPostedModal(true);
         toast.success(user.message);
       } catch (error) {
@@ -2581,10 +2585,10 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     textAlign: "right",
                     fontSize: "12px",
                     marginTop: "5px",
-                    color: charCount < 500 ? "red" : "green",
+                    color: charCount < 1000 ? "red" : "green",
                   }}
                 >
-                  {charCount}/500 minimum characters
+                  {charCount}/1000 minimum characters
                 </div>
                 {errors.jobDesc && (
                   <span className="text-danger small">
@@ -3217,7 +3221,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         onClose={() => setShowJobPostedModal(false)}
         jobTitle={formData.jobTitle}
         companyName={formData.companyName}
-        jobLink={""}
+        jobLink={`/job-single-v2/${jobpostid}`}
       />
 
     </>

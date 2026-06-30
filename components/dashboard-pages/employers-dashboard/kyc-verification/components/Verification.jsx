@@ -112,7 +112,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
     const validateStep1 = () => {
         let newErrors = {};
         //////return true ;
-        if (!kycData.companyName || kycData.companyName.length < 5 || kycData.companyName.trim() == "") {
+        if (!kycData.companyName || kycData.companyName.length < 4 || kycData.companyName.trim() == "") {
             newErrors.companyName = "Company name is required";
         }
 

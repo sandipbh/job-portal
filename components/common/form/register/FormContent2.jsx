@@ -302,7 +302,7 @@ const FormContent2 = () => {
           companyName: newErrors.companyName
         }));
         return;
-      } else if (formData.companyName.trim().length < 2) {
+      } else if (formData.companyName.trim().length < 4) {
         newErrors.companyName = "Enter a valid company name";
         toast.error(newErrors.companyName);
         setErrors((prev) => ({
