@@ -31,7 +31,7 @@ const RelatedJobs3 = ({ id }) => {
         const result = await response.json();
 
         const listData = result?.data;
-        console.log('Job Details  ', JSON.stringify(listData))
+        //  console.log('Job Details  ', JSON.stringify(listData))
 
         if (listData) {
 
@@ -100,7 +100,7 @@ const RelatedJobs3 = ({ id }) => {
           <>
             {jobRelated.map((item) => (
               <div
-                className="job-block-four col-lg-6 col-md-6 col-sm-12"
+                className="job-block-four col-lg-12 col-md-12 col-sm-12"
                 key={item.id}
               >
                 <div className="inner-box">
@@ -111,7 +111,7 @@ const RelatedJobs3 = ({ id }) => {
                       </li>
                     ))}
                   </ul>
-                  <span className="company-logo">
+                  <span className="company-logo" style={{ width: "80px", height: "60px" }}>
                     <Image
                       width={80}
                       height={60}

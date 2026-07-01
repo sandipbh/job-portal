@@ -26,7 +26,7 @@ const index = () => {
 
             <section className="ls-section">
                 <div className="auto-container">
-                    <div className="row">
+                    <div className="row align-items-start">
                         <div
                             className="offcanvas offcanvas-start"
                             tabIndex="-1"

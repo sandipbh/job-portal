@@ -15,9 +15,11 @@
         padding: 0 15px;
     }
 }
+
 .mr-30 {
     margin-right: 30px;
 }
+
 @keyframes slideInDown {
     0% {
         -webkit-transform: translate3d(0, -100%, 0);
@@ -119,6 +121,7 @@
 }
 
 .banner-style-two.dark {
+
     h3,
     p {
         color: #696969;
@@ -171,7 +174,7 @@
 
 // send private message candidates single modal css
 .apply-modal-content {
-    padding: 40px 40px 40px 40px;
+    padding: 20px 20px 20px 20px;
 
     .title {
         margin-bottom: 20px;
@@ -187,11 +190,11 @@
 
     .uploadButton .uploadButton-button {
         width: 100%;
-        border-color: rgba(25, 103, 210, 0.15);
+        border-color: rgb(187 196 239);
         height: auto;
-        padding: 30px;
+        padding: 1px;
         font-size: 14px;
-        color: #77838f;
+        color: #38424d;
 
         &::before {
             display: none;
@@ -265,7 +268,7 @@
 
 .menu-active-link,
 .menu-active {
-    > a {
+    >a {
         color: var(--primary-color) !important;
     }
 }
@@ -310,7 +313,7 @@
     display: none;
 }
 
-.ui-checkbox input[type="radio"]:checked ~ span::before {
+.ui-checkbox input[type="radio"]:checked~span::before {
     content: "\f00c";
     background-color: var(--primary-color);
     border: 1px solid var(--primary-color);

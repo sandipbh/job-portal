@@ -1,11 +1,10 @@
 import Link from "next/link";
-import candidatesData from "../../../../../data/candidates";
 import Image from "next/image";
 
-const Applicants = () => {
+const Applicants = ({ candidates }) => {
   return (
     <>
-      {candidatesData.slice(17, 23).map((candidate) => (
+      {candidates.map((candidate) => (
         <div
           className="candidate-block-three col-lg-6 col-md-12 col-sm-12"
           key={candidate.id}

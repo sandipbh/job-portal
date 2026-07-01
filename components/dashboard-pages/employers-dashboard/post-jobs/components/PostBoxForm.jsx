@@ -79,7 +79,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         }
       });
       const data = await response.json();
-      let fullname = data.data;
+      let fullname = data.fullname;
       console.log(fullname)
       setFormData((prev) => ({
         ...prev,
@@ -999,6 +999,12 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
           "Please enter a question";
       }
 
+      // Candidate Answer Type
+      if (!q.type?.trim()) {
+        newErrors[`type_${index}`] =
+          "Please select candidate answer type";
+      }
+
       // Type Answer
       if (q.type === "text") {
         if (!q.preferredAnswer?.trim()) {
@@ -1007,8 +1013,16 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         }
       }
 
-      // Yes No
-      if (q.type === "yesno") {
+      // Answer
+      if (q.type === "Answer") {
+        if (!q.preferredAnswer?.trim()) {
+          newErrors[`preferred_${index}`] =
+            "Please enter preferred answer";
+        }
+      }
+
+      // Yes / No
+      if (q.type === "Yes/No") {
         if (!q.preferredAnswer) {
           newErrors[`preferred_${index}`] =
             "Please select preferred answer";
@@ -1016,8 +1030,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       }
 
       // Multiple Choice
-      if (q.type === "options") {
-
+      if (q.type === "MultiOption") {
         if (q.options.length < 2) {
           newErrors[`options_${index}`] =
             "Minimum 2 options required";
@@ -1032,7 +1045,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
         if (!q.preferredAnswer) {
           newErrors[`preferred_${index}`] =
-            "Please select answer";
+            "Please select preferred option";
         }
       }
     });
@@ -1405,7 +1418,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
             <div
               key={index}
               className="tab-step"
-              onClick={() => setActiveTab(index)}
+            // onClick={() => setActiveTab(index)}
             >
               <div
                 className={`circle ${isCompleted ? "completed" : isActive ? "active" : ""
@@ -2253,7 +2266,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                         }}
                       />
                     </div>
-                    {questions.length > 1 && (
+                    {questions.length > 0 && (
                       <button
                         type="button"
                         className="delete-btn"
@@ -2288,13 +2301,18 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                         updated[index].type = e.target.value;
                         updated[index].preferredAnswer = "";
 
-                        if (e.target.value === "MultiOption") {
+                        if (e.target.value === "MultiOption" || e.target.value === "Yes/No") {
                           updated[index].options = [""];
                         } else {
                           updated[index].options = [];
                         }
 
                         setQuestions(updated);
+
+                        setErrors((prev) => ({
+                          ...prev,
+                          [`type_${index}`]: "",
+                        }));
                         console.log(questions)
                       }}
                     >
@@ -2303,6 +2321,12 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                       <option value="Yes/No">Yes / No</option>
                       <option value="MultiOption">Multiple Choice</option>
                     </select>
+
+                    {errors[`type_${index}`] && (
+                      <span className="error-text">
+                        {errors[`type_${index}`]}
+                      </span>
+                    )}
                   </div>
                   {/* Preferred Answer for Text */}
                   {q.type === "Answer" && (
@@ -2362,7 +2386,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   {/* Multiple Choice Options */}
                   {q.type === "MultiOption" && (
                     <div className="options-box">
-                      <span>{q.options}</span>
+
                       {q.options.map((opt, i) => (
                         <div key={i}>
                           <input

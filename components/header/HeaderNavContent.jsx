@@ -25,14 +25,13 @@ const HeaderNavContent = () => {
         <ul className="navigation" id="navbar">
           {/* current dropdown */}
           <li>
-             <Link href="/">Home</Link>
+            <Link href="/">Home </Link>
           </li>
           {/* End homepage menu items */}
 
           <li
-            className={`${
-              isActiveParent(findJobItems, usePathname()) ? "current" : ""
-            } dropdown has-mega-menu`}
+            className={`${isActiveParent(findJobItems, usePathname()) ? "current" : ""
+              } dropdown has-mega-menu`}
             id="has-mega-menu"
           >
             <span>Find Jobs</span>
@@ -66,12 +65,11 @@ const HeaderNavContent = () => {
           {/* End findjobs menu items */}
 
           <li
-            className={`${
-              isActiveParent(employerItems, usePathname()) ||
+            className={`${isActiveParent(employerItems, usePathname()) ||
               usePathname()?.split("/")[1] === "employers-dashboard"
-                ? "current"
-                : ""
-            } dropdown`}
+              ? "current"
+              : ""
+              } dropdown`}
           >
             <span>Employers</span>
             <ul>
@@ -118,14 +116,13 @@ const HeaderNavContent = () => {
           {/* End Employers menu items */}
 
           <li
-            className={`${
-              isActiveParent(candidateItems, usePathname()) ||
+            className={`${isActiveParent(candidateItems, usePathname()) ||
               usePathname()?.split("/")[1] === "candidates-dashboard"
+              ? "current"
+              : ""
                 ? "current"
                 : ""
-                ? "current"
-                : ""
-            } dropdown`}
+              } dropdown`}
           >
             <span>Candidates</span>
             <ul>
@@ -172,9 +169,8 @@ const HeaderNavContent = () => {
           {/* End Candidates menu items */}
 
           <li
-            className={`${
-              isActiveParentChaild(blogItems, usePathname()) ? "current" : ""
-            } dropdown`}
+            className={`${isActiveParentChaild(blogItems, usePathname()) ? "current" : ""
+              } dropdown`}
           >
             <span>Blog</span>
             <ul>
@@ -193,23 +189,21 @@ const HeaderNavContent = () => {
           {/* End Blog menu items */}
 
           <li
-            className={`${
-              isActiveParentChaild(pageItems, usePathname()) ||
+            className={`${isActiveParentChaild(pageItems, usePathname()) ||
               isActiveParentChaild(shopItems[0].items, usePathname())
-                ? "current "
-                : ""
-            } dropdown`}
+              ? "current "
+              : ""
+              } dropdown`}
           >
             <span>Pages</span>
             <ul>
               {shopItems.map((item) => (
                 <li className="dropdown" key={item.id}>
                   <span
-                    className={`${
-                      isActiveParentChaild(shopItems[0].items, usePathname())
-                        ? "current "
-                        : ""
-                    }`}
+                    className={`${isActiveParentChaild(shopItems[0].items, usePathname())
+                      ? "current "
+                      : ""
+                      }`}
                   >
                     {item.title}
                   </span>

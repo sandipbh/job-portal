@@ -8,12 +8,59 @@ import ApplyQuestionDrawer from "./ApplyQuestionDrawer";
 import { toast } from "react-toastify";
 
 
-const ApplyJobModalContent = () => {
+const ApplyJobModalContent = ({ id }) => {
+
+  let jobId = id ?? 0;
+
+
   const [resume, setResume] = useState(null);
   const [message, setMessage] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [errors, setErrors] = useState({});
   const router = useRouter();
+
+  const [fullName, setFullName] = useState("");
+  const [loginType, setLoginType] = useState("");
+  const [loginUqid, setLoginUqid] = useState("");
+
+
+  useEffect(() => {
+    getCookiesValue();
+  }, []);
+
+  const getCookiesValue = async () => {
+    try {
+      const response = await fetch("/api/cookies-details", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      const data = await response.json();
+      const fullname = data?.fullname ?? "";
+      const role = data?.role ?? "";
+      const uqid = data?.uqid ?? "";
+
+      setFullName(fullname);
+      setLoginType(role);
+      setLoginUqid(uqid);
+      // if (!fullname || !role || !uqid) {
+      //   toast.error("Login information is missing. Please log in again.");
+      //   return;
+      // }
+
+      // if (role != "candidate") {
+      //   toast.error("Login information is missing. Please log in as candidate.");
+      //   return;
+      // }
+
+
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   const handleResumeChange = (e) => {
     const file = e.target.files[0];
@@ -70,17 +117,16 @@ const ApplyJobModalContent = () => {
     }
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const newErrors = {};
 
-    if (!resume) {
+    if (!resume || resume.size === 0) {
       newErrors.resume = "Please upload your resume.";
     }
 
-    if (!message.trim()) {
+    if (!message.trim() || message.length < 10) {
       newErrors.message = "Please enter a message.";
     }
 
@@ -92,7 +138,12 @@ const ApplyJobModalContent = () => {
 
     if (Object.keys(newErrors).length > 0) return;
 
-    // Open Question Modal
+    // document.getElementById("applyModalCloseBtn")?.click();
+
+    // setTimeout(() => {
+    //   setShowDrawer();
+    // }, 300);
+
     setShowDrawer(true);
   };
 
@@ -105,6 +156,10 @@ const ApplyJobModalContent = () => {
 
     setShowDrawer(false);
 
+    // const modal = document.getElementById("applyJobModal");
+    // const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
+    // modalInstance?.hide();
+
     // Swal.fire({
     //   toast: true,
     //   position: "top-end",
@@ -113,6 +168,8 @@ const ApplyJobModalContent = () => {
     //   timer: 1500,
     //   showConfirmButton: false,
     // });
+
+
     toast.success("Applied Successfully")
 
     resetForm();
@@ -151,14 +208,21 @@ const ApplyJobModalContent = () => {
     >
       <div className="row">
         {/* Resume Upload */}
-        <div className="col-lg-12 form-group">
+        <div className="col-lg-12  mb-4 ">
           <div className="uploading-outer apply-cv-outer">
+
+            {resume && (
+              <div className="mt-2 file-name text-center">
+                {resume.name}
+              </div>
+            )}
             <div className="uploadButton">
+
               <input
-                className="uploadButton-input"
+                className="uploadButton-input d-none"
                 type="file"
                 id="upload"
-                accept=".pdf,.doc,.docx"
+                accept=".pdf"
                 onChange={handleResumeChange}
               />
 
@@ -166,21 +230,15 @@ const ApplyJobModalContent = () => {
                 className="uploadButton-button ripple-effect"
                 htmlFor="upload"
               >
-                Upload CV (DOC, DOCX, PDF)
+                Upload CV (PDF)
               </label>
             </div>
-
-            {/* {resume && (
-              <div className="mt-2 file-name">
-                {resume.name}
-              </div>
-            )}
 
             {errors.resume && (
               <div className="error-text">
                 {errors.resume}
               </div>
-            )} */}
+            )}
           </div>
         </div>
 
@@ -190,6 +248,7 @@ const ApplyJobModalContent = () => {
             className="darma"
             placeholder="Tell recruiter about your skills, experience, and qualifications..."
             value={message}
+            maxLength={500}
             onChange={(e) => {
               setMessage(e.target.value);
 
@@ -201,11 +260,27 @@ const ApplyJobModalContent = () => {
               }
             }}
           />
-          {/* {errors.message && (
-            <div className="error-text">
-              {errors.message}
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              {errors.message && (
+                <div className="error-text">
+                  {errors.message}
+                </div>
+              )}
             </div>
-          )} */}
+            <div
+              style={{
+                textAlign: "right",
+                fontSize: "13px",
+                color: message.length >= 500 ? "red" : "#666",
+                marginTop: "5px",
+              }}
+            >
+              <span className="error-text">  {message.length}/500 characters</span>
+            </div>
+
+          </div>
+
 
         </div>
 
@@ -238,12 +313,12 @@ const ApplyJobModalContent = () => {
               </span>
             </label>
           </div>
-          {/* 
+
           {errors.accepted && (
             <div className="error-text">
               {errors.accepted}
             </div>
-          )} */}
+          )}
         </div>
 
         {/* Submit */}
@@ -270,8 +345,9 @@ const ApplyJobModalContent = () => {
         setResume={setResume}
         errors={errors}
         setErrors={setErrors}
+        jobId={jobId}
       />
-    </form>
+    </form >
   );
 };
 

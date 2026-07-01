@@ -1,41 +1,52 @@
-
 'use client'
+
 import { useDispatch, useSelector } from "react-redux";
 import { addExperience } from "../../../features/filter/filterSlice";
-import { experienceLavelCheck } from "../../../features/job/jobSlice";
 
 const ExperienceLevel = () => {
-    const { experienceLavel } = useSelector((state) => state.job) || {};
     const dispatch = useDispatch();
 
-    // experience handler
-    const experienceHandler = (e, id) => {
-        dispatch(addExperience(e.target.value));
-        dispatch(experienceLavelCheck(id));
+    const experience =
+        useSelector((state) => state.filter.jobList.experience) || 0;
+
+    const handleChange = (e) => {
+        dispatch(addExperience(Number(e.target.value)));
     };
 
     return (
-        <ul className="switchbox">
-            {experienceLavel?.map((item) => (
-                <li key={item.id}>
-                    <label className="switch">
-                        <input
-                            type="checkbox"
-                            checked={item.isChecked}
-                            value={item.value}
-                            onChange={(e) => experienceHandler(e, item.id)}
-                        />
-                        <span className="slider round"></span>
-                        <span className="title">{item.name}</span>
-                    </label>
-                </li>
-            ))}
-            <li>
-                <button className="view-more">
-                    <span className="icon flaticon-plus"></span> View More
-                </button>
-            </li>
-        </ul>
+        <div className="experience-filter">
+            <div
+                className="experience-marker"
+                style={{
+                    left: `calc(${(experience / 30) * 100}% - 12px)`,
+                }}
+            >
+                <span>{experience}</span>
+            </div>
+
+            <input
+                type="range"
+                min="0"
+                max="30"
+                value={experience}
+                onChange={handleChange}
+                className="experience-slider"
+                style={{
+                    background: `linear-gradient(
+            to right,
+            #1967d2 0%,
+            #1967d2 ${(experience / 30) * 100}%,
+            #d7dce8 ${(experience / 30) * 100}%,
+            #d7dce8 100%
+        )`
+                }}
+            />
+
+            <div className="experience-labels">
+                <span>0 Yrs</span>
+                <span>30 Yrs</span>
+            </div>
+        </div>
     );
 };
 

@@ -6,6 +6,7 @@ import RelatedJobs3 from "@/components/job-single-pages/related-jobs/RelatedJobs
 import ApplyJobModalContent from "@/components/job-single-pages/shared-components/ApplyJobModalContent";
 import Image from "next/image";
 import JobCardSkeleton from "@/components/skeleton/Job-list";
+import { toast } from "react-toastify";
 
 const JobDetailsV2 = ({ id }) => {
 
@@ -17,6 +18,51 @@ const JobDetailsV2 = ({ id }) => {
     useEffect(() => {
         setShareUrl(window.location.href);
     }, []);
+
+    const [fullName, setFullName] = useState("");
+    const [loginType, setLoginType] = useState("");
+    const [loginUqid, setLoginUqid] = useState("");
+
+
+    useEffect(() => {
+        getCookiesValue();
+    }, []);
+
+    const getCookiesValue = async () => {
+        try {
+            const response = await fetch("/api/cookies-details", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+            const data = await response.json();
+            const fullname = data?.fullname ?? "";
+            const role = data?.role ?? "";
+            const uqid = data?.uqid ?? "";
+
+            setFullName(fullname);
+            setLoginType(role);
+            setLoginUqid(uqid);
+
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const checkloginType = () => {
+        if (loginType == "") {
+            toast.error("Login your account.");
+            return;
+        }
+        if (loginType != "candidate") {
+            toast.error("Login information is missing. Please log in as candidate.");
+            return;
+        }
+    }
+
+
 
     useEffect(() => {
         getJobDetails();
@@ -35,7 +81,7 @@ const JobDetailsV2 = ({ id }) => {
             const result = await response.json();
 
             const listData = result?.data;
-            console.log('Job Details  ', JSON.stringify(listData))
+            // console.log('Job Details  ', JSON.stringify(listData))
 
             if (listData) {
 
@@ -109,16 +155,16 @@ const JobDetailsV2 = ({ id }) => {
                         <section className="job-detail-section">
                             <div className="job-detail-outer">
                                 <div className="auto-container">
-                                    <div className="row">
-                                        <div className="content-column col-lg-8 col-md-12 col-sm-12">
-                                            <div className="job-block-outer">
+                                    <div className="row align-items-start">
+                                        <div className="upper-box" style={{ padding: "10px 0 10px" }}>
+                                            <div className="auto-container">
                                                 <div className="job-block-seven">
                                                     <div className="inner-box">
                                                         <div className="content">
                                                             <span className="company-logo">
                                                                 <Image
                                                                     width={100}
-                                                                    height={98}
+                                                                    height={80}
                                                                     src={jobDetails?.logo || "/images/defaultLogo.png"}
                                                                     alt="logo"
                                                                     priority
@@ -159,6 +205,80 @@ const JobDetailsV2 = ({ id }) => {
                                                             {/* End .job-other-info */}
                                                         </div>
                                                         {/* End .content */}
+
+                                                        {loginType == "candidate" ? (
+                                                            <div className="btn-box">
+                                                                <a
+                                                                    href="#"
+                                                                    className="theme-btn btn-style-one"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#applyJobModal"
+                                                                >
+                                                                    Apply For Job
+                                                                </a>
+                                                                <button className="bookmark-btn">
+                                                                    <i className="flaticon-bookmark"></i>
+                                                                </button>
+                                                            </div>
+                                                        ) : (<div className="btn-box">
+                                                            <button
+
+                                                                onClick={() => {
+                                                                    checkloginType()
+                                                                }}
+                                                                className="theme-btn btn-style-one"
+                                                            >
+                                                                Apply For Job
+                                                            </button>
+                                                            <button className="bookmark-btn">
+                                                                <i className="flaticon-bookmark"></i>
+                                                            </button>
+                                                        </div>)}
+
+                                                        {/* End apply for job btn */}
+
+                                                        {/* <!-- Modal --> */}
+                                                        <div
+                                                            className="modal fade"
+                                                            id="applyJobModal"
+                                                            tabIndex="-1"
+                                                            aria-hidden="true"
+                                                        >
+                                                            <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                                <div className="apply-modal-content modal-content" style={{ overflowY: "auto" }}>
+                                                                    <div className="text-center">
+                                                                        <h3 className="title">Apply for this job</h3>
+                                                                        <button
+                                                                            id="applyModalCloseBtn"
+                                                                            type="button"
+                                                                            className="closed-modal"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"
+                                                                        ></button>
+                                                                    </div>
+                                                                    {/* End modal-header */}
+
+                                                                    <ApplyJobModalContent id={jobId} />
+                                                                    {/* End PrivateMessageBox */}
+                                                                </div>
+                                                                {/* End .send-private-message-wrapper */}
+                                                            </div>
+                                                        </div>
+                                                        {/* End .modal */}
+                                                        {/* End .modal */}
+                                                    </div>
+                                                </div>
+                                                {/* <!-- Job Block --> */}
+                                            </div>
+                                        </div>
+                                        <div className="content-column col-lg-8 col-md-12 col-sm-12">
+
+
+                                            <div className="job-block-outer">
+                                                <div className="job-block-seven">
+                                                    <div className="inner-box">
+
+                                                        {/* End .content */}
                                                     </div>
                                                 </div>
                                                 {/* <!-- Job Block --> */}
@@ -168,8 +288,6 @@ const JobDetailsV2 = ({ id }) => {
                                             <div className="job-detail">
                                                 <h4>Job Description</h4>
 
-
-
                                                 <div className="ql-snow">
                                                     <div
                                                         className="ql-editor"
@@ -178,11 +296,24 @@ const JobDetailsV2 = ({ id }) => {
                                                 </div>
 
 
-
                                             </div>
                                             {/* End jobdetails content */}
+                                            <div className="job-detail">
+                                                <h4>Skills</h4>
+                                                <ul className="job-skills">
+                                                    {(jobDetails?.skills ?? "").split(", ").map((item, index, arr) => (
+                                                        <li key={index}>
+                                                            {item.replace("*", "")}
+                                                            {item.includes("*") && <sup className="fa fa-star" style={{
+                                                                fontSize: "xx-small", color: "#d66a22", top: "-0.9em"
+                                                            }}></sup>}
+                                                            {index < arr.length - 1 && ", "}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
 
-                                            <div className="other-options">
+                                            <div className="other-options" style={{ marginBottom: "20px", marginTop: "20px" }}>
                                                 <div className="social-share">
                                                     <h5>Share this job</h5>
                                                     <a
@@ -215,75 +346,16 @@ const JobDetailsV2 = ({ id }) => {
                                                     </a>
                                                 </div>
                                             </div>
-                                            {/* <!-- Other Options --> */}
+                                            <div className="row mt-3">
+                                                <div className="col-6 align-self-start  mt-3">
+                                                    <h4 style={{
+                                                        fontWeight: "500",
+                                                        fontSize: "18px",
+                                                        lineHeight: "24px",
+                                                        color: "rgb(32, 33, 36)",
+                                                        marginBottom: "20px",
 
-
-                                            <div className="related-jobs">
-                                                <div className="title-box">
-                                                    <h3>Related Jobs</h3>
-                                                    {/* <div className="text">
-                                            2020 jobs live - 293 added today.
-                                        </div> */}
-                                                </div>
-                                                {/* End title box */}
-
-                                                <div className="row">
-                                                    <RelatedJobs3 id={jobDetails?.indistryList} />
-                                                </div>
-                                                {/* End .row */}
-                                            </div>
-                                            {/* <!-- Related Jobs --> */}
-                                        </div>
-                                        {/* End .content-column */}
-
-                                        <div className="sidebar-column col-lg-4 col-md-12 col-sm-12">
-                                            <aside className="sidebar">
-                                                <div className="btn-box">
-                                                    <a
-                                                        href="#"
-                                                        className="theme-btn btn-style-one"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#applyJobModal"
-                                                    >
-                                                        Apply For Job
-                                                    </a>
-                                                    <button className="bookmark-btn">
-                                                        <i className="flaticon-bookmark"></i>
-                                                    </button>
-                                                </div>
-                                                {/* End apply for job btn */}
-
-                                                {/* <!-- Modal --> */}
-                                                <div
-                                                    className="modal fade"
-                                                    id="applyJobModal"
-                                                    tabIndex="-1"
-                                                    aria-hidden="true"
-                                                >
-                                                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                        <div className="apply-modal-content modal-content">
-                                                            <div className="text-center">
-                                                                <h3 className="title">Apply for this job</h3>
-                                                                <button
-                                                                    type="button"
-                                                                    className="closed-modal"
-                                                                    data-bs-dismiss="modal"
-                                                                    aria-label="Close"
-                                                                ></button>
-                                                            </div>
-                                                            {/* End modal-header */}
-
-                                                            <ApplyJobModalContent />
-                                                            {/* End PrivateMessageBox */}
-                                                        </div>
-                                                        {/* End .send-private-message-wrapper */}
-                                                    </div>
-                                                </div>
-                                                {/* End .modal */}
-
-                                                <div className="sidebar-widget" style={{ marginBlock: "0px" }}>
-                                                    {/* <!-- Job Overview --> */}
-                                                    <h4 className="widget-title">Job Overview</h4>
+                                                    }}>Job Overview</h4>
                                                     <div className="widget-content">
                                                         <ul className="job-overview">
                                                             <li>
@@ -315,96 +387,113 @@ const JobDetailsV2 = ({ id }) => {
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                    <div className=" mt-3"></div>
-                                                    <h4 className="widget-title">Job Skills </h4>
-                                                    <div className="widget-content">
-                                                        <ul className="job-skills">
-                                                            {(jobDetails?.skills ?? "").split(", ").map((item, index, arr) => (
-                                                                <li key={index}>
-                                                                    {item.replace("*", "")}
-                                                                    {item.includes("*") && <sup className="fa fa-star" style={{
-                                                                        fontSize: "xx-small", color: "#d66a22", top: "-0.9em"
-                                                                    }}></sup>}
-                                                                    {index < arr.length - 1 && ", "}
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                    {/* <!-- Job Skills --> */}
                                                 </div>
-                                                {/* End .sidebar-widget */}
-
-                                                <div className="sidebar-widget company-widget">
+                                                <div className="col-6 align-self-start  mt-3">
                                                     <div className="widget-content">
+                                                        <h4 style={{
+                                                            fontWeight: "500",
+                                                            fontSize: "18px",
+                                                            lineHeight: "24px",
+                                                            color: "rgb(32, 33, 36)",
+                                                            marginBottom: "20px",
+
+                                                        }}>Company Details</h4>
                                                         <div className="company-title">
                                                             <div className="company-logo">
                                                                 <Image
-                                                                    width={54}
-                                                                    height={53}
+                                                                    width={100}
+                                                                    height={80}
                                                                     src={jobDetails?.logo || "/images/defaultLogo.png"}
                                                                     alt="resource"
                                                                     priority
                                                                 />
                                                             </div>
-                                                            <h5 className="company-name">{jobDetails.company}</h5>
-                                                            {/* <a href="#" className="profile-link">
-                                                    View company profile
-                                                </a> */}
+                                                            <h6 className="company-name">{jobDetails.company}</h6>
+                                                            <a href="#" className="profile-link">
+                                                                View company profile
+                                                            </a>
 
-
-                                                        </div>
-                                                        {/* End company title */}
-                                                        <div>
-                                                            <ul className="company-info">
-                                                                <li>
-                                                                    Primary industry: <span>{jobDetails?.indistry}</span>
-                                                                </li>
-                                                                <li>
-                                                                    Company size: <span>{jobDetails?.compSize}</span>
-                                                                </li>
-
-                                                                {/* <li>
-                                                        Phone: <span>123 456 7890</span>
-                                                    </li>
-                                                    <li>
-                                                        Email: <span>info@joio.com</span>
-                                                    </li> */}
-                                                                <li>
-                                                                    Location: <span>{jobDetails?.compCity}, {jobDetails?.compState}</span>
-                                                                </li>
-                                                                {/* <li>
+                                                            <div>
+                                                                <ul className="company-info" style={{ marginBottom: "10px" }}>
+                                                                    <li style={{ paddingTop: "8px" }}>
+                                                                        Primary industry: <span>{jobDetails?.indistry}</span>
+                                                                    </li>
+                                                                    <li style={{ paddingTop: "8px" }}>
+                                                                        Company size: <span>{jobDetails?.compSize}</span>
+                                                                    </li>
+                                                                    {/* <li style={{ paddingTop: "8px"}}>
+                                                                        Phone: <span>123 456 7890</span>
+                                                                    </li>
+                                                                    <li style={{ paddingTop: "8px"}}>
+                                                                        Email: <span>info@joio.com</span>
+                                                                    </li>   */}
+                                                                    <li style={{ paddingTop: "8px" }}>
+                                                                        Location: <span>{jobDetails?.compCity}, {jobDetails?.compState}</span>
+                                                                    </li>
+                                                                    {/* <li>
                                                         Social media:
                                                         <Social />
                                                     </li> */}
-                                                            </ul>
-                                                            {
+                                                                </ul>
+                                                                {
 
-                                                                jobDetails?.compWebsite && (
-                                                                    <div className="btn-box">
-                                                                        <a
-                                                                            href={jobDetails?.compWebsite}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            className="btn btn-sm btn-outline-primary w-100"
+                                                                    jobDetails?.compWebsite && (
+                                                                        <div className="btn-box">
+                                                                            <a
+                                                                                href={jobDetails?.compWebsite}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                className="btn btn-sm btn-outline-primary w-100"
 
-                                                                        >
-                                                                            {jobDetails?.compWebsite}
-                                                                        </a>
-                                                                    </div>
-                                                                )
-                                                            }
+                                                                            >
+                                                                                {jobDetails?.compWebsite}
+                                                                            </a>
+                                                                        </div>
+                                                                    )
+                                                                }
 
+                                                            </div>
                                                         </div>
-
+                                                        {/* End company title */}
 
 
                                                         {/* End btn-box */}
                                                     </div>
                                                 </div>
-                                                {/* End .company-widget */}
+                                            </div>
 
 
-                                                {/* End contact-widget */}
+                                            {/* <!-- Other Options --> */}
+
+
+
+                                            {/* <!-- Related Jobs --> */}
+                                        </div>
+                                        {/* End .content-column */}
+
+                                        <div className="sidebar-column col-lg-4 col-md-12 col-sm-12">
+                                            <aside className="sidebar">
+
+
+                                                <div className="sidebar-widget" style={{ marginBlock: "0px", "padding": "20px 10px 20px" }}>
+                                                    <div className="related-jobs mt-3">
+                                                        <div className="title-box">
+                                                            <h3>Related Jobs</h3>
+                                                            {/* <div className="text">
+                                            2020 jobs live - 293 added today.
+                                        </div> */}
+                                                        </div>
+                                                        {/* End title box */}
+
+                                                        <div className="row">
+                                                            <RelatedJobs3 id={jobDetails?.indistryList} />
+                                                        </div>
+                                                        {/* End .row */}
+                                                    </div>
+                                                </div>
+                                                {/* End .sidebar-widget */}
+
+
                                             </aside>
                                             {/* End .sidebar */}
                                         </div>
@@ -417,7 +506,8 @@ const JobDetailsV2 = ({ id }) => {
                         {/* <!-- End Job Detail Section --> */}
 
                     </>
-                )}
+                )
+            }
         </>
     );
 };

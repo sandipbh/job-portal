@@ -15,12 +15,14 @@ export async function GET(req) {
         console.error("Invalid JSON token:", err);
         user = {};
     }
-    console.log("dashboard user User Role :", user.external.role);
+    console.log("dashboard user User Role :", user);
 
     try {
         const response = NextResponse.json(
             {
-                data: user.external.fullName || "",
+                fullname: user.external.fullName || "",
+                role: user.external.role || "",
+                uqid: user.external.uqId || "",
             },
             { status: 201 }
         );

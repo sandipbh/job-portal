@@ -10,10 +10,13 @@ const initialState = {
         },
         category: "",
         jobType: [],
+        companyType: [],
         jobTypeSelect: "",
+        skills: [],
+        education: [],
+        industry: [],
         datePosted: "",
-        experience: [],
-        experienceSelect: "",
+        experience: 0,
         salary: {
             min: 0,
             max: 20000,
@@ -56,30 +59,112 @@ export const filterSlice = createSlice({
                 );
             }
         },
+
+        addSkill: (state, { payload }) => {
+            const exists = state.jobList.skills.includes(payload);
+
+            if (!exists) {
+                state.jobList.skills.push(payload);
+            } else {
+                state.jobList.skills = state.jobList.skills.filter(
+                    (item) => item !== payload
+                );
+            }
+        },
+        clearSkills: (state) => {
+            state.jobList.skills = [];
+        },
+
+        addEducation: (state, { payload }) => {
+            const exists = state.jobList.education.includes(payload);
+
+            if (!exists) {
+                state.jobList.education.push(payload);
+            } else {
+                state.jobList.education = state.jobList.education.filter(
+                    (item) => item !== payload
+                );
+            }
+        },
+
+        setEducation: (state, action) => {
+            state.jobList.education = action.payload;
+        },
+
+        clearEducation: (state) => {
+            state.jobList.education = [];
+        },
+        addIndustry: (state, { payload }) => {
+            const exists = state.jobList.industry.includes(payload);
+
+            if (!exists) {
+                state.jobList.industry.push(payload);
+            } else {
+                state.jobList.industry =
+                    state.jobList.industry.filter(
+                        (item) => item !== payload
+                    );
+            }
+        },
+
+        setIndustry: (state, action) => {
+            state.jobList.industry = action.payload;
+        },
+
+        clearIndustry: (state) => {
+            state.jobList.industry = [];
+        },
         clearJobType: (state) => {
             state.jobList.jobType = [];
         },
         addJobTypeSelect: (state, { payload }) => {
             state.jobList.jobTypeSelect = payload;
         },
-        addDatePosted: (state, { payload }) => {
-            state.jobList.datePosted = payload;
-        },
-        addExperience: (state, { payload }) => {
-            const isExist = state.jobList.experience.includes(payload);
+        addCompanyType: (state, { payload }) => {
+            const isExist = state.jobList.companyType.includes(payload);
+
             if (!isExist) {
-                state.jobList.experience.push(payload);
+                state.jobList.companyType.push(payload);
             } else {
-                state.jobList.experience = state.jobList.experience.filter(
+                state.jobList.companyType =
+                    state.jobList.companyType.filter(
+                        (item) => item !== payload
+                    );
+            }
+        },
+        clearCompanyType: (state) => {
+            state.jobList.companyType = [];
+        },
+
+        addSkill: (state, { payload }) => {
+            const exists = state.jobList.skills.includes(payload);
+
+            if (!exists) {
+                state.jobList.skills.push(payload);
+            } else {
+                state.jobList.skills = state.jobList.skills.filter(
                     (item) => item !== payload
                 );
             }
         },
-        addExperienceSelect: (state, { payload }) => {
-            state.jobList.experienceSelect = payload;
+
+        setSkills: (state, action) => {
+            state.jobList.skills = action.payload;
         },
+
+        clearSkills: (state) => {
+            state.jobList.skills = [];
+        },
+
+        addDatePosted: (state, { payload }) => {
+            state.jobList.datePosted = payload;
+        },
+        addExperience: (state, { payload }) => {
+            state.jobList.experience = payload;
+        },
+
         clearExperience: (state) => {
-            state.jobList.experience = [];
+            state.jobList.experience = 0;
         },
         addSalary: (state, { payload }) => {
             state.jobList.salary.min = payload.min;
@@ -104,12 +189,23 @@ export const {
     addDestination,
     addCategory,
     addJobType,
+    addCompanyType,
     clearJobType,
+    clearCompanyType,
+    addSkill,
+    clearSkills,
+    setSkills,
+    addEducation,
+    setEducation,
+    clearEducation,
     addJobTypeSelect,
     addDatePosted,
     addExperience,
     addExperienceSelect,
     clearExperience,
+    addIndustry,
+    setIndustry,
+    clearIndustry,
     addSalary,
     addTag,
     addSort,

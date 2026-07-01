@@ -1,6 +1,6 @@
 "use client";
 
-import applicationQuestions from "@/data/applicationQuestions";
+//import applicationQuestions from "@/data/applicationQuestions";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
@@ -18,9 +18,47 @@ const ApplyQuestionDrawer = ({
     setResume,
     errors,
     setErrors,
+    jobId
 }) => {
 
     const [typing, setTyping] = useState(false);
+    const [applicationQuestions, setApplicationQuestions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [fullName, setFullName] = useState("");
+    const [loginType, setLoginType] = useState("");
+    const [loginUqid, setLoginUqid] = useState("");
+
+    useEffect(() => {
+        getQuestionsList();
+    }, []);
+
+
+
+    const getQuestionsList = async () => {
+        try {
+
+            const response = await fetch(`/api/job-details-questions?JobPostId=${jobId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            const result = await response.json();
+
+            const listData = result?.data;
+            console.log('Job Details Questions ', JSON.stringify(listData))
+
+            if (listData) {
+
+                setApplicationQuestions(listData);
+                setLoading(false);
+            }
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const chatEndRef = useRef(null);
     useEffect(() => {
@@ -63,6 +101,7 @@ const ApplyQuestionDrawer = ({
 
         if (currentQuestion === applicationQuestions.length - 1) {
             onSubmit();
+            document.getElementById("applyModalCloseBtn")?.click();
             return;
         }
 
@@ -115,7 +154,6 @@ const ApplyQuestionDrawer = ({
                 {/* Header */}
                 <div className="drawer-header">
                     <h4>Complete Application</h4>
-
                     <button
                         type="button"
                         className="close-btn"
@@ -149,7 +187,7 @@ const ApplyQuestionDrawer = ({
 
                     {/* Intro */}
                     <div className="bot-message intro">
-                        Hi Samir 👋
+                        Hi {fullName} 👋
                         <br />
                         The recruiter needs some profile information.
                         <br />
@@ -183,6 +221,8 @@ const ApplyQuestionDrawer = ({
                             {/* Current Question */}
                             <div className="bot-message">
                                 {question.question}
+
+                                {console.log("Question Options ", question.options)}
                             </div>
 
                             <div className="question-options">
@@ -201,21 +241,19 @@ const ApplyQuestionDrawer = ({
                                 )}
 
                                 {question.type === "radio" &&
-                                    question.options.map((option) => (
+
+
+                                    question.options?.map((option) => (
                                         <label
                                             key={option}
-                                            className={`option-card ${answers[question.key] === option
-                                                ? "active"
-                                                : ""
+                                            className={`option-card ${answers[question.key] === option ? "active" : ""
                                                 }`}
                                         >
                                             <input
                                                 type="radio"
                                                 name={question.key}
                                                 value={option}
-                                                checked={
-                                                    answers[question.key] === option
-                                                }
+                                                checked={answers[question.key] === option}
                                                 onChange={(e) =>
                                                     setAnswers({
                                                         ...answers,
@@ -226,7 +264,8 @@ const ApplyQuestionDrawer = ({
 
                                             <span>{option}</span>
                                         </label>
-                                    ))}
+                                    ))
+                                }
 
                                 {question.type === "select" && (
                                     <select

@@ -473,9 +473,11 @@ Job Section
 .job-block .job-info li a {
   color: #696969;
 }
+
 .job-block .content h4 {
   margin-bottom: 10px;
 }
+
 .job-block .bookmark-btn {
   position: absolute;
   right: 0;
@@ -1648,7 +1650,7 @@ Job Detail Section
 }
 
 .social-share a {
-  padding: 10px 25px;
+  padding: 5px 10px;
   font-size: 14px;
   line-height: 20px;
   color: #ffffff;
@@ -1663,12 +1665,12 @@ Job Detail Section
 
 .job-detail-section .related-jobs {
   position: relative;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
 }
 
 .job-detail-outer .map-outer {
   position: relative;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
 }
 
 .job-detail-outer .map-canvas {
@@ -1682,7 +1684,7 @@ Job Detail Section
 
 .related-jobs .title-box h3 {
   font-weight: 500;
-  font-size: 26px;
+  font-size: 20px;
   line-height: 35px;
   color: #000000;
   margin-bottom: 10px;
@@ -1697,6 +1699,7 @@ Job Detail Section
 .job-overview li {
   position: relative;
   padding-left: 50px;
+
   &:not(:last-child) {
     margin-bottom: 30px;
   }

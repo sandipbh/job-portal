@@ -2,8 +2,8 @@ module.exports = [
   {
     id: 1,
     logo: "/images/resource/company-logo/1-1.png",
-    jobTitle: "Software Engineer (Android), Libraries",
-    company: "Segment",
+    jobTitle: "Software (Android), Libraries",
+    company: "Samir TechPrime",
     location: "London, UK",
     time: "11 hours ago",
     salary: "$35k - $45k",
@@ -30,17 +30,28 @@ module.exports = [
     category: "Residential",
     created_at: "Last Hour",
     experience: "Fresh",
+    companyType: "Corporate",
+    skills: ["React",
+      "JavaScript",
+      "Redux",
+      "HTML",
+      "CSS"],
+
+    industry: "IT Services & Consulting",
+
+    education: "B.Tech/B.E.",
     totalSalary: {
       min: 0,
       max: 500,
     },
     tag: "app",
   },
+
   {
     id: 2,
     logo: "/images/resource/company-logo/1-2.png",
-    jobTitle: "Recruiting Coordinator",
-    company: "Catalyst",
+    jobTitle: "IT Consultant",
+    company: "daddu pvt ltd",
     location: "London, UK",
     time: "11 hours ago",
     salary: "$35k - $45k",

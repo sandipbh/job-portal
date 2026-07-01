@@ -16,7 +16,7 @@ export const metadata = {
 };
 
 const JobSingleDynamicV2 = ({ params }) => {
-  const id = params.id;
+  const id = params.id ?? 0;
 
   return (
     <>

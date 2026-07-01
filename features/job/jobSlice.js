@@ -45,10 +45,43 @@ const initialState = {
         },
         {
             id: 4,
-            name: "Temporary",
-            value: "temporary",
+            name: "Remote",
+            value: "remote",
             isChecked: false,
         },
+        {
+            id: 5,
+            name: "Hybrid",
+            value: "hybrid",
+            isChecked: false,
+        },
+    ],
+    companyTypeList: [
+        {
+            id: 1,
+            name: "Corporate",
+            value: "corporate",
+            isChecked: false,
+        },
+        {
+            id: 2,
+            name: "Foreign MNC",
+            value: "foreign-mnc",
+            isChecked: false,
+        },
+        {
+            id: 3,
+            name: "Indian MNC",
+            value: "indian-mnc",
+            isChecked: false,
+        },
+        {
+            id: 4,
+            name: "Startup",
+            value: "startup",
+            isChecked: false,
+        },
+
     ],
     datePost: [
         { id: 1, name: "All", value: "all", isChecked: false },
@@ -155,6 +188,28 @@ export const jobSlice = createSlice({
                 };
             });
         },
+        clearCompanyTypeToggle: (state) => {
+            state?.companyTypeList?.map((item) => {
+                item.isChecked = false;
+                return {
+                    ...item,
+                };
+            });
+        },
+        CompanyTypeCheck: (state, { payload }) => {
+            state?.companyTypeList?.map((item) => {
+                if (item.id === payload) {
+                    if (item.isChecked) {
+                        item.isChecked = false;
+                    } else {
+                        item.isChecked = true;
+                    }
+                }
+                return {
+                    ...item,
+                };
+            });
+        },
         datePostCheck: (state, { payload }) => {
             state?.datePost?.map((item) => {
                 item.isChecked = false;
@@ -203,6 +258,8 @@ export const {
     addLatestJob,
     clearJobTypeToggle,
     jobTypeCheck,
+    clearCompanyTypeToggle,
+    CompanyTypeCheck,
     datePostCheck,
     clearDatePostToggle,
     experienceLavelCheck,
