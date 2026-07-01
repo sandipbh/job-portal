@@ -284,8 +284,7 @@ export async function POST(req) {
 
       return NextResponse.json(
         {
-          message: responseData.message || "Job Post Failed",
-          jobpostid: responseData.data.jobPostId
+          message: responseData.message || "Job Post Failed.",
         },
         { status: responseData.status || 500 }
       );
@@ -307,7 +306,7 @@ export async function POST(req) {
     console.error("UPDATE ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to update Profile" },
+      { message: "Failed to update details" },
       { status: 500 }
     );
   }

@@ -37,12 +37,19 @@ export async function GET(req) {
             `${externalApiBaseUrl.replace(/\/+$/, "")}/api/Public/getJobListRelated`;
 
 
-        const externalResponse = await apiFetch(externalApiUrl, {
+
+        const externalResponse = await fetch(externalApiUrl, {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
             body: JSON.stringify(loginBody),
+            next: { revalidate: 60 }
         });
 
-        const responseData = JSON.parse(await externalResponse.text());
+        const responseData = await externalResponse.json();
+
 
         const response = NextResponse.json(
             {
