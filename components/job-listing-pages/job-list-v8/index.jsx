@@ -34,19 +34,19 @@ const index = () => {
               aria-labelledby="offcanvasLabel"
             >
               <div className="filters-column hide-left">
-                <FilterSidebar />
+                {/* <FilterSidebar /> */}
               </div>
             </div>
             {/* End filter column for tablet and mobile devices */}
 
             <div className="filters-column hidden-1023 col-lg-4 col-md-12 col-sm-12">
-              <FilterSidebar />
+              {/* <FilterSidebar /> */}
             </div>
             {/* <!-- End Filters Column --> */}
 
             <div className="content-column col-lg-8 col-md-12 col-sm-12">
               <div className="ls-outer">
-                <FilterJobsBox />
+                {/* <FilterJobsBox /> */}
                 {/* <!-- ls Switcher --> */}
               </div>
             </div>

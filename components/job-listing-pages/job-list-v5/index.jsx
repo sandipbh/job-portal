@@ -33,7 +33,7 @@ const index = () => {
           <div className="row">
             <div className="content-column col-lg-12">
               <div className="ls-outer">
-                <FilterJobBox />
+                {/* <FilterJobBox /> */}
               </div>
             </div>
             {/* <!-- End Content Column --> */}
