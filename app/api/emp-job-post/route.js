@@ -277,7 +277,7 @@ export async function POST(req) {
 
     if (!externalResponse.ok) {
       console.error(
-        "External jobpost failed:",
+        "External job post failed:",
         responseData.success,
         responseData.message
       );

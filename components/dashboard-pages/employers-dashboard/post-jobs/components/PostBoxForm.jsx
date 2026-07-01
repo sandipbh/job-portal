@@ -17,7 +17,7 @@ import { useSearchParams, usePathname } from "next/navigation";
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
 });
-const MAX_LENGTH = 1000;
+const MAX_LENGTH = 2000;
 
 const modules = {
   toolbar: [
@@ -2585,10 +2585,10 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     textAlign: "right",
                     fontSize: "12px",
                     marginTop: "5px",
-                    color: charCount < 1000 ? "red" : "green",
+                    color: charCount < 2000 ? "red" : "green",
                   }}
                 >
-                  {charCount}/1000 minimum characters
+                  {charCount}/2000 minimum characters
                 </div>
                 {errors.jobDesc && (
                   <span className="text-danger small">

@@ -2,13 +2,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import JobCardSkeleton from "@/components/skeleton/Job-list";
 
 
 const JobFeatured7 = () => {
 
   const [jobList, setJobList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     getJobList();
   }, []);
 
@@ -28,9 +31,8 @@ const JobFeatured7 = () => {
 
       if (listData) {
 
-
         setJobList(listData);
-
+        setLoading(false);
       }
     } catch (error) {
       console.error(error);
@@ -80,62 +82,70 @@ const JobFeatured7 = () => {
 
   return (
     <>
-      {jobList.slice(0, 5).map((item) => (
-        <div className="job-block-five" key={item.id}>
-          <div className="inner-box">
-            <div className="content">
+      {loading
+        ? Array.from({ length: 5 }).map((_, i) => (
+          <JobCardSkeleton key={i} />
+        ))
+        : (
+          <>
+            {jobList.map((item) => (
+              <div className="job-block-five" key={item.id}>
+                <div className="inner-box">
+                  <div className="content">
 
-              <span className="company-logo">
+                    <span className="company-logo">
 
-                <Image
-                  width={100}
-                  height={75}
-                  src={item.logo}
-                  alt="item brand"
-                />
-              </span>
-              <h4>
-                <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
+                      <Image
+                        width={100}
+                        height={75}
+                        src={item.logo}
+                        alt="item brand"
+                      />
+                    </span>
+                    <h4>
+                      <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
 
-              </h4>
-              <ul className="job-info">
-                <li>
-                  <span className="icon flaticon-briefcase"></span>
-                  {item.company}
-                </li>
-                {/* compnay info */}
-                <li>
-                  <span className="icon flaticon-map-locator"></span>
-                  {item.location}
-                </li>
-                {/* location info */}
-                <li>
-                  <span className="icon flaticon-clock-3"></span> {getTimeAgo(item.time)}
-                </li>
-                {/* time info */}
-                <li>
-                  <span className="icon flaticon-money"></span> {item.salary}
-                </li>
-                {/* salary info */}
-              </ul>
-              {/* End .job-info */}
-            </div>
-            <ul className="job-other-info">
-              {item.jobType.slice(0, 1).map((val, i) => (
-                <li key={i} className={`${val.styleClass}`}>
-                  {val.type}
-                </li>
-              ))}
-            </ul>
-            <Link
-              href={`/job-single-v2/${item.id}`}
-              className="theme-btn btn-style-four"
-            >
-              Apply Job
-            </Link>
-          </div>
-        </div>
-      ))}
+                    </h4>
+                    <ul className="job-info">
+                      <li>
+                        <span className="icon flaticon-briefcase"></span>
+                        {item.company}
+                      </li>
+                      {/* compnay info */}
+                      <li>
+                        <span className="icon flaticon-map-locator"></span>
+                        {item.location}
+                      </li>
+                      {/* location info */}
+                      <li>
+                        <span className="icon flaticon-clock-3"></span> {getTimeAgo(item.time)}
+                      </li>
+                      {/* time info */}
+                      <li>
+                        <span className="icon flaticon-money"></span> {item.salary}
+                      </li>
+                      {/* salary info */}
+                    </ul>
+                    {/* End .job-info */}
+                  </div>
+                  <ul className="job-other-info">
+                    {item.jobType.slice(0, 1).map((val, i) => (
+                      <li key={i} className={`${val.styleClass}`}>
+                        {val.type}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={`/job-single-v2/${item.id}`}
+                    className="theme-btn btn-style-four"
+                  >
+                    Apply Job
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
     </>
   );
 };

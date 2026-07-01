@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import "rc-slider/assets/index.css";
 import "quill/dist/quill.snow.css";
-
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function RootLayout({ children }) {
   useEffect(() => {
