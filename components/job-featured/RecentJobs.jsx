@@ -48,7 +48,7 @@ const RecentJobs = () => {
             {jobList.map((item) => (
               <div className="job-block-four" key={item.id}>
                 <div className="inner-box">
-                  <span>{item.jobType.length}</span>
+
                   <ul className="job-other-info">
 
                     {item.jobType.map((val, i) => (
@@ -68,7 +68,7 @@ const RecentJobs = () => {
                   </span>
                   <span className="company-name">{item.company}</span>
                   <h4>
-                    <Link href={`/job-single-v3/${item.id}`}>{item.jobTitle}</Link>
+                    <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
                   </h4>
                   <div className="location">
                     <span className="icon flaticon-map-locator"></span>

@@ -41,9 +41,11 @@ const ApplyJobModalContent = ({ id }) => {
       const role = data?.role ?? "";
       const uqid = data?.uqid ?? "";
 
+
       setFullName(fullname);
       setLoginType(role);
       setLoginUqid(uqid);
+
       // if (!fullname || !role || !uqid) {
       //   toast.error("Login information is missing. Please log in again.");
       //   return;

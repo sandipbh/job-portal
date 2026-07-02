@@ -123,6 +123,7 @@ export async function POST(req) {
       gender,
       languages,
       summary,
+      noticePeriod,
 
     } = await req.json();
 
@@ -160,6 +161,9 @@ export async function POST(req) {
       currentCtc: currentCtc,
       expectedCtc: expectedCtc,
       summary: summary,
+      noticePeriod: noticePeriod,
+      gender: gender,
+      languages: languages,
 
       uqId: user.external.uqId,
       LoginIp: LoginIp,

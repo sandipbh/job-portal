@@ -3822,214 +3822,214 @@ in 2 tab of Company Profile
 
 }
 
-/***html show ***/
-.ql-editor {
-  box-sizing: border-box;
-  line-height: 1.6;
-  font-size: 16px;
-  color: #333;
-  word-wrap: break-word;
-}
+// /***html show ***/
+// .ql-editor {
+//   box-sizing: border-box;
+//   line-height: 1.6;
+//   font-size: 16px;
+//   color: #333;
+//   word-wrap: break-word;
+// }
 
-.ql-editor p {
-  margin: 0 0 12px;
-}
+// .ql-editor p {
+//   margin: 0 0 12px;
+// }
 
-.ql-editor h1 {
-  font-size: 2em;
-  font-weight: 600;
-  margin: .67em 0;
-}
+// .ql-editor h1 {
+//   font-size: 2em;
+//   font-weight: 600;
+//   margin: .67em 0;
+// }
 
-.ql-editor h2 {
-  font-size: 1.5em;
-  font-weight: 600;
-  margin: .83em 0;
-}
+// .ql-editor h2 {
+//   font-size: 1.5em;
+//   font-weight: 600;
+//   margin: .83em 0;
+// }
 
-.ql-editor h3 {
-  font-size: 1.17em;
-  font-weight: 600;
-  margin: 1em 0;
-}
+// .ql-editor h3 {
+//   font-size: 1.17em;
+//   font-weight: 600;
+//   margin: 1em 0;
+// }
 
-.ql-editor h4 {
-  font-size: 1em;
-  font-weight: 600;
-  margin: 1.33em 0;
-}
+// .ql-editor h4 {
+//   font-size: 1em;
+//   font-weight: 600;
+//   margin: 1.33em 0;
+// }
 
-.ql-editor h5 {
-  font-size: .83em;
-  font-weight: 600;
-  margin: 1.67em 0;
-}
+// .ql-editor h5 {
+//   font-size: .83em;
+//   font-weight: 600;
+//   margin: 1.67em 0;
+// }
 
-.ql-editor h6 {
-  font-size: .67em;
-  font-weight: 600;
-  margin: 2.33em 0;
-}
+// .ql-editor h6 {
+//   font-size: .67em;
+//   font-weight: 600;
+//   margin: 2.33em 0;
+// }
 
-.ql-editor strong {
-  font-weight: bold;
-}
+// .ql-editor strong {
+//   font-weight: bold;
+// }
 
-.ql-editor em {
-  font-style: italic;
-}
+// .ql-editor em {
+//   font-style: italic;
+// }
 
-.ql-editor u {
-  text-decoration: underline;
-}
+// .ql-editor u {
+//   text-decoration: underline;
+// }
 
-.ql-editor s {
-  text-decoration: line-through;
-}
+// .ql-editor s {
+//   text-decoration: line-through;
+// }
 
-/* Lists */
+// /* Lists */
 
-.ql-editor ul {
-  list-style: disc;
-  padding-left: 1.5em;
-  margin: 1em 0;
-}
+// .ql-editor ul {
+//   list-style: disc;
+//   padding-left: 1.5em;
+//   margin: 1em 0;
+// }
 
-.ql-editor ol {
-  list-style: decimal;
-  padding-left: 1.5em;
-  margin: 1em 0;
-}
+// .ql-editor ol {
+//   list-style: decimal;
+//   padding-left: 1.5em;
+//   margin: 1em 0;
+// }
 
-.ql-editor li {
-  margin-bottom: 6px;
-  display: list-item;
-}
+// .ql-editor li {
+//   margin-bottom: 6px;
+//   display: list-item;
+// }
 
-/* Nested Lists */
+// /* Nested Lists */
 
-.ql-editor ul ul {
-  list-style: circle;
-}
+// .ql-editor ul ul {
+//   list-style: circle;
+// }
 
-.ql-editor ul ul ul {
-  list-style: square;
-}
+// .ql-editor ul ul ul {
+//   list-style: square;
+// }
 
-/* Alignment */
+// /* Alignment */
 
-.ql-align-center {
-  text-align: center;
-}
+// .ql-align-center {
+//   text-align: center;
+// }
 
-.ql-align-right {
-  text-align: right;
-}
+// .ql-align-right {
+//   text-align: right;
+// }
 
-.ql-align-justify {
-  text-align: justify;
-}
+// .ql-align-justify {
+//   text-align: justify;
+// }
 
-/* Blockquote */
+// /* Blockquote */
 
-.ql-editor blockquote {
-  border-left: 4px solid #ccc;
-  padding-left: 16px;
-  color: #666;
-  margin: 16px 0;
-}
+// .ql-editor blockquote {
+//   border-left: 4px solid #ccc;
+//   padding-left: 16px;
+//   color: #666;
+//   margin: 16px 0;
+// }
 
-/* Code */
+// /* Code */
 
-.ql-editor code {
-  background: #f4f4f4;
-  padding: 2px 5px;
-  border-radius: 3px;
-}
+// .ql-editor code {
+//   background: #f4f4f4;
+//   padding: 2px 5px;
+//   border-radius: 3px;
+// }
 
-.ql-editor pre {
-  background: #23241f;
-  color: #fff;
-  padding: 12px;
-  overflow-x: auto;
-  border-radius: 5px;
-}
+// .ql-editor pre {
+//   background: #23241f;
+//   color: #fff;
+//   padding: 12px;
+//   overflow-x: auto;
+//   border-radius: 5px;
+// }
 
-/* Links */
+// /* Links */
 
-.ql-editor a {
-  color: #06c;
-  text-decoration: underline;
-}
+// .ql-editor a {
+//   color: #06c;
+//   text-decoration: underline;
+// }
 
-/* Images */
+// /* Images */
 
-.ql-editor img {
-  max-width: 100%;
-  height: auto;
-}
+// .ql-editor img {
+//   max-width: 100%;
+//   height: auto;
+// }
 
-/* Indent */
+// /* Indent */
 
-.ql-indent-1 {
-  padding-left: 3em;
-}
+// .ql-indent-1 {
+//   padding-left: 3em;
+// }
 
-.ql-indent-2 {
-  padding-left: 6em;
-}
+// .ql-indent-2 {
+//   padding-left: 6em;
+// }
 
-.ql-indent-3 {
-  padding-left: 9em;
-}
+// .ql-indent-3 {
+//   padding-left: 9em;
+// }
 
-.ql-indent-4 {
-  padding-left: 12em;
-}
+// .ql-indent-4 {
+//   padding-left: 12em;
+// }
 
-.ql-indent-5 {
-  padding-left: 15em;
-}
+// .ql-indent-5 {
+//   padding-left: 15em;
+// }
 
-.ql-indent-6 {
-  padding-left: 18em;
-}
+// .ql-indent-6 {
+//   padding-left: 18em;
+// }
 
-.ql-indent-7 {
-  padding-left: 21em;
-}
+// .ql-indent-7 {
+//   padding-left: 21em;
+// }
 
-.ql-indent-8 {
-  padding-left: 24em;
-}
+// .ql-indent-8 {
+//   padding-left: 24em;
+// }
 
-/* Font Size */
+// /* Font Size */
 
-.ql-size-small {
-  font-size: .75em;
-}
+// .ql-size-small {
+//   font-size: .75em;
+// }
 
-.ql-size-large {
-  font-size: 1.5em;
-}
+// .ql-size-large {
+//   font-size: 1.5em;
+// }
 
-.ql-size-huge {
-  font-size: 2.5em;
-}
+// .ql-size-huge {
+//   font-size: 2.5em;
+// }
 
-.ql-ui {
-  position: absolute;
-}
+// .ql-ui {
+//   position: absolute;
+// }
 
-li[data-list="checked"]>.ql-ui::before {
-  content: '\2611';
-  cursor: pointer;
-}
+// li[data-list="checked"]>.ql-ui::before {
+//   content: '\2611';
+//   cursor: pointer;
+// }
 
-li[data-list="unchecked"]>.ql-ui::before {
-  content: '\2610';
-  cursor: pointer;
-}
+// li[data-list="unchecked"]>.ql-ui::before {
+//   content: '\2610';
+//   cursor: pointer;
+// }
 
 /***end html show ***/
 
@@ -4840,7 +4840,7 @@ li[data-list="unchecked"]>.ql-ui::before {
 
 .filter-btn {
   width: 100%;
-  height: 50px;
+  height: 40px;
   border: 1px solid #e5e7eb;
   background: #fff;
   border-radius: 8px;
@@ -4923,7 +4923,7 @@ li[data-list="unchecked"]>.ql-ui::before {
 }
 
 .clear-all-btn {
-  height: 50px;
+  height: 40px;
   padding: 0 18px;
   border-radius: 8px;
   background: #fff1f1;
@@ -4973,7 +4973,7 @@ li[data-list="unchecked"]>.ql-ui::before {
 }
 
 .filter-summary {
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   font-size: 14px;
   color: #666;
 }
@@ -5092,7 +5092,7 @@ li[data-list="unchecked"]>.ql-ui::before {
   align-items: center;
   justify-content: center;
   gap: 30px;
-  margin-top: 25px;
+  margin-top: 0px;
   padding: 10px 0;
 }
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import jobs from "../../../../../data/job-featured.js";
+//import jobs from "../../../../../data/job-featured.js";
 import Image from "next/image.js";
 
 
@@ -27,6 +27,47 @@ const JobListingsTable = () => {
   const [showDate, setShowDate] = useState(false);
   const [location, setLocation] = useState("");
 
+
+  const [jobList, setJobList] = useState([]);
+
+  useEffect(() => {
+    getJobList();
+  }, []);
+
+  const getJobList = async () => {
+    try {
+      const response = await fetch("/api/emp-job-post-list", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const result = await response.json();
+
+      const listData = result?.data;
+      console.log('listData  ', listData)
+
+      if (listData) {
+
+        setJobList(listData);
+
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+
+
   const handleCheckbox = (value, selected, setSelected) => {
     if (selected.includes(value)) {
       setSelected(selected.filter((item) => item !== value));
@@ -35,7 +76,67 @@ const JobListingsTable = () => {
     }
   };
 
-  const filteredJobs = jobs.filter((job) => {
+  const normalizeValue = (value) =>
+    (value ?? "").toString().trim().toLowerCase();
+
+  const getJobTypeValues = (job) => {
+    if (Array.isArray(job?.jobType)) {
+      return job.jobType
+        .map((type) => normalizeValue(type?.type || type))
+        .filter(Boolean);
+    }
+
+    if (typeof job?.jobType === "string") {
+      return [normalizeValue(job.jobType)];
+    }
+
+    if (job?.jobType?.type) {
+      return [normalizeValue(job.jobType.type)];
+    }
+
+    return [];
+  };
+
+  const getExperienceValue = (job) =>
+    normalizeValue(
+      job?.experience ?? job?.experienceLevel ?? job?.expLevel ?? job?.minExperience ?? job?.maxExperience
+    );
+
+  const getStatusValue = (job) =>
+    normalizeValue(job?.status ?? job?.jobStatus ?? job?.job_status);
+
+  const getCreatedDateValue = (job) =>
+    job?.created_at ?? job?.createdAt ?? job?.created_on ?? job?.postedAt ?? "";
+
+  const matchesDateOption = (dateValue, option) => {
+    if (!dateValue) return false;
+
+    const createdDate = new Date(dateValue);
+    if (Number.isNaN(createdDate.getTime())) return false;
+
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffDays = (startOfToday - createdDate) / (1000 * 60 * 60 * 24);
+
+    switch (option) {
+      case "Today":
+        return diffDays >= 0 && diffDays <= 1;
+      case "Last 7 Days":
+        return diffDays >= 0 && diffDays <= 7;
+      case "Last 15 Days":
+        return diffDays >= 0 && diffDays <= 15;
+      case "Last 30 Days":
+        return diffDays >= 0 && diffDays <= 30;
+      case "Last 6 Months":
+        return diffDays >= 0 && diffDays <= 183;
+      case "Last Year":
+        return diffDays >= 0 && diffDays <= 365;
+      default:
+        return false;
+    }
+  };
+
+  const filteredJobs = jobList.filter((job) => {
     const matchesSearch =
       searchTerm === "" ||
       (job?.jobTitle || "")
@@ -48,33 +149,48 @@ const JobListingsTable = () => {
         .toLowerCase()
         .includes(location.toLowerCase());
 
+    const matchesStatus =
+      selectedStatus.length === 0 ||
+      selectedStatus.some(
+        (status) => normalizeValue(getStatusValue(job)) === normalizeValue(status)
+      );
+
     const matchesExperience =
       selectedExperience.length === 0 ||
-      selectedExperience.includes(job?.experience);
+      selectedExperience.some(
+        (experience) => normalizeValue(getExperienceValue(job)) === normalizeValue(experience)
+      );
 
     const matchesDate =
       selectedDates.length === 0 ||
-      selectedDates.includes(job?.created_at);
+      selectedDates.some((dateOption) =>
+        matchesDateOption(getCreatedDateValue(job), dateOption)
+      );
 
     const matchesJobType =
       selectedJobTypes.length === 0 ||
-      job?.jobType?.some((type) =>
-        selectedJobTypes.includes(type.type)
+      getJobTypeValues(job).some((type) =>
+        selectedJobTypes.some(
+          (selectedType) => normalizeValue(type) === normalizeValue(selectedType)
+        )
       );
 
     return (
       matchesSearch &&
       matchesLocation &&
+      matchesStatus &&
       matchesExperience &&
       matchesDate &&
       matchesJobType
     );
   });
+
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [jobsPerPage, setJobsPerPage] = useState(20);
-  const totalPages = Math.ceil(
-    filteredJobs.length / jobsPerPage
+  const [jobsPerPage, setJobsPerPage] = useState(10);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredJobs.length / jobsPerPage)
   );
 
   const startIndex = (currentPage - 1) * jobsPerPage;
@@ -111,10 +227,9 @@ const JobListingsTable = () => {
           }}
         >
           <option value={10}>10</option>
-          <option value={20}>20</option>
-          <option value={40}>40</option>
-          <option value={60}>60</option>
-          <option value={80}>80</option>
+          <option value={25}>25</option>
+          <option value={50}>50</option>
+          <option value={75}>75</option>
           <option value={100}>100</option>
         </select>
       </div>
@@ -157,17 +272,9 @@ const JobListingsTable = () => {
 
   return (
     <div className="tabs-box">
-      <div className="widget-title">
-        <h4>Responses to your jobs and NVites will appear here</h4>
-      </div>
-
 
       <div className="widget-content">
-        <div className="filters-header">
-          <h5>
-            <span className="la la-filter"></span> Filters
-          </h5>
-        </div>
+
         <div className="job-filter-bar">
 
 
@@ -555,7 +662,7 @@ const JobListingsTable = () => {
           <table className="default-table manage-job-table">
             <thead>
               <tr>
-                <th>Title</th>
+                <th>Job Title</th>
                 <th>Applications</th>
                 <th>Created & Expired</th>
                 <th>Status</th>
@@ -564,75 +671,84 @@ const JobListingsTable = () => {
             </thead>
 
             <tbody>
-              {currentJobs.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    {/* <!-- Job Block --> */}
-                    <div className="job-block">
-                      <div className="inner-box">
-                        <div className="content">
-                          <span className="company-logo">
-                            <Image
-                              width={50}
-                              height={49}
-                              src={item.logo}
-                              alt="logo"
-                            />
-                          </span>
-                          <h4>
-                            <Link href={`/job-single-v3/${item.id}`}>
-                              {item.jobTitle}
-                            </Link>
-                          </h4>
-                          <ul className="job-info">
-                            <li>
-                              <span className="icon flaticon-briefcase"></span>
-                              Segment
-                            </li>
-                            <li>
-                              <span className="icon flaticon-map-locator"></span>
-                              London, UK
-                            </li>
-                          </ul>
+              {currentJobs.length > 0 ? (
+                currentJobs.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      {/* <!-- Job Block --> */}
+                      <div className="job-block">
+                        <div className="inner-box">
+                          <div className="content">
+                            <span className="company-logo">
+                              <Image
+                                width={50}
+                                height={49}
+                                src={item.logo}
+                                alt="logo"
+                              />
+                            </span>
+                            <h4>
+                              <Link href={`/job-single-v2/${item.id}`}>
+                                {item.jobTitle}
+                              </Link>
+                            </h4>
+                            <ul className="job-info">
+                              <li>
+                                <span className="icon flaticon-briefcase"></span>
+                                {item.company}
+                              </li>
+                              <li>
+                                <span className="icon flaticon-map-locator"></span>
+                                {item.location}
+                              </li>
+                            </ul>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="applied">
-                    <a href="#">3+ Applied</a>
-                  </td>
-                  <td>
-                    October 27, 2017 <br />
-                    April 25, 2011
-                  </td>
-                  <td className="status">Active</td>
-                  <td>
-                    <div className="option-box">
-                      <ul className="option-list">
-                        <li>
-                          <button data-text="View Aplication">
-                            <span className="la la-eye"></span>
-                          </button>
-                        </li>
-                        <li>
-                          <Link
-                            href={`/employers-dashboard/post-jobs?jobId=${item.id}`}
-                          >
-                            <button data-text="Edit Job">
-                              <span className="la la-pencil"></span>
+                    </td>
+                    <td className="applied">
+                      <a href="#">{item.applyCount} Applied</a>
+                    </td>
+                    <td>
+                      {formatDate(item.created_at)} <br />
+                      {formatDate(item.expire_at)}
+                    </td>
+                    <td className="status">{item.status} </td>
+                    <td>
+                      <div className="option-box">
+                        <ul className="option-list">
+                          <li>
+                            <button data-text="View Aplication">
+                              <span className="la la-eye"></span>
                             </button>
-                          </Link>
-                        </li>
-                        <li>
-                          <button data-text="Delete Aplication">
-                            <span className="la la-trash"></span>
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
+                          </li>
+                          <li>
+                            <Link
+                              href={`/employers-dashboard/post-jobs?jobid=${item.id}`}
+                            >
+                              <button data-text="Edit Job">
+                                <span className="la la-pencil"></span>
+                              </button>
+                            </Link>
+
+                          </li>
+                          <li>
+                            <button data-text="Delete Aplication">
+                              <span className="la la-trash"></span>
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center">
+                    No jobs match the current filters.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
           <PaginationControls />

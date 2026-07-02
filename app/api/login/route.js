@@ -84,6 +84,7 @@ export async function POST(req) {
           status: externalData.success,
           isVefity: externalData.isVefity,
           isActive: externalData.isActive,
+
         },
         {
           status: externalResponse.status,
@@ -104,6 +105,7 @@ export async function POST(req) {
         external: externalData,
         isVefity: externalData.isVefity,
         isActive: externalData.isActive,
+
       },
       { status: 201 }
     );
@@ -154,7 +156,7 @@ export async function POST(req) {
     console.error("LOGIN ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to login user " + error },
+      { message: "Failed to login user" },
       { status: 500 }
     );
   }

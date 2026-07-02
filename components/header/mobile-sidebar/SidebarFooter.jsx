@@ -8,7 +8,7 @@ const SidebarFooter = () => {
 
   return (
     <div className="mm-add-listing mm-listitem pro-footer">
-      <a href="#" className="theme-btn btn-style-one mm-listitem__text">
+      <a href="#" className="theme-btn btn-style-one  btn-sm mm-listitem__text" style={{ height: "40px" }}>
         Job Post
       </a>
       {/* job post btn */}

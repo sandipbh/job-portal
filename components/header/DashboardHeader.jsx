@@ -12,7 +12,39 @@ import { usePathname } from "next/navigation";
 const DashboardHeader = () => {
     const [navbar, setNavbar] = useState(false);
 
+    const [fullName, setFullName] = useState("");
+    const [loginType, setLoginType] = useState("");
+    const [loginUqid, setLoginUqid] = useState("");
+    const [logo, setLogo] = useState("");
 
+    useEffect(() => {
+        getCookiesValue();
+    }, []);
+
+    const getCookiesValue = async () => {
+        try {
+            const response = await fetch("/api/cookies-details", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+            const data = await response.json();
+            const fullname = data?.fullname ?? "";
+            const role = data?.role ?? "";
+            const uqid = data?.uqid ?? "";
+            const logo = data?.logo ?? "";
+
+            setFullName(fullname);
+            setLoginType(role);
+            setLoginUqid(uqid);
+            setLogo(logo);
+
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const changeBackground = () => {
         if (window.scrollY >= 0) {
@@ -29,9 +61,8 @@ const DashboardHeader = () => {
     return (
         // <!-- Main Header-->
         <header
-            className={`main-header header-shaddow  ${
-                navbar ? "fixed-header " : ""
-            }`}
+            className={`main-header header-shaddow  ${navbar ? "fixed-header " : ""
+                }`}
         >
             <div className="container-fluid">
                 {/* <!-- Main box --> */}
@@ -81,24 +112,23 @@ const DashboardHeader = () => {
                                 <Image
                                     alt="avatar"
                                     className="thumb"
-                                    src="/images/resource/company-6.png"
+                                    src={logo || "/images/resource/company-6.png"}
                                     width={50}
                                     height={50}
                                 />
-                                <span className="name">My Account</span>
+                                <span className="name">{fullName}</span>
                             </a>
 
                             <ul className="dropdown-menu">
                                 {employerMenuData.map((item) => (
                                     <li
-                                        className={`${
-                                            isActiveLink(
-                                                item.routePath,
-                                                usePathname()
-                                            )
-                                                ? "active"
-                                                : ""
-                                        } mb-1`}
+                                        className={`${isActiveLink(
+                                            item.routePath,
+                                            usePathname()
+                                        )
+                                            ? "active"
+                                            : ""
+                                            } mb-1`}
                                         key={item.id}
                                     >
                                         <Link href={item.routePath}>

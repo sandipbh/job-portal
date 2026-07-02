@@ -347,7 +347,7 @@ const JobDetailsV2 = ({ id }) => {
                                                 </div>
                                             </div>
                                             <div className="row mt-3">
-                                                <div className="col-6 align-self-start  mt-3">
+                                                <div className="col-6 col-12 col-lg-6 col-md-6 align-self-start  mt-3">
                                                     <h4 style={{
                                                         fontWeight: "500",
                                                         fontSize: "18px",
@@ -388,7 +388,7 @@ const JobDetailsV2 = ({ id }) => {
                                                         </ul>
                                                     </div>
                                                 </div>
-                                                <div className="col-6 align-self-start  mt-3">
+                                                <div className="col-12 col-lg-6 col-md-6 align-self-start  mt-3">
                                                     <div className="widget-content">
                                                         <h4 style={{
                                                             fontWeight: "500",
@@ -446,7 +446,7 @@ const JobDetailsV2 = ({ id }) => {
                                                                                 className="btn btn-sm btn-outline-primary w-100"
 
                                                                             >
-                                                                                {jobDetails?.compWebsite}
+                                                                                Visit Website
                                                                             </a>
                                                                         </div>
                                                                     )

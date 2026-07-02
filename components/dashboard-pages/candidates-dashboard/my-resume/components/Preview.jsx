@@ -190,6 +190,17 @@ const Preview = ({ data }) => {
                 ))}
               </ul>
             </section>
+            <section>
+              <h3>NOTICE PERIOD  </h3>
+
+              <ul className="resume-list">
+
+                <li >
+                  {personal?.noticePeriod ? personal?.noticePeriod : "N/A"}
+                </li>
+
+              </ul>
+            </section>
 
           </div>
 

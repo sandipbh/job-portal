@@ -11,48 +11,52 @@ import CopyrightFooter from "../../CopyrightFooter";
 import JobApplied from "./components/JobApplied";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
+import { useEffect, useState } from "react";
 
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const Index = () => {
- 
+
   // ✅ HANDLE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
- 
+
+  }
+
+  const [fullName, setFullName] = useState("");
+  const [loginType, setLoginType] = useState("");
+  const [loginUqid, setLoginUqid] = useState("");
+  const [logo, setLogo] = useState("");
+
+  useEffect(() => {
+    getCookiesValue();
+  }, []);
+
+  const getCookiesValue = async () => {
     try {
-
-      const email = "test@mail.com";
-      const role = "candidate";
-
-      const res = await fetch("/api/candi-dashboard", {
-        method: "POST",
+      const response = await fetch("/api/cookies-details", {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
-        },
-        body: JSON.stringify({  email,  role }), 
+        }
       });
+      const data = await response.json();
+      const fullname = data?.fullname ?? "";
+      const role = data?.role ?? "";
+      const uqid = data?.uqid ?? "";
+      const logo = data?.logo ?? "";
 
-      const user = await res.json();
-      console.log("Response from /api/candi-dashboard:", user);
+      setFullName(fullname);
+      setLoginType(role);
+      setLoginUqid(uqid);
+      setLogo(logo);
 
-      if (!res.ok) {
-        toast.error(user.message || "Registration failed");
-        return;
-      }
- 
 
-      toast.success("Registration successful. Please verify OTP.");
-     
     } catch (error) {
       console.error(error);
-      toast.error("Registration failed. Please try again.");
-    } finally {
-      
     }
   };
 
- 
 
   return (
     <div className="page-wrapper dashboard">
@@ -74,16 +78,8 @@ const Index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="Howdy, Jerome!!" />
+          <BreadCrumb title={`Howdy, ${fullName}!!`} />
           {/* breadCrumb */}
-
-  <button
-            type="button"
-            onClick={handleSubmit}
-            className="theme-btn btn-style-one"
-          >
-            Check Request Api Token 
-          </button>
 
 
           <MenuToggler />

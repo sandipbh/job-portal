@@ -32,6 +32,14 @@ const modules = {
   ],
 };
 
+// Current date
+const today = new Date().toISOString().split("T")[0];
+
+// Current date + 15 days
+const after15Days = new Date();
+after15Days.setDate(after15Days.getDate() + 15);
+const maxExpiryDate = after15Days.toISOString().split("T")[0];
+
 const formats = [
   "header",
   "bold",
@@ -179,6 +187,11 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     allowDirectCall: "No",
     days: [],
 
+    itsUrgent: false,
+    postingDate: "",
+    expiryDate: "",
+    vacancies: "",
+
     jobDesc: "",
     aboutCompany: "",
     screeningQuestions: [],
@@ -312,6 +325,11 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
           //externalLink: details?.languages || "",
           allowDirectCall: details?.caN_CALL || "",
           days: details?.calL_DAYS ? details?.calL_DAYS.split(",") : [],
+
+          itsUrgent: details?.iS_URGENT || false,
+          postingDate: details?.posteD_DATE.substring(0, 10) || "",
+          expiryDate: details?.expirY_DATE.substring(0, 10) || "",
+          vacancies: details?.vacancies || "0",
 
           jobDesc: details?.joB_DESC || "",
           aboutCompany: details?.abouT_COMP || "",
@@ -1239,6 +1257,16 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       newErrors.days = "Select at least one day";
     }
 
+    if (!formData.postingDate) {
+      newErrors.postingDate = "Select posting date";
+    }
+
+    if (!formData.expiryDate) {
+      newErrors.expiryDate = "Select expiry date";
+    }
+
+
+
     // Application Method
     // if (!formData.applicationMethod) {
     //   newErrors.applicationMethod = "Select application method";
@@ -1551,9 +1579,13 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   className="form-select"
                 >
                   <option value="">Select Work Mode</option>
-                  <option value="On-site">On-site</option>
+                  <option value="Full Time">Full Time</option>
+                  <option value="Part Time">Part Time</option>
                   <option value="Remote">Remote</option>
                   <option value="Hybrid">Hybrid</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+
 
                 </select>
                 {errors.workMode && (
@@ -2793,7 +2825,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
               {/* Call Time */}
               <div className="form-group col-lg-6">
-                <label>Receive Calls Between  </label>
+                <label>Receive Calls Between   </label>
                 <div style={{ display: "flex", gap: "10px" }}>
                   <div className="col-6">
                     <input
@@ -2806,7 +2838,8 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     {errors.callFrom && (
                       <span className="error-text">{errors.callFrom}</span>
                     )}
-                  </div ><div className="col-6">
+                  </div >
+                  <div className="col-6">
                     <input
                       type="time"
                       className={`form-control ${errors.callTo ? "error-border" : ""}`}
@@ -2819,7 +2852,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     )}
                   </div>
                 </div>
-
 
               </div>
 
@@ -2857,6 +2889,80 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 {errors.days && (
                   <span className="error-text">{errors.days}</span>
                 )}
+              </div>
+
+              <div className="form-group col-lg-6">
+
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <div className="col-6">
+                    <label style={{ fontWeight: "500" }}>Posting Date    </label>
+                    <input
+                      type="date"
+                      className={`form-control ${errors.postingDate ? "error-border" : ""}`}
+                      name="postingDate"
+                      value={formData.postingDate || today}
+                      min={today}
+                      onChange={handleContactChange}
+                    />
+                    {errors.postingDate && (
+                      <span className="error-text">{errors.postingDate}</span>
+                    )}
+                  </div >
+                  <div className="col-6">
+                    <label style={{ fontWeight: "500" }}> Expiry Date     </label>
+                    <input
+                      type="date"
+                      className={`form-control ${errors.expiryDate ? "error-border" : ""}`}
+                      name="expiryDate"
+                      value={formData.expiryDate || maxExpiryDate}
+                      min={today}
+
+                      onChange={handleContactChange}
+                    />
+                    {errors.expiryDate && (
+                      <span className="error-text">{errors.expiryDate}</span>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+
+              <div className="form-group col-lg-3">
+                <label>Vacancies 	</label>
+
+                <input
+                  type="tel"
+                  name="vacancies"
+                  value={formData.vacancies}
+                  className="form-control"
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+                    setFormData({ ...formData, vacancies: value });
+                  }}
+                  placeholder="Enter number of vacancies"
+                  maxLength={4}
+                />
+
+
+              </div>
+              <div className="form-group col-lg-3">
+                <label>Urgent Requirement</label>
+                <div className="d-flex gap-3">
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="itsUrgent"
+                      checked={formData.itsUrgent || false}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          itsUrgent: e.target.checked,
+                        }))
+                      }
+                    />
+                    {" "}Urgent
+                  </label>
+                </div>
               </div>
 
               {/* Application Method */}
@@ -2899,20 +3005,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 
             </div> */}
 
-              {/* Notifications */}
-              {/* <div className="form-group col-lg-12">
-                <label>Notifications</label>
 
-                <div className="d-flex gap-3">
-                  <label>
-                    <input type="checkbox" id="emailNotify" /> Email Notifications
-                  </label>
-
-                  <label>
-                    <input type="checkbox" id="smsNotify" /> SMS Notifications
-                  </label>
-                </div>
-              </div> */}
               <div className="row">
                 <p className="mt-2" style={{ borderTop: "1px solid #cecece" }}></p>
                 <h5 className="mt-1" >Advance Option</h5>
@@ -3023,7 +3116,8 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                           {errors.walkInTimingFrom && (
                             <span className="error-text">{errors.walkInTimingFrom}</span>
                           )}
-                        </div ><div className="col-6">
+                        </div >
+                        <div className="col-6">
                           <input
                             type="time"
                             className={`form-control ${errors.walkInTimingTo ? "error-border" : ""}`}

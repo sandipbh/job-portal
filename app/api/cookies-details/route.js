@@ -23,6 +23,7 @@ export async function GET(req) {
                 fullname: user.external.fullName || "",
                 role: user.external.role || "",
                 uqid: user.external.uqId || "",
+                logo: user.external.logo || "",
             },
             { status: 201 }
         );

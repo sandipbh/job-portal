@@ -104,6 +104,7 @@ const Basic = ({ formData,
     languageString: "",
     country: "India",
     countryCode: "+91",
+    noticePeriod: data.basic?.noticePeriod || "",
 
   });
 
@@ -122,7 +123,7 @@ const Basic = ({ formData,
 
       const result = await response.json();
 
-      //console.log("Profile Details fetched:", result);
+      console.log("Profile Details fetched:", result);
 
       const profile = result?.data;
 
@@ -146,6 +147,7 @@ const Basic = ({ formData,
 
           country: "India",
           countryCode: "+91",
+          noticePeriod: profile.noticePeriod || "",
 
           languages: profile.languages
             ? profile.languages.split(",")
@@ -246,6 +248,11 @@ const Basic = ({ formData,
     if (!form.gender) {
       newErrors.gender = "Please select gender";
     }
+    // Notice Period
+    if (!form.noticePeriod) {
+      newErrors.noticePeriod = "Please select notice period";
+    }
+
 
     // Pincode
     if (!form.pincode) {
@@ -778,7 +785,37 @@ const Basic = ({ formData,
             <span className="error-text">{errors.gender}</span>
           )}
         </div>
+        <div className="form-group col-lg-6 col-md-12">
+          <label>Notice Period   </label>
+          <select
+            className="form-select "
+            value={form.noticePeriod || ""}
 
+            onChange={(e) => {
+              const value = e.target.value;
+
+              setForm((prev) => ({
+                ...prev,
+                noticePeriod: value,
+              }));
+
+            }}
+          >
+            <option value="">-- Select Notice Period --</option>
+
+            <option value="Immediate joining">Immediate joining</option>
+            <option value="Less than 15days">Less than 15days</option>
+            <option value="Less than 30days">Less than 30days</option>
+            <option value="Less than 60days">Less than 60days</option>
+            <option value="Less than 90days">Less than 90days</option>
+
+          </select>
+          {errors.noticePeriod && (
+            <span className="error-text">{errors.noticePeriod}</span>
+          )}
+
+
+        </div>
 
         {/* LANGUAGES */}
         <div className="form-group col-lg-12">

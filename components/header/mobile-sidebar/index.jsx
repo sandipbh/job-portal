@@ -8,7 +8,8 @@ import {
   SubMenu,
 } from "react-pro-sidebar";
 
-import mobileMenuData from "../../../data/mobileMenuData";
+//import mobileMenuData from "../../../data/mobileMenuData";
+import { mobileMenuData } from "@/data/mobileMenuData";
 import SidebarFooter from "./SidebarFooter";
 import SidebarHeader from "./SidebarHeader";
 import {
@@ -18,10 +19,11 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 
 
+
 const Index = () => {
 
   const router = useRouter()
-
+  const pathname = usePathname()
 
   return (
     <div
@@ -33,38 +35,62 @@ const Index = () => {
       <SidebarHeader />
       {/* End pro-header */}
 
-      
-        <Sidebar>
-          <Menu>
-            {mobileMenuData.map((item) => (
+      <Sidebar>
+        <Menu>
+          {mobileMenuData.map((menu) => {
+            if (menu.single) {
+              return (
+                <MenuItem
+                  key={menu.id}
+                  onClick={() => router.push(menu.routePath)}
+                  className={
+                    isActiveLink(menu.routePath, pathname)
+                      ? "menu-active-link"
+                      : ""
+                  }
+                >
+                  {menu.name}
+                </MenuItem>
+              );
+            }
+
+            return (
               <SubMenu
+                key={menu.id}
+                label={menu.label}
                 className={
-                  isActiveParentChaild(item.items, usePathname())
+                  menu.items.some((group) =>
+                    group.items?.some((item) => item.routePath === pathname)
+                  )
                     ? "menu-active"
                     : ""
                 }
-                label={item.label}
-                key={item.id}
               >
-                {item.items.map((menuItem, i) => (
-                  <MenuItem
-
-                  onClick={()=>router.push(menuItem.routePath)}
-                    className={
-                      isActiveLink(menuItem.routePath, usePathname())
-                        ? "menu-active-link"
-                        : ""
-                    }
-                    key={i}
-                    // routerLink={<Link href={menuItem.routePath} />}
+                {menu.items.map((group) => (
+                  <SubMenu
+                    key={group.id}
+                    label={group.title}
                   >
-                    {menuItem.name}
-                  </MenuItem>
+                    {group.items.map((item) => (
+                      <MenuItem
+                        key={item.routePath}
+                        onClick={() => router.push(item.routePath)}
+                        className={
+                          isActiveLink(item.routePath, pathname)
+                            ? "menu-active-link"
+                            : ""
+                        }
+                      >
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                  </SubMenu>
                 ))}
               </SubMenu>
-            ))}
-          </Menu>
-        </Sidebar>
+            );
+          })}
+        </Menu>
+      </Sidebar>
 
 
       <SidebarFooter />

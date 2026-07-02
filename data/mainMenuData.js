@@ -8,13 +8,12 @@ export const homeItems = [
       }
     ],
   },
-
 ];
 
 export const findJobItems = [
   {
     id: 1,
-    title: "Jobs Listing",
+    title: "Popular categories",
     items: [
       {
         name: "Job List V1",
@@ -40,7 +39,7 @@ export const findJobItems = [
   },
   {
     id: 2,
-    title: "Jobs Listing",
+    title: "Jobs in demand",
     items: [
       {
         name: "Job List V6",
@@ -66,7 +65,7 @@ export const findJobItems = [
   },
   {
     id: 3,
-    title: "Jobs Listing",
+    title: "Jobs by location",
     items: [
       {
         name: "Job List V11",
@@ -86,38 +85,38 @@ export const findJobItems = [
       },
     ],
   },
-  {
-    id: 4,
-    title: "Jobs Single",
-    items: [
-      {
-        name: "Job Single V1",
-        routePath: "/job-single-v1/1",
-      },
-      {
-        name: "Job Single V2",
-        routePath: "/job-single-v2/2",
-      },
-      {
-        name: "Job Single V3",
-        routePath: "/job-single-v3/3",
-      },
-      {
-        name: "Job Single V4",
-        routePath: "/job-single-v4/4",
-      },
-      {
-        name: "Job Single V5",
-        routePath: "/job-single-v5/5",
-      },
-    ],
-  },
+  // {
+  //   id: 4,
+  //   title: "Jobs Single",
+  //   items: [
+  //     {
+  //       name: "Job Single V1",
+  //       routePath: "/job-single-v1/1",
+  //     },
+  //     {
+  //       name: "Job Single V2",
+  //       routePath: "/job-single-v2/2",
+  //     },
+  //     {
+  //       name: "Job Single V3",
+  //       routePath: "/job-single-v3/3",
+  //     },
+  //     {
+  //       name: "Job Single V4",
+  //       routePath: "/job-single-v4/4",
+  //     },
+  //     {
+  //       name: "Job Single V5",
+  //       routePath: "/job-single-v5/5",
+  //     },
+  //   ],
+  // },
 ];
 
 export const employerItems = [
   {
     id: 1,
-    title: "Employers List",
+    title: "Employers categories",
     items: [
       {
         name: "Employers List V1",
@@ -139,7 +138,7 @@ export const employerItems = [
   },
   {
     id: 2,
-    title: "Employers Single",
+    title: "Explore collections",
     items: [
       {
         name: "Employers Single V1",

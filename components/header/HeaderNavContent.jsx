@@ -22,6 +22,7 @@ const HeaderNavContent = () => {
   return (
     <>
       <nav className="nav main-menu">
+
         <ul className="navigation" id="navbar">
           {/* current dropdown */}
           <li>
@@ -36,7 +37,7 @@ const HeaderNavContent = () => {
           >
             <span>Find Jobs</span>
             <div className="mega-menu">
-              <div className="mega-menu-bar row">
+              <div className="mega-menu-bar row align-items-start">
                 {findJobItems.map((item) => (
                   <div
                     className="column col-lg-3 col-md-3 col-sm-12"
@@ -197,7 +198,7 @@ const HeaderNavContent = () => {
           >
             <span>Pages</span>
             <ul>
-              {shopItems.map((item) => (
+              {/* {shopItems.map((item) => (
                 <li className="dropdown" key={item.id}>
                   <span
                     className={`${isActiveParentChaild(shopItems[0].items, usePathname())
@@ -222,7 +223,7 @@ const HeaderNavContent = () => {
                     ))}
                   </ul>
                 </li>
-              ))}
+              ))} */}
               {pageItems.map((item, i) => (
                 <li
                   className={

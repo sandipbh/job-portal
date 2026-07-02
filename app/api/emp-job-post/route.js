@@ -136,6 +136,12 @@ export async function POST(req) {
       externalLink,
       allowDirectCall,
       days,
+
+      itsUrgent,
+      postingDate,
+      expiryDate,
+      vacancies,
+
       jobDesc,
       aboutCompany,
       screeningQuestions,
@@ -217,6 +223,11 @@ export async function POST(req) {
       externalLink: externalLink,
       allowDirectCall: allowDirectCall,
       days: days,
+
+      itsUrgent: itsUrgent,
+      postingDate: postingDate,
+      expiryDate: expiryDate,
+      vacancies: vacancies,
 
       jobDesc: jobDesc,
       aboutCompany: aboutCompany,

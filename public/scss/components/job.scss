@@ -1514,6 +1514,16 @@ Job Detail Section
 .job-detail-outer {
   position: relative;
   padding: 50px 0;
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    padding: 30px 0; // Reduced vertical padding
+  }
+
+  /* Extra small devices (very small phones) */
+  @media (max-width: 480px) {
+    padding: 25px 0;
+  }
 }
 
 .job-detail {
