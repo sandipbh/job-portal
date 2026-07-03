@@ -31,7 +31,7 @@ const index = () => {
           <BreadCrumb title="Manage jobs!" />
           {/* breadCrumb */}
 
-          <MenuToggler />
+          {/* <MenuToggler /> */}
           {/* Collapsible sidebar button */}
 
           <div className="row">

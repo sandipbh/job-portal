@@ -37,7 +37,7 @@ const Index = () => {
                     <BreadCrumb title="KYC Verification" />
                     {/* breadCrumb */}
 
-                    <MenuToggler />
+                    {/* <MenuToggler /> */}
                     {/* Collapsible sidebar button */}
 
                     <div className="row">

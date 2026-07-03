@@ -28,6 +28,8 @@ const ApplyQuestionDrawer = ({
     const [loginType, setLoginType] = useState("");
     const [loginUqid, setLoginUqid] = useState("");
 
+
+
     useEffect(() => {
         getQuestionsList();
     }, []);
@@ -47,7 +49,7 @@ const ApplyQuestionDrawer = ({
             const result = await response.json();
 
             const listData = result?.data;
-            console.log('Job Details Questions ', JSON.stringify(listData))
+            //console.log('Job Details Questions ', JSON.stringify(listData))
 
             if (listData) {
 
@@ -56,7 +58,7 @@ const ApplyQuestionDrawer = ({
             }
 
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     };
 
@@ -80,29 +82,64 @@ const ApplyQuestionDrawer = ({
     const question = applicationQuestions[currentQuestion];
 
     const handleNext = () => {
+        // Validate current question
+        if (question.type === "file") {
 
-        if (question.type === "file" && !resume) {
+            // Clear resume error
             setErrors((prev) => ({
                 ...prev,
-                resume: "Please upload your resume.",
+                resume: "",
             }));
-            return;
+        } else {
+            const value = answers[question.key];
+
+            if (!value || value.toString().trim() === "") {
+                setErrors((prev) => ({
+                    ...prev,
+                    [question.key]: "Please answer this question .",
+                }));
+                return;
+            }
+
+            // Clear current question error
+            setErrors((prev) => ({
+                ...prev,
+                [question.key]: "",
+            }));
         }
+
+        // Save completed question
         setCompletedQuestions((prev) => [
             ...prev,
             {
                 question: question.question,
                 answer:
                     question.type === "file"
-                        ? resume?.name || "Skipped"
-                        : answers[question.key] || "Skipped",
+                        ? resume?.name
+                        : answers[question.key],
             },
         ]);
 
+        // Last question
         if (currentQuestion === applicationQuestions.length - 1) {
-            onSubmit();
-            document.getElementById("applyModalCloseBtn")?.click();
-            return;
+            // Create JSON payload
+            const payload = applicationQuestions.map((q) => ({
+                question: q.question,
+                key: q.key,
+                answer:
+                    q.type === "file"
+                        ? (resume?.name || null)
+                        : (answers[q.key] || null),
+            }));
+
+
+            //console.log("Application Payload");
+
+            // Send payload to parent/API
+            onSubmit(payload);
+
+            // document.getElementById("applyModalCloseBtn")?.click();
+            // return;
         }
 
         setTyping(true);
@@ -220,9 +257,7 @@ const ApplyQuestionDrawer = ({
                         <>
                             {/* Current Question */}
                             <div className="bot-message">
-                                {question.question}
-
-                                {console.log("Question Options ", question.options)}
+                                {question?.question || ""}
                             </div>
 
                             <div className="question-options">
@@ -231,12 +266,18 @@ const ApplyQuestionDrawer = ({
                                     <input
                                         className="form-control"
                                         value={answers[question.key] || ""}
-                                        onChange={(e) =>
-                                            setAnswers({
-                                                ...answers,
+                                        onChange={(e) => {
+
+                                            setAnswers((prev) => ({
+                                                ...prev,
                                                 [question.key]: e.target.value,
-                                            })
-                                        }
+                                            }));
+
+                                            setErrors((prev) => ({
+                                                ...prev,
+                                                [question.key]: "",
+                                            }));
+                                        }}
                                     />
                                 )}
 
@@ -254,12 +295,16 @@ const ApplyQuestionDrawer = ({
                                                 name={question.key}
                                                 value={option}
                                                 checked={answers[question.key] === option}
-                                                onChange={(e) =>
-                                                    setAnswers({
-                                                        ...answers,
+                                                onChange={(e) => {
+                                                    setAnswers((prev) => ({
+                                                        ...prev,
                                                         [question.key]: e.target.value,
-                                                    })
-                                                }
+                                                    }));
+                                                    setErrors((prev) => ({
+                                                        ...prev,
+                                                        [question.key]: "",
+                                                    }));
+                                                }}
                                             />
 
                                             <span>{option}</span>
@@ -271,12 +316,17 @@ const ApplyQuestionDrawer = ({
                                     <select
                                         className="form-control"
                                         value={answers[question.key] || ""}
-                                        onChange={(e) =>
-                                            setAnswers({
-                                                ...answers,
+                                        onChange={(e) => {
+                                            setAnswers((prev) => ({
+                                                ...prev,
                                                 [question.key]: e.target.value,
-                                            })
-                                        }
+                                            }));
+
+                                            setErrors((prev) => ({
+                                                ...prev,
+                                                [question.key]: "",
+                                            }));
+                                        }}
                                     >
                                         <option value="">Select</option>
 
@@ -359,8 +409,13 @@ const ApplyQuestionDrawer = ({
                                         </div>
                                     </>
                                 )}
-
+                                {errors[question.key] && (
+                                    <div className="error-text mt-2">
+                                        {errors[question.key]}
+                                    </div>
+                                )}
                             </div>
+
                         </>
                     )}
 
@@ -377,16 +432,9 @@ const ApplyQuestionDrawer = ({
                         disabled={currentQuestion === 0}
                         onClick={handlePrevious}
                     >
-                        Previous
+                        <i className="fas fa-arrow-left me-2"></i>  Previous
                     </button>
 
-                    <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        onClick={handleSkip}
-                    >
-                        Skip
-                    </button>
 
                     <button
                         type="button"

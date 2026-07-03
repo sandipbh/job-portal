@@ -46,10 +46,10 @@ const Index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="Dashboard Home!!" />
+          <BreadCrumb title="Dashboard" />
           {/* breadCrumb */}
 
-          <MenuToggler />
+          {/* <MenuToggler /> */}
           {/* Collapsible sidebar button */}
 
           <div className="row">

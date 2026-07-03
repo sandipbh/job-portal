@@ -39,14 +39,13 @@ const Index = () => {
           <BreadCrumb title="Messages!" />
           {/* breadCrumb */}
 
-          <MenuToggler />
+          {/* <MenuToggler /> */}
           {/* Collapsible sidebar button */}
 
           <div className="row">
             <div
-              className={`col-lg-12 ${
-                chatSidebar ? "active-chat-contacts" : ""
-              }`}
+              className={`col-lg-12 ${chatSidebar ? "active-chat-contacts" : ""
+                }`}
             >
               <div className="chat-widget">
                 <div className="widget-content">

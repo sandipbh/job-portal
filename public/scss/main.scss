@@ -3612,11 +3612,11 @@ in 2 tab of Company Profile
 }
 
 .intro {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .chat-message {
-  margin-bottom: 22px;
+  margin-bottom: 10px;
   animation: message .3s ease;
 }
 
@@ -3624,12 +3624,12 @@ in 2 tab of Company Profile
   display: inline-block;
   max-width: 85%;
   background: #f2f5fa;
-  padding: 14px 18px;
+  padding: 5px 8px;
   border-radius: 18px 18px 18px 6px;
   line-height: 1.6;
   font-size: 15px;
   color: #222;
-  margin-bottom: 10px;
+  margin-bottom: 7px;
   animation: message .25s ease;
 }
 
@@ -3639,19 +3639,19 @@ in 2 tab of Company Profile
   max-width: 85%;
   background: #1967d2;
   color: #fff;
-  padding: 12px 18px;
+  padding: 5px 15px;
   border-radius: 18px 18px 6px 18px;
   font-size: 15px;
   animation: message .25s ease;
 }
 
 .question-options {
-  margin-bottom: 28px;
+  margin-bottom: 10px;
   animation: message .3s ease;
 }
 
 .question-options .form-control {
-  height: 48px;
+  height: 40px;
   border-radius: 12px;
   border: 1px solid #ddd;
   font-size: 15px;
@@ -3741,6 +3741,7 @@ in 2 tab of Company Profile
 }
 
 .drawer-footer {
+  margin-bottom: 50px;
   display: flex;
   gap: 12px;
   justify-content: space-between;
@@ -3817,7 +3818,7 @@ in 2 tab of Company Profile
   }
 
   .drawer-chat {
-    padding: 18px;
+    padding: 5px;
   }
 
 }

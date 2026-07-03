@@ -15,8 +15,8 @@ export const metadata = {
   description: "Superio - Job Borad React NextJS Template",
 };
 
-const JobSingleDynamicV2 = ({ params }) => {
-  const id = params.id ?? 0;
+const JobSingleDynamicV2 = async ({ params }) => {
+  const { id } = await params;
 
   return (
     <>
@@ -31,7 +31,7 @@ const JobSingleDynamicV2 = ({ params }) => {
 
       <MobileMenu />
       {/* End MobileMenu */}
-      <JobDetailsV2 id={params.id} />
+      <JobDetailsV2 id={id} />
 
 
       <FooterDefault footerStyle="alternate5" />

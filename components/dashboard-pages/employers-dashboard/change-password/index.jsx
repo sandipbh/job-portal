@@ -31,7 +31,7 @@ const index = () => {
           <div className="d-flex justify-content-between align-items-center mb-3">
             <BreadCrumb title="Change Password!" />
             {/* breadCrumb */}
-            <MenuToggler />
+
             {/* Collapsible sidebar button */}
           </div>
 

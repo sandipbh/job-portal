@@ -468,7 +468,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
                         <div
                             key={index}
                             className="tab-step"
-                            onClick={() => setActiveTab(index)}
+                        // onClick={() => setActiveTab(index)}
                         >
                             <div
                                 className={`circle ${isCompleted ? "completed" : isActive ? "active" : ""

@@ -324,8 +324,6 @@ const Basic = ({ formData,
     } finally {
       setLoading(false);
     }
-
-
   };
 
   const [languages, setLanguages] = useState([]);

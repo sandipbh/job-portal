@@ -136,7 +136,7 @@
   display: none;
 }
 
-.mm-menu li.current > a {
+.mm-menu li.current>a {
   color: #ffffff;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 5px;
@@ -390,6 +390,7 @@ Dashboard
 .ui-item.ui-red h4 {
   color: rgba(217, 48, 37, 1);
 }
+
 .ui-item.ui-red .icon {
   color: rgba(217, 48, 37, 1);
   background: rgba(217, 48, 37, 0.1);
@@ -398,6 +399,7 @@ Dashboard
 .ui-item.ui-yellow h4 {
   color: rgba(249, 171, 0, 1);
 }
+
 .ui-item.ui-yellow .icon {
   color: rgba(249, 171, 0, 1);
   background: rgba(249, 171, 0, 0.1);
@@ -406,6 +408,7 @@ Dashboard
 .ui-item.ui-green h4 {
   color: rgba(52, 168, 83, 1);
 }
+
 .ui-item.ui-green .icon {
   color: rgba(52, 168, 83, 1);
   background: rgba(52, 168, 83, 0.1);
@@ -714,7 +717,7 @@ Listing Block Seven
   background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0)), to(rgba(27, 32, 50, 1)));
   background: -o-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(27, 32, 50, 1) 100%);
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(27, 32, 50, 1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#1b2032',GradientType=0 );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffffff', endColorstr='#1b2032', GradientType=0);
   z-index: 1;
   opacity: 0.8;
   content: "";
@@ -885,9 +888,11 @@ User Sidebar
 .user-sidebar::-webkit-scrollbar {
   width: 4px;
 }
+
 .user-sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .user-sidebar::-webkit-scrollbar-thumb {
   background-color: #f0f5f7;
   border-radius: 10px;
@@ -988,6 +993,7 @@ User Sidebar
   -webkit-transition: all 500ms ease;
   -o-transition: all 500ms ease;
   transition: all 500ms ease;
+  background: #e5edff;
 }
 
 .user-sidebar .navigation li a i {
@@ -1001,10 +1007,10 @@ User Sidebar
   transition: all 500ms ease;
 }
 
-.user-sidebar .navigation > li.active > a,
-.user-sidebar .navigation > li:hover > a {
+.user-sidebar .navigation>li.active>a,
+.user-sidebar .navigation>li:hover>a {
   color: var(--primary-color);
-  background: rgba(25, 103, 210, 0.1);
+  background: #9ac1f7;
 }
 
 .user-sidebar .navigation li.active a i,
@@ -1015,6 +1021,7 @@ User Sidebar
 .place.sky {
   color: #4cbfd8;
 }
+
 .place.sky .icon {
   background-color: #4cbfd8;
 }
@@ -1022,6 +1029,7 @@ User Sidebar
 .place.pink {
   color: #ff8480;
 }
+
 .place.pink .icon {
   background-color: #ff8480;
 }
@@ -1029,6 +1037,7 @@ User Sidebar
 .place.purple {
   color: #8c689d;
 }
+
 .place.purple .icon {
   background-color: #8c689d;
 }
@@ -1036,6 +1045,7 @@ User Sidebar
 .place.green {
   color: #35c2a5;
 }
+
 .place.green .icon {
   background-color: #35c2a5;
 }
@@ -1043,6 +1053,7 @@ User Sidebar
 .place.dark-pink {
   color: #ff007a;
 }
+
 .place.dark-pink .icon {
   background-color: #ff007a;
 }
@@ -1050,6 +1061,7 @@ User Sidebar
 .place.orange {
   color: #ffb874;
 }
+
 .place.orange .icon {
   background-color: #ffb874;
 }
@@ -1057,6 +1069,7 @@ User Sidebar
 .place.purple {
   color: #8c689d;
 }
+
 .place.purple .icon {
   background-color: #8c689d;
 }
@@ -1142,9 +1155,11 @@ Chat Widget
 .card ::-webkit-scrollbar {
   width: 4px;
 }
+
 .card ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .card ::-webkit-scrollbar-thumb {
   background-color: #f0f5f7;
   border-radius: 10px;
@@ -1155,6 +1170,7 @@ Chat Widget
   overflow-y: auto;
   white-space: nowrap;
 }
+
 .msg_card_body {
   position: relative;
   overflow-y: auto;
@@ -1226,11 +1242,13 @@ Chat Widget
   line-height: 20px;
   padding: 15px 30px;
 }
+
 .type_msg:focus {
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
   outline: 0px !important;
 }
+
 .attach_btn {
   border-radius: 15px 0 0 15px !important;
   background-color: rgba(0, 0, 0, 0.3) !important;
@@ -1238,6 +1256,7 @@ Chat Widget
   color: white !important;
   cursor: pointer;
 }
+
 .send_btn {
   border-radius: 0 15px 15px 0 !important;
   background-color: rgba(0, 0, 0, 0.3) !important;
@@ -1280,6 +1299,7 @@ Chat Widget
   -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
 }
+
 .user_img_msg {
   height: 50px;
   width: 50px;
@@ -1287,6 +1307,7 @@ Chat Widget
   -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
 }
+
 .img_cont {
   position: relative;
   height: 50px;
@@ -1361,9 +1382,11 @@ Chat Widget
   border-radius: 50%;
   border: 2px solid #fafafa;
 }
+
 .offline {
   background-color: #ff0000 !important;
 }
+
 .user_info {
   position: relative;
   display: -webkit-box;
@@ -1378,6 +1401,7 @@ Chat Widget
   justify-content: center;
   margin-left: 15px;
 }
+
 .user_info span {
   font-size: 16px;
   line-height: 22px;
@@ -1385,16 +1409,19 @@ Chat Widget
   font-weight: 500;
   margin-bottom: 3px;
 }
+
 .user_info p {
   font-size: 14px !important;
   color: #5c6770 !important;
   line-height: 1.4em !important;
   margin-bottom: 0 !important;
 }
+
 .video_cam {
   margin-left: 50px;
   margin-top: 5px;
 }
+
 .video_cam span {
   color: white;
   font-size: 20px;
@@ -1513,6 +1540,7 @@ Chat Widget
   cursor: pointer;
   font-size: 20px;
 }
+
 .action_menu {
   z-index: 1;
   position: absolute;
@@ -1524,19 +1552,23 @@ Chat Widget
   right: 15px;
   display: none;
 }
+
 .action_menu ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
+
 .action_menu ul li {
   width: 100%;
   padding: 10px 15px;
   margin-bottom: 5px;
 }
+
 .action_menu ul li i {
   padding-right: 10px;
 }
+
 .action_menu ul li:hover {
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.2);

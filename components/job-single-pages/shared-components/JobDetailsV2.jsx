@@ -7,6 +7,7 @@ import ApplyJobModalContent from "@/components/job-single-pages/shared-component
 import Image from "next/image";
 import JobCardSkeleton from "@/components/skeleton/Job-list";
 import { toast } from "react-toastify";
+import { Modal } from "bootstrap";
 
 const JobDetailsV2 = ({ id }) => {
 
@@ -93,8 +94,10 @@ const JobDetailsV2 = ({ id }) => {
             console.error(error);
         }
     };
-
-
+    const handleApplyClick = () => {
+        const modal = new Modal(document.getElementById("applyJobModal"));
+        modal.show();
+    };
     const getTimeAgo = (date) => {
         const now = new Date();
         const posted = new Date(date);
@@ -208,14 +211,16 @@ const JobDetailsV2 = ({ id }) => {
 
                                                         {loginType == "candidate" ? (
                                                             <div className="btn-box">
-                                                                <a
-                                                                    href="#"
+
+                                                                <button
+                                                                    type="button"
                                                                     className="theme-btn btn-style-one"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#applyJobModal"
+                                                                    onClick={handleApplyClick}
                                                                 >
                                                                     Apply For Job
-                                                                </a>
+                                                                </button>
+
+
                                                                 <button className="bookmark-btn">
                                                                     <i className="flaticon-bookmark"></i>
                                                                 </button>
@@ -247,7 +252,7 @@ const JobDetailsV2 = ({ id }) => {
                                                             <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                                 <div className="apply-modal-content modal-content" style={{ overflowY: "auto" }}>
                                                                     <div className="text-center">
-                                                                        <h3 className="title">Apply for this job</h3>
+                                                                        <h3 className="title">Apply for this job  </h3>
                                                                         <button
                                                                             id="applyModalCloseBtn"
                                                                             type="button"
@@ -258,7 +263,7 @@ const JobDetailsV2 = ({ id }) => {
                                                                     </div>
                                                                     {/* End modal-header */}
 
-                                                                    <ApplyJobModalContent id={jobId} />
+                                                                    <ApplyJobModalContent id={jobId} hasQue={jobDetails?.hasQue || false} />
                                                                     {/* End PrivateMessageBox */}
                                                                 </div>
                                                                 {/* End .send-private-message-wrapper */}
@@ -286,11 +291,11 @@ const JobDetailsV2 = ({ id }) => {
                                             {/* End job-block-outer */}
 
                                             <div className="job-detail">
-                                                <h4>Job Description</h4>
+                                                <h4 style={{ marginBottom: "0px" }}>Job Description</h4>
 
                                                 <div className="ql-snow">
                                                     <div
-                                                        className="ql-editor"
+                                                        className="ql-editor" style={{ padding: "5px 0px" }}
                                                         dangerouslySetInnerHTML={{ __html: jobDetails?.jobDesc || "" }}
                                                     />
                                                 </div>
@@ -299,7 +304,7 @@ const JobDetailsV2 = ({ id }) => {
                                             </div>
                                             {/* End jobdetails content */}
                                             <div className="job-detail">
-                                                <h4>Skills</h4>
+                                                <h4 className="mt-2 mb-2">Skills</h4>
                                                 <ul className="job-skills">
                                                     {(jobDetails?.skills ?? "").split(", ").map((item, index, arr) => (
                                                         <li key={index}>
@@ -313,9 +318,9 @@ const JobDetailsV2 = ({ id }) => {
                                                 </ul>
                                             </div>
 
-                                            <div className="other-options" style={{ marginBottom: "20px", marginTop: "20px" }}>
+                                            <div className="other-options" style={{ marginBottom: "10px", marginTop: "10px" }}>
                                                 <div className="social-share">
-                                                    <h5>Share this job</h5>
+                                                    <h5>Share this job  </h5>
                                                     <a
                                                         href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
                                                         className="facebook"
@@ -476,7 +481,7 @@ const JobDetailsV2 = ({ id }) => {
 
 
                                                 <div className="sidebar-widget" style={{ marginBlock: "0px", "padding": "20px 10px 20px" }}>
-                                                    <div className="related-jobs mt-3">
+                                                    <div className="related-jobs ">
                                                         <div className="title-box">
                                                             <h3>Related Jobs</h3>
                                                             {/* <div className="text">

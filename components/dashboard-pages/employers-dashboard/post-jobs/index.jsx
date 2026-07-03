@@ -39,7 +39,7 @@ const index = () => {
           <BreadCrumb title="Post a Job" />
           {/* breadCrumb */}
 
-          <MenuToggler />
+          {/* <MenuToggler /> */}
           {/* Collapsible sidebar button */}
 
           <div className="row">

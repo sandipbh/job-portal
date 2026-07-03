@@ -146,7 +146,7 @@ const JobSingleDynamicV1 = ({ params }) => {
 
                 <div className="other-options">
                   <div className="social-share">
-                    <h5>Share this job</h5>
+                    <h5>Share this job </h5>
                     <SocialTwo />
                   </div>
                 </div>

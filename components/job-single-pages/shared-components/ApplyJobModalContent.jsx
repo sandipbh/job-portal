@@ -8,14 +8,17 @@ import ApplyQuestionDrawer from "./ApplyQuestionDrawer";
 import { toast } from "react-toastify";
 
 
-const ApplyJobModalContent = ({ id }) => {
+const ApplyJobModalContent = ({ id, hasQue }) => {
 
   let jobId = id ?? 0;
-
+  //alert("JhasQue: " + hasQue);
+  let hasQuestions = hasQue;
 
   const [resume, setResume] = useState(null);
   const [message, setMessage] = useState("");
   const [accepted, setAccepted] = useState(false);
+
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const router = useRouter();
 
@@ -23,8 +26,15 @@ const ApplyJobModalContent = ({ id }) => {
   const [loginType, setLoginType] = useState("");
   const [loginUqid, setLoginUqid] = useState("");
 
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+
+  const [answers, setAnswers] = useState({});
+
+  const [completedQuestions, setCompletedQuestions] = useState([]);
 
   useEffect(() => {
+
     getCookiesValue();
   }, []);
 
@@ -56,7 +66,7 @@ const ApplyJobModalContent = ({ id }) => {
       //   return;
       // }
 
-
+      setShowDrawer(false);
 
     } catch (error) {
       console.error(error);
@@ -119,7 +129,7 @@ const ApplyJobModalContent = ({ id }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -140,41 +150,108 @@ const ApplyJobModalContent = ({ id }) => {
 
     if (Object.keys(newErrors).length > 0) return;
 
-    // document.getElementById("applyModalCloseBtn")?.click();
 
-    // setTimeout(() => {
-    //   setShowDrawer();
-    // }, 300);
+    if (hasQuestions) {
+      setAnswers({});
+      setCompletedQuestions([]);
+      setCurrentQuestion(0);
+      setShowDrawer(true);
+    }
+    else {
+      setLoading(true);
+      console.log({
+        resume,
+        message,
+        answers,
+      });
 
-    setShowDrawer(true);
+
+      const formData = new FormData();
+
+      formData.append("resume", resume);
+      formData.append("message", message);
+      formData.append("answers", JSON.stringify(answers));
+      formData.append("jobpostId", jobId);
+
+      try {
+        setLoading(true);
+
+        const res = await fetch("/api/job-apply", {
+          method: "POST",
+          body: formData,
+        });
+
+        const user = await res.json();
+        console.log("Response from /api/candi-update-profile:", user);
+
+        if (!res.ok) {
+          toast.error(user.message || "Profile update failed");
+          setLoading(false);
+          return;
+        }
+
+        toast.success(user.message || "Applied Successfully");
+        setLoading(false);
+        document.getElementById("applyModalCloseBtn")?.click();
+        resetForm();
+
+      } catch (error) {
+        console.error(error);
+        toast.error("Profile update failed. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+
+    }
+
   };
 
-  const handleFinalApply = () => {
+  const handleFinalApply = async (payload) => {
+
+    setShowDrawer(false);
+    setLoading(true);
     console.log({
       resume,
       message,
       answers,
     });
 
-    setShowDrawer(false);
 
-    // const modal = document.getElementById("applyJobModal");
-    // const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
-    // modalInstance?.hide();
+    const formData = new FormData();
 
-    // Swal.fire({
-    //   toast: true,
-    //   position: "top-end",
-    //   icon: "success",
-    //   title: "Applied Successfully",
-    //   timer: 1500,
-    //   showConfirmButton: false,
-    // });
+    formData.append("resume", resume);
+    formData.append("message", message);
+    formData.append("answers", JSON.stringify(payload));
+    formData.append("jobpostId", jobId);
 
+    try {
+      setLoading(true);
 
-    toast.success("Applied Successfully")
+      const res = await fetch("/api/job-apply", {
+        method: "POST",
+        body: formData,
+      });
 
-    resetForm();
+      const user = await res.json();
+      console.log("Response from /api/candi-update-profile:", user);
+
+      if (!res.ok) {
+        toast.error(user.message || "Profile update failed");
+        setLoading(false);
+        return;
+      }
+
+      toast.success(user.message || "Applied Successfully");
+      setLoading(false);
+      document.getElementById("applyModalCloseBtn")?.click();
+      resetForm();
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Profile update failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -197,12 +274,7 @@ const ApplyJobModalContent = ({ id }) => {
     };
   }, []);
 
-  const [showDrawer, setShowDrawer] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
 
-  const [answers, setAnswers] = useState({});
-
-  const [completedQuestions, setCompletedQuestions] = useState([]);
   return (
     <form
       className="default-form job-apply-form"
@@ -250,7 +322,7 @@ const ApplyJobModalContent = ({ id }) => {
             className="darma"
             placeholder="Tell recruiter about your skills, experience, and qualifications..."
             value={message}
-            maxLength={500}
+            maxLength={1000}
             onChange={(e) => {
               setMessage(e.target.value);
 
@@ -274,11 +346,11 @@ const ApplyJobModalContent = ({ id }) => {
               style={{
                 textAlign: "right",
                 fontSize: "13px",
-                color: message.length >= 500 ? "red" : "#666",
+                color: message.length >= 1000 ? "red" : "#666",
                 marginTop: "5px",
               }}
             >
-              <span className="error-text">  {message.length}/500 characters</span>
+              <span className="error-text">  {message.length}/1000 characters</span>
             </div>
 
           </div>
@@ -324,13 +396,15 @@ const ApplyJobModalContent = ({ id }) => {
         </div>
 
         {/* Submit */}
-        <div className="col-lg-12 form-group">
+        <div className="col-lg-12 form-group mt-2">
           <button
             className="theme-btn btn-style-one w-100"
             type="submit"
+            disabled={loading}
           >
-            Apply Job
+            {loading ? "Applying..." : "Apply Job"}
           </button>
+
         </div>
       </div>
       <ApplyQuestionDrawer

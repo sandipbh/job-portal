@@ -82,7 +82,7 @@ const Index = () => {
           {/* breadCrumb */}
 
 
-          <MenuToggler />
+          {/* <MenuToggler /> */}
           {/* Collapsible sidebar button */}
 
           <div className="row">

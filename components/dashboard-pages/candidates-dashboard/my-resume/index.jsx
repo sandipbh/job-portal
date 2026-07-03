@@ -31,7 +31,7 @@ const index = () => {
           <BreadCrumb title="My Resume!" />
           {/* breadCrumb */}
 
-          <MenuToggler />
+          {/* <MenuToggler /> */}
           {/* Collapsible sidebar button */}
 
           <div className="row">
