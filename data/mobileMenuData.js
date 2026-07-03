@@ -64,10 +64,10 @@ export const mobileMenuData = [
     ],
   },
 
-  // Shop
-  {
-    id: 7,
-    label: "Shop",
-    items: shopItems,
-  },
+  // // Shop
+  // {
+  //   id: 7,
+  //   label: "Shop",
+  //   items: shopItems,
+  // },
 ];
