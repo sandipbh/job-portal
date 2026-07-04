@@ -1,8 +1,8 @@
 import ChangePassword from "@/components/dashboard-pages/employers-dashboard/change-password";
 
 export const metadata = {
-  title: "Change Password || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
+  title: "Change Password || RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
 };
 
 const index = () => {

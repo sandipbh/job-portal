@@ -1,17 +1,17 @@
 import Faq from "@/components/pages-menu/faq";
 import RegSuccess from "@/components/pages-menu/regsuccess";
-import RegistrationConfirmation from "@/components/common/form/register/registerConfirmation";  
- 
+import RegistrationConfirmation from "@/components/common/form/register/registerConfirmation";
+
 export const metadata = {
-  title: "Faq || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
+  title: "Faq || RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
 };
 
 const index = () => {
   return (
-    <> 
-   
-      <RegSuccess/> 
+    <>
+
+      <RegSuccess />
     </>
   );
 };

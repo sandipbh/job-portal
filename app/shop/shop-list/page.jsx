@@ -1,8 +1,8 @@
 import ShopList from "@/components/shop/shop-list";
 
 export const metadata = {
-  title: "Shop List || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
+  title: "Shop List || RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
 };
 
 const index = () => {

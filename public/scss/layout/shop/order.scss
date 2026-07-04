@@ -6,17 +6,17 @@ CheckOut Page
 
 ***/
 
-.checkout-page{
-  position:relative;
-  padding:60px 0px 10px;
+.checkout-page {
+  position: relative;
+  padding: 60px 0px 10px;
 }
 
-.checkout-page .column{
+.checkout-page .column {
   position: relative;
   margin-bottom: 50px;
 }
 
-.checkout-page .title{
+.checkout-page .title {
   position: relative;
   font-weight: 500;
   font-size: 18px;
@@ -25,21 +25,21 @@ CheckOut Page
   margin-bottom: 30px;
 }
 
-.checkout-form{
-  position:relative;
+.checkout-form {
+  position: relative;
   background: #ffffff;
-  
+
   border-radius: 10px;
-  
+
 }
 
-.checkout-form .coupen-outer{
+.checkout-form .coupen-outer {
   position: relative;
   text-align: center;
   margin-bottom: 35px;
 }
 
-.checkout-form .coupen-outer .text{
+.checkout-form .coupen-outer .text {
   display: block;
   font-size: 15px;
   color: #5c6770;
@@ -47,12 +47,12 @@ CheckOut Page
   margin-bottom: 25px;
 }
 
-.checkout-form .coupen-outer .text a{
+.checkout-form .coupen-outer .text a {
   font-weight: 500;
   color: #1b2032;
 }
 
-.checkout-form .coupen-outer .form-grou{
+.checkout-form .coupen-outer .form-grou {
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -65,7 +65,7 @@ CheckOut Page
   align-items: center;
 }
 
-.checkout-form .coupen-outer .input{
+.checkout-form .coupen-outer .input {
   position: relative;
   width: 100%;
   display: block;
@@ -93,27 +93,27 @@ CheckOut Page
   margin-bottom: 10px;
 }
 
-.checkout-form .default-form .form-group input{
+.checkout-form .default-form .form-group input {
   margin-bottom: 10px;
 }
 
-.checkout-form .default-form .form-group input:last-child{
+.checkout-form .default-form .form-group input:last-child {
   margin-bottom: 0;
 }
 
-.checkout-form .default-form .form-group textarea{
+.checkout-form .default-form .form-group textarea {
   height: 200px;
 }
 
-.order-box{
-  position:relative;
+.order-box {
+  position: relative;
   padding: 30px 30px;
   background: #F5F7FC;
   border-radius: 8px;
   margin-bottom: 30px;
 }
 
-.order-box h3{
+.order-box h3 {
   position: relative;
   font-weight: 500;
   font-size: 18px;
@@ -122,21 +122,21 @@ CheckOut Page
   margin-bottom: 25px;
 }
 
-.order-box table{
+.order-box table {
   width: 100%;
 }
 
-.order-box thead th{
+.order-box thead th {
   position: relative;
   padding-bottom: 11px;
   border-bottom: 1px solid #E7E7EC;
 }
 
-.order-box thead th strong{
+.order-box thead th strong {
   font-weight: 500;
 }
 
-.order-box .cart-item td{
+.order-box .cart-item td {
   font-size: 15px;
   line-height: 20px;
   color: #696969;
@@ -145,12 +145,12 @@ CheckOut Page
 }
 
 .order-box table th:last-child,
-.order-box table td:last-child{
+.order-box table td:last-child {
   position: relative;
   text-align: right;
 }
 
-.order-box .cart-subtotal td{
+.order-box .cart-subtotal td {
   padding: 15px 0;
   font-weight: 500;
   font-size: 16px;
@@ -160,7 +160,7 @@ CheckOut Page
   border-bottom: 1px solid #E7E7EC;
 }
 
-.order-box .order-total td{
+.order-box .order-total td {
   font-weight: 500;
   font-size: 16px;
   line-height: 22px;
@@ -168,59 +168,59 @@ CheckOut Page
   padding-top: 15px;
 }
 
-.payment-box{
-  position:relative;
+.payment-box {
+  position: relative;
 }
 
-.payment-options{
-  position:relative;
+.payment-options {
+  position: relative;
   padding: 30px 30px;
   background-color: #F5F7FC;
   border-radius: 10px;
   margin-bottom: 30px;
 }
 
-.payment-box .payment-options li{
-  position:relative;
-  margin-bottom:35px; 
+.payment-box .payment-options li {
+  position: relative;
+  margin-bottom: 35px;
 }
 
-.payment-box .payment-options li .radio-option{
-  position:relative;    
+.payment-box .payment-options li .radio-option {
+  position: relative;
 }
 
-.payment-box .payment-options li .radio-option label{
-  position:relative;
-  display:block;
-  padding-left:30px;
+.payment-box .payment-options li .radio-option label {
+  position: relative;
+  display: block;
+  padding-left: 30px;
   font-weight: 500;
   font-size: 16px;
   line-height: 15px;
   color: #202124;
-  text-transform:capitalize;
-  cursor:pointer;
+  text-transform: capitalize;
+  cursor: pointer;
 }
 
-.payment-box .payment-options li .radio-option label .small-text{
-  position:relative;
-  display:none;
-  text-transform:none;
+.payment-box .payment-options li .radio-option label .small-text {
+  position: relative;
+  display: none;
+  text-transform: none;
   margin-top: 10px;
   font-size: 14px;
   line-height: 24px;
   color: #696969;
 }
 
-.payment-box .payment-options li .radio-option input:checked + label .small-text{
-  display:block;
+.payment-box .payment-options li .radio-option input:checked+label .small-text {
+  display: block;
 }
 
-.payment-box .payment-options li .radio-option label img{
-  position:relative;
+.payment-box .payment-options li .radio-option label img {
+  position: relative;
   margin-left: 15px;
 }
 
-.payment-box .btn-box .theme-btn{
+.payment-box .btn-box .theme-btn {
   position: relative;
   display: block;
   width: 100%;
@@ -234,22 +234,22 @@ Order Slip
 
 ***/
 
-.order-confirmation{
+.order-confirmation {
   position: relative;
   padding: 100px 0 70px;
 }
 
-.order-confirmation .auto-container{
+.order-confirmation .auto-container {
   max-width: 770px;
 }
 
-.order-confirmation .upper-box{
+.order-confirmation .upper-box {
   position: relative;
   margin-bottom: 40px;
   text-align: center;
 }
 
-.order-confirmation .upper-box .icon{
+.order-confirmation .upper-box .icon {
   display: inline-block;
   height: 80px;
   width: 80px;
@@ -262,7 +262,7 @@ Order Slip
   margin-bottom: 13px;
 }
 
-.order-confirmation .upper-box h4{
+.order-confirmation .upper-box h4 {
   font-weight: 500;
   font-size: 30px;
   line-height: 41px;
@@ -270,13 +270,13 @@ Order Slip
   margin-bottom: 11px;
 }
 
-.order-confirmation .upper-box .text{
+.order-confirmation .upper-box .text {
   font-size: 15px;
   line-height: 20px;
   color: #696969;
 }
 
-.order-confirmation .order-info{
+.order-confirmation .order-info {
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -295,7 +295,7 @@ Order Slip
   justify-content: space-between;
 }
 
-.order-confirmation .order-info li{
+.order-confirmation .order-info li {
   position: relative;
   margin-right: 40px;
   -webkit-box-orient: vertical;
@@ -309,13 +309,13 @@ Order Slip
   line-height: 20px;
   color: #696969;
   margin-bottom: 40px;
-}   
+}
 
-.order-confirmation .order-info li:last-child{
+.order-confirmation .order-info li:last-child {
   margin-right: 0;
 }
 
-.order-confirmation .order-info li strong{
+.order-confirmation .order-info li strong {
   font-weight: 500;
   font-size: 16px;
   line-height: 22px;
@@ -323,7 +323,7 @@ Order Slip
   margin-top: 13px;
 }
 
-.order-confirmation .order-box{
+.order-confirmation .order-box {
   background: none;
   border: 1px solid #ECEDF2;
   border-radius: 8px;

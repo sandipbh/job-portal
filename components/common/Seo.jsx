@@ -2,12 +2,12 @@
 
 const Seo = ({ pageTitle }) => (
 
-  
+
   <>
     {/* <Head>
       <title>
         {pageTitle &&
-          `${pageTitle} || Superio - Job Borad React NextJS Template}`}
+          `${pageTitle} || RatinGrow - Hiring Verified}`}
       </title>
       <meta
         name="viewport"

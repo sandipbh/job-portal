@@ -466,29 +466,37 @@ Testimonial Section Three
   margin: 0;
   position: absolute;
   z-index: 2;
+
   @media (max-width: 1024px) {
     left: 52%;
   }
+
   @media (max-width: 768px) {
     bottom: 70px;
     left: 51%;
   }
+
   @media (max-width: 767px) {
     bottom: -80px;
   }
+
   &.slick-prev {
     left: 51%;
+
     @media (max-width: 1024px) {
       left: 46%;
     }
+
     @media (max-width: 768px) {
       left: 42%;
     }
+
     @media (max-width: 767px) {
       left: 33%;
     }
   }
 }
+
 .testimonial-section-three {
   @media (max-width: 767px) {
     margin-bottom: 80px;
@@ -505,7 +513,7 @@ Testimonial Section Four
 
 .testimonial-section-four {
   position: relative;
-  padding: 100px 0;
+  padding: 30px 0;
 }
 
 .testimonial-section-four .testimonial-carousel {

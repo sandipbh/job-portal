@@ -27,7 +27,6 @@ const JobListingsTable = () => {
   const [showDate, setShowDate] = useState(false);
   const [location, setLocation] = useState("");
 
-
   const [jobList, setJobList] = useState([]);
 
   useEffect(() => {

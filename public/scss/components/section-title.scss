@@ -6,7 +6,7 @@ Section Title
 
 ***/
 
-.sec-title-outer{
+.sec-title-outer {
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -21,10 +21,10 @@ Section Title
 
 .sec-title {
   position: relative;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
 }
 
-.sec-title .sub-title{
+.sec-title .sub-title {
   position: relative;
   display: block;
   font-size: 18px;
@@ -51,11 +51,11 @@ Section Title
 }
 
 .sec-title.light h2,
-.sec-title.light .text{
+.sec-title.light .text {
   color: #ffffff;
 }
 
-.sec-title-outer .link{
+.sec-title-outer .link {
   position: relative;
   font-weight: normal;
   font-size: 14px;
@@ -64,11 +64,11 @@ Section Title
   margin-bottom: 50px;
 }
 
-.sec-title-outer .link .icon{
+.sec-title-outer .link .icon {
   margin-left: 5px;
 }
 
-.sec-title-outer select{
+.sec-title-outer select {
   position: relative;
   background: #FFFFFF;
   border: 1px solid #ECEDF2;
@@ -87,12 +87,12 @@ Section Title
   appearance: none;
 }
 
-.sec-title-outer .select-box-outer{
+.sec-title-outer .select-box-outer {
   position: relative;
   margin-bottom: 50px;
 }
 
-.sec-title-outer .select-box-outer .icon{
+.sec-title-outer .select-box-outer .icon {
   position: absolute;
   right: 22px;
   top: 50%;

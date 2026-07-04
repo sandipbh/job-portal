@@ -1,8 +1,8 @@
 import ShopDetails from "@/components/shop/shop-single/ShopDetails";
 
 export const metadata = {
-  title: "Shop-details || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
+  title: "Shop-details || RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
 };
 
 const ShopSingleDyanmic = ({ params }) => {

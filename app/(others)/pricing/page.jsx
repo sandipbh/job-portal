@@ -1,8 +1,8 @@
 import Pricing from "@/components/pages-menu/pricing";
 
 export const metadata = {
-  title: "Pricing || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
+  title: "Pricing || RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
 };
 
 const index = () => {

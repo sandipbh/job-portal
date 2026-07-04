@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
         />
         <meta
           name="description"
-          content="Superio - Job Borad React NextJS Template"
+          content="RatinGrow - Hiring Verified"
         />
         <meta name="ibthemes" content="ATFN" />
 

@@ -1,8 +1,8 @@
 import ShortListedJobs from "@/components/dashboard-pages/candidates-dashboard/short-listed-jobs";
 
 export const metadata = {
-  title: "Short ListedJobs || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
+  title: "Short ListedJobs || RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
 };
 
 const index = () => {

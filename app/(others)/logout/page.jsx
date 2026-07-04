@@ -1,8 +1,8 @@
 import Logout from "@/components/pages-menu/logout";
 
 export const metadata = {
-  title: "Login || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
+  title: "Login || RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
 };
 
 const index = () => {

@@ -11,8 +11,8 @@ import JobDetailsV2 from "@/components/job-single-pages/shared-components/JobDet
 
 
 export const metadata = {
-  title: "Job Single Dyanmic V2 || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
+  title: "Job Single Dyanmic V2 || RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
 };
 
 const JobSingleDynamicV2 = async ({ params }) => {

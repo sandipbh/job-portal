@@ -1,8 +1,8 @@
 import CandidatesList from "@/components/candidates-listing-pages/candidates-list-v5";
 
 export const metadata = {
-  title: "Candidates List V5 || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
+  title: "Candidates List V5 || RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
 };
 
 const index = () => {

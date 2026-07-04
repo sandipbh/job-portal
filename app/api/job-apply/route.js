@@ -30,10 +30,10 @@ export async function POST(req) {
 
     const base64 = buffer.toString("base64");
 
-    console.log(jobpostId);
-    console.log('resume  ---', base64); // File
-    console.log(message);
-    console.log(answers);
+    // console.log(jobpostId);
+    // console.log('resume  ---', base64); // File
+    // console.log(message);
+    // console.log(answers);
 
 
 
@@ -74,7 +74,7 @@ export async function POST(req) {
     };
 
 
-    console.log("body Data:", loginBody);
+    //console.log("body Data:", loginBody);
 
     // Allow self-signed certs in local development only.
     if (process.env.NODE_ENV !== "production") {
@@ -88,14 +88,14 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-    console.log("External API Base URL :", externalApiBaseUrl);
+    // console.log("External API Base URL :", externalApiBaseUrl);
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/api/public/jobApply`;
 
-    console.log("External API URL :", externalApiUrl);
-    console.log("External API Request Body:", loginBody);
+    //console.log("External API URL :", externalApiUrl);
+    //console.log("External API Request Body:", loginBody);
 
     // Send multipart/form-data (use the FormData we built above)
     const externalResponse = await fetch(externalApiUrl, {
@@ -129,7 +129,7 @@ export async function POST(req) {
       );
     }
 
-    console.log("Application submitted successfully");
+    // console.log("Application submitted successfully");
 
     // 6. Send response with cookies
     const response = NextResponse.json(

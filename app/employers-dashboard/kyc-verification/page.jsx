@@ -1,8 +1,8 @@
 import KycForm from "@/components/dashboard-pages/employers-dashboard/kyc-verification";
 
 export const metadata = {
-    title: "Employeers Dashboard || Superio - Job Borad React NextJS Template",
-    description: "Superio - Job Borad React NextJS Template",
+    title: "Employeers Dashboard || RatinGrow - Hiring Verified",
+    description: "RatinGrow - Hiring Verified",
 };
 
 const index = () => {

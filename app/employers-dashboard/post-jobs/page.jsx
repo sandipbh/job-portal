@@ -5,8 +5,8 @@ import PostJob from "@/components/dashboard-pages/employers-dashboard/post-jobs"
 import JobCardSkeleton from "@/components/skeleton/Job-list";
 
 export const metadata = {
-  title: "Post Jobs || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
+  title: "Post Jobs || RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
 };
 
 const index = () => {
