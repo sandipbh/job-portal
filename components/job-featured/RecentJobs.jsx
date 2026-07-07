@@ -25,7 +25,7 @@ const RecentJobs = () => {
       const result = await response.json();
 
       const listData = result?.data;
-      console.log('listData  recent ', listData)
+      //console.log('listData  recent ', listData)
 
       if (listData) {
 

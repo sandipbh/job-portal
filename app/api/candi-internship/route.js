@@ -106,7 +106,7 @@ export async function POST(req) {
     // 1. Basic validation
     if (!user.external.uqId || !user.external.role) {
       return NextResponse.json(
-        { message: "Email and role are required" },
+        { message: "Your login has expired, relogin your account" },
         { status: 400 }
       );
     }

@@ -43,8 +43,8 @@ export default function RootLayout({ children }) {
         />
         <meta name="ibthemes" content="ATFN" />
 
-        <link rel="icon" href="./favicon.ico" />
-        <link rel="stylesheet" href="/css/quill.snow.css"></link>
+        {/* <link rel="icon" href="./favicon.ico" />
+        <link rel="stylesheet" href="/css/quill.snow.css"></link> */}
       </head>
 
       <body>

@@ -192,7 +192,7 @@ const CompetitiveExam = ({
                 console.log("Response from /api/candi-competitive-exam:", user);
 
                 if (!res.ok) {
-                    toast.error(user.message || "Profile update failed");
+                    toast.error(user.message || "Request failed");
                     setLoading(false);
                     return;
                 }

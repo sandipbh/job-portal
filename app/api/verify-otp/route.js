@@ -29,12 +29,16 @@ export async function POST(req) {
         { message: "Url is not configured." },
         { status: 500 }
       );
-    } 
-
+    }
+    const LoginIp =
+      headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      headersList.get("x-real-ip") ||
+      headersList.get("cf-connecting-ip") ||
+      "Unknown";
     // console.log("Received OTP verification request:", { mobileOtp, emailOtp, uqid });
     // console.log("uqid:", uqid);
     // console.log(externalApiBaseUrl);
-    
+
     const verifyUrl =
       process.env.VERIFY_OTP_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/verification/verifyOtp`;
@@ -44,7 +48,7 @@ export async function POST(req) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ uqid, mobileOtp, emailOtp }),
+      body: JSON.stringify({ uqid, mobileOtp, emailOtp, LoginIp }),
     });
 
     const externalData = await externalResponse.json();

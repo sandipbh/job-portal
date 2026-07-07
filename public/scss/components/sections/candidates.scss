@@ -209,21 +209,21 @@ Candidates Section Two
 
 .candidate-block-three {
   position: relative;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .candidate-block-three .inner-box {
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
+  // display: flex;
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  padding: 30px 30px;
+  padding: 7px 7px;
   background: #ffffff;
   border: 1px solid #ecedf2;
   border-radius: 8px;
@@ -239,7 +239,7 @@ Candidates Section Two
 
 .candidate-block-three .inner-box .content {
   position: relative;
-  padding-left: 110px;
+  padding-left: 95px;
   min-height: 90px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -276,6 +276,7 @@ Candidates Section Two
   font-weight: 500;
   color: #202124;
   margin-bottom: 5px;
+  width: 100%;
 }
 
 .candidate-block-three .name a {
@@ -491,8 +492,7 @@ Candidates Section Two
   display: none;
 }
 
-.resume-action .theme-btn {
-}
+.resume-action .theme-btn {}
 
 .resume-action .theme-btn i {
   margin-left: 40px;

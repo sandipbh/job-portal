@@ -23,7 +23,11 @@ export async function POST(req) {
         { status: 500 }
       );
     }
- 
+    const LoginIp =
+      headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      headersList.get("x-real-ip") ||
+      headersList.get("cf-connecting-ip") ||
+      "Unknown";
 
     const resendUrl =
       process.env.RESEND_OTP_API_URL ||
@@ -38,6 +42,7 @@ export async function POST(req) {
         Uqid: uqid,
         Email: email,
         Mobile: mobile,
+        ipAddress: LoginIp
       }),
     });
 

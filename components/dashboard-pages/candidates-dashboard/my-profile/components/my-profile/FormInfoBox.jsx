@@ -406,13 +406,15 @@ const FormInfoBox = ({ formData,
 
 
         <div className="form-group col-lg-6 col-md-12">
-          <label>Date of Birth</label>
+          <label>Date of Birth   </label>
           <div >
 
             <input
               type="date"
               name="dob"
-              value={formData.dob}
+              value={formData?.dob
+                ? new Date(formData.dob).toISOString().split("T")[0]
+                : ""}
               onChange={handleChange}
               placeholder="Date of Birth"
               maxLength={10}

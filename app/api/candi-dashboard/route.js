@@ -9,11 +9,11 @@ import {
 
 
 export async function POST(req) {
-    const headersList = await headers();
+  const headersList = await headers();
 
   try {
     const {
-      email, 
+      email,
       role
     } = await req.json();
 
@@ -22,22 +22,22 @@ export async function POST(req) {
     // 1. Basic validation
     if (!email || !role) {
       return NextResponse.json(
-        { message: "Email and role are required" },
+        { message: "Your login has expired, relogin your account" },
         { status: 400 }
       );
     }
 
- 
-     const LoginIp =
-    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    headersList.get("x-real-ip") ||
-    headersList.get("cf-connecting-ip") ||
-    "Unknown";
+
+    const LoginIp =
+      headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      headersList.get("x-real-ip") ||
+      headersList.get("cf-connecting-ip") ||
+      "Unknown";
 
     const loginBody = {
-      Email: email, 
-      Role: role, 
-    };    
+      Email: email,
+      Role: role,
+    };
     console.log("Login body:", loginBody);
 
     // Allow self-signed certs in local development only.
@@ -54,15 +54,15 @@ export async function POST(req) {
     }
     console.log("External API Base URL 00:", externalApiBaseUrl);
 
-    
 
-     const externalApiUrl =
+
+    const externalApiUrl =
       process.env.REGISTER_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/Candidate/CandiData`;
 
-      console.log("External API URL :", externalApiUrl);
-      console.log("External API Request Body:", loginBody);
- 
+    console.log("External API URL :", externalApiUrl);
+    console.log("External API Request Body:", loginBody);
+
     const externalResponse = await apiFetch(externalApiUrl, {
       method: "POST",
       body: JSON.stringify(loginBody),
@@ -88,7 +88,7 @@ export async function POST(req) {
       );
     }
 
-    console.log("User logged in successfully:",  role);
+    console.log("User logged in successfully:", role);
 
     // 6. Send response with cookies
     const response = NextResponse.json(
@@ -100,8 +100,8 @@ export async function POST(req) {
       { status: 201 }
     );
 
-  
- 
+
+
     return response;
   } catch (error) {
     console.error("LOGIN ERROR:", error);

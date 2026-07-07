@@ -45,7 +45,7 @@ const JobListingsTable = () => {
       const result = await response.json();
 
       const listData = result?.data;
-      console.log('listData  ', listData)
+      // console.log('listData  ', listData)
 
       if (listData) {
 
@@ -480,8 +480,6 @@ const JobListingsTable = () => {
               )}
             </div>
 
-
-
             {/* Date */}
             <div className="filter-dropdown">
               <button
@@ -705,12 +703,26 @@ const JobListingsTable = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="applied">
-                      <a href="#">{item.applyCount} Applied</a>
+
+                    <td>
+                      <div className="response-count">
+                        <Link
+                          href={`/employers-dashboard/all-applicants?jobId=${item.id}`}
+                        >
+                          {item.applyCount} Responses
+                        </Link>
+
+                        <Link
+                          href={`/employers-dashboard/all-applicants?jobId=${item.id}&status=Shortlisted`}
+                          className="shortlisted-link"
+                        >
+                          {item.shortlistCount} Shortlisted
+                        </Link>
+                      </div>
                     </td>
                     <td>
                       {formatDate(item.created_at)} <br />
-                      {formatDate(item.expire_at)}
+                      <span className="error-text"> {formatDate(item.expire_at)}</span>
                     </td>
                     <td className="status">{item.status} </td>
                     <td>

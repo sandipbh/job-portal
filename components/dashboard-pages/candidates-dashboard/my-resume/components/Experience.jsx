@@ -1,8 +1,10 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from 'react-toastify';
 
 const ExperienceForm = ({ data, setData, onNext }) => {
+
+  const inputRef = useRef(null);
 
   const emptyExperience = {
     designation: "",
@@ -44,6 +46,8 @@ const ExperienceForm = ({ data, setData, onNext }) => {
 
       const profile = result?.data;
 
+
+
       if (profile) {
 
         const examList = profile.map(item => ({
@@ -55,10 +59,12 @@ const ExperienceForm = ({ data, setData, onNext }) => {
           workingStartYear: item.fromYear,
           workingEndMonth: item.toMonth,
           workingEndYear: item.toYear,
-          currentlyWorking: item.currentCompany,
+          currentlyWorking: item.currentCompany === "True" ? true : false,
           description: item.workProfile,
 
         }));
+
+        console.log(examList)
         setList(examList);
 
         setForm(emptyExperience);
@@ -100,7 +106,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
       console.log("Response from /api/candi-experience:", user);
 
       if (!res.ok) {
-        toast.error(user.message || "Profile update failed");
+        toast.error(user.message || "Request failed");
         setLoading(false);
         return;
       }
@@ -125,6 +131,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
       setForm(emptyExperience);
       setErrors({});
       setShowForm(false);
+      handleFocus();;
 
       /*** set list** */
 
@@ -141,6 +148,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
   };
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
 
     setForm((prev) => ({
       ...prev,
@@ -164,7 +172,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
       newErrors.company = "Company name is required";
     }
 
-    if (!form.workingStartMonth || form.workingStartMonth.length < 3) {
+    if (!form.workingStartMonth || form.workingStartMonth < 1) {
       newErrors.workingStartMonth = "Select start month";
     }
 
@@ -173,7 +181,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
     }
 
     if (!form.currentlyWorking) {
-      if (!form.workingEndMonth || form.workingEndMonth.length < 3) {
+      if (!form.workingEndMonth || form.workingEndMonth < 1) {
         newErrors.workingEndMonth = "Select end month";
       }
 
@@ -225,12 +233,15 @@ const ExperienceForm = ({ data, setData, onNext }) => {
     setForm({ ...list[index] });
     setEditIndex(index);
     setShowForm(true);
+    inputRef.current?.focus();
+
   };
 
   const handleCancel = () => {
     setForm(emptyExperience);
     setEditIndex(null);
     setShowForm(false);
+    handleFocus();;
   };
 
   //  DELETE
@@ -258,7 +269,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
       ...prev,
       experience: list,
     }));
-
+    handleFocus();;
     onNext();
   };
 
@@ -282,10 +293,13 @@ const ExperienceForm = ({ data, setData, onNext }) => {
   const startYear = Number(form.startYear);
   const minEndYear = startYear || 2000;
   const maxYear = currentYear;
-
+  const handleFocus = () => {
+    inputRef.current?.focus();
+  };
 
   return (
     <form className="default-form" onSubmit={handleSubmit}>
+
       <div className="form-header">
         <h4>Work Experience</h4>
         <p>Add Employment details if you are already working / have worked before in an organization</p>
@@ -299,43 +313,12 @@ const ExperienceForm = ({ data, setData, onNext }) => {
             setForm(emptyExperience);
             setEditIndex(null);
             setShowForm(true);
+            handleFocus();
           }}
         >
           + Add Work Experience
         </button>
       )}
-
-      {list.map((item, index) => (
-        <div key={index} className="exam-card" style={{ marginBottom: "10px" }}>
-
-          <div className="d-flex justify-content-between align-items-start">
-
-            <div>
-              <h5>{item.designation}</h5>
-
-              <p className="mb-1">
-                {item.company} ,  {item.location}
-              </p>
-              <p className="mb-0">
-                From {item.workingStartMonth}, {item.workingStartYear} - {" "}
-                {item.currentlyWorking
-                  ? "Present"
-                  : `${item.workingEndMonth}, ${item.workingEndYear}`}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => handleEdit(index)}
-            >
-              ✏️
-            </button>
-
-          </div>
-
-        </div>
-      ))}
-
       {showForm && (
         <>
           <div className="exam-form-box">
@@ -345,11 +328,12 @@ const ExperienceForm = ({ data, setData, onNext }) => {
                 <label>Designation</label>
                 <input
                   type="text"
+                  ref={inputRef}
                   name="designation"
                   value={form.designation}
                   onChange={handleChange}
                   placeholder="Enter Designation"
-                  maxLength={100}
+                  maxLength={70}
                 />
 
                 {errors.designation && (
@@ -373,10 +357,9 @@ const ExperienceForm = ({ data, setData, onNext }) => {
                 )}
               </div>
 
-
               {/* WORKING SINCE */}
               <div className="form-group col-12 mt-2">
-                <label>Working Since</label>
+                <label>Working Since </label>
 
                 {/* START DATE */}
                 <div className="row">
@@ -389,7 +372,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
                     >
                       <option value="">Select Month</option>
                       {months.map((m, index) => (
-                        <option key={index} value={m.id} >{m.value}</option>
+                        <option key={index} value={m.key} >{m.value}  </option>
                       ))}
                     </select>
 
@@ -452,7 +435,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
                         <option value="">Select Month</option>
 
                         {months.map((m, index) => (
-                          <option key={index} value={m.id} >{m.value}</option>
+                          <option key={index} value={m.key} >{m.value}</option>
                         ))}
                       </select>
 
@@ -521,7 +504,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
 
               {/* DESCRIPTION */}
               <div className="form-group col-12">
-                <label>Describe your job profile</label>
+                <label>Describe your job profile (<span className="text-muted">max 500char</span>) </label>
 
                 <textarea
                   name="description"
@@ -563,10 +546,43 @@ const ExperienceForm = ({ data, setData, onNext }) => {
         </>
       )}
 
+      {list.map((item, index) => (
+        <div key={index} className="exam-card" style={{ marginBottom: "10px" }}>
+
+          <div className="d-flex justify-content-between align-items-start">
+
+            <div>
+              <h5>{item.designation}</h5>
+
+              <p className="mb-1">
+                {item.company} ,  {item.location}
+              </p>
+              <p className="mb-0">
+                From    {months.find(x => x.key === Number(item.workingStartMonth))?.value || ""}, {item.workingStartYear} - {" "}
+                {item.currentlyWorking
+                  ? "Present"
+                  : `${months.find(x => x.key === Number(item.workingEndMonth))?.value || ""}, ${item.workingEndYear}`}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleEdit(index)}
+            >
+              ✏️
+            </button>
+
+          </div>
+
+        </div>
+      ))}
+
+
+
       {/* SAVE */}
       <div className="text-end mt-3">
         <button type="submit" className="theme-btn btn-style-one">
-          Save & Continue
+          Next
         </button>
       </div>
     </form>

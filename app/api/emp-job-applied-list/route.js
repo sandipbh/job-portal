@@ -23,10 +23,10 @@ export async function GET(req) {
   try {
 
     const loginBody = {
-      JobPostId: JobPostId,
       uqId: user.external.uqId,
       Role: user.external.role,
       Token: user.external.accessToken,
+      JobPostId: JobPostId
     };
 
     // Allow self-signed certs in local development only.
@@ -44,8 +44,7 @@ export async function GET(req) {
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
-      `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/getJobDetails`;
-
+      `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/getJobAppliedList`;
 
     const externalResponse = await apiFetch(externalApiUrl, {
       method: "POST",
@@ -136,12 +135,6 @@ export async function POST(req) {
       externalLink,
       allowDirectCall,
       days,
-
-      itsUrgent,
-      postingDate,
-      expiryDate,
-      vacancies,
-
       jobDesc,
       aboutCompany,
       screeningQuestions,
@@ -224,11 +217,6 @@ export async function POST(req) {
       allowDirectCall: allowDirectCall,
       days: days,
 
-      itsUrgent: itsUrgent,
-      postingDate: postingDate,
-      expiryDate: expiryDate,
-      vacancies: vacancies,
-
       jobDesc: jobDesc,
       aboutCompany: aboutCompany,
       screeningQuestions: screeningQuestions,
@@ -288,14 +276,14 @@ export async function POST(req) {
 
     if (!externalResponse.ok) {
       console.error(
-        "External job post failed:",
+        "External jobpost failed:",
         responseData.success,
         responseData.message
       );
 
       return NextResponse.json(
         {
-          message: responseData.message || "Job Post Failed.",
+          message: responseData.message || "Job Post Failed",
         },
         { status: responseData.status || 500 }
       );
@@ -307,7 +295,6 @@ export async function POST(req) {
     const response = NextResponse.json(
       {
         message: responseData.message || "Job Posted successfully",
-        jobpostid: responseData.data.jobPostId
       },
       { status: 201 }
     );
@@ -317,7 +304,7 @@ export async function POST(req) {
     console.error("UPDATE ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to update details" },
+      { message: "Failed to update Profile" },
       { status: 500 }
     );
   }

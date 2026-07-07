@@ -108,7 +108,7 @@ const Project = ({ data, setData, onNext }) => {
             newErrors.projectName = "Project name is required";
         }
 
-        if (!form.projectStartMonth || form.projectStartMonth.length < 2) {
+        if (!form.projectStartMonth || form.projectStartMonth < 1) {
             newErrors.projectStartMonth = "Select start month";
         }
 
@@ -117,7 +117,7 @@ const Project = ({ data, setData, onNext }) => {
         }
 
         if (!form.currentlyWorking) {
-            if (!form.projectEndMonth || form.projectEndMonth.length < 2) {
+            if (!form.projectEndMonth || form.projectEndMonth < 1) {
                 newErrors.projectEndMonth = "Select end month";
             }
 
@@ -460,7 +460,7 @@ const Project = ({ data, setData, onNext }) => {
                                             >
                                                 <option value="">Select Month</option>
                                                 {months.map((m, index) => (
-                                                    <option key={index} value={m.id} >{m.value}</option>
+                                                    <option key={index} value={m.key} >{m.value}</option>
                                                 ))}
                                             </select>
 
@@ -523,7 +523,7 @@ const Project = ({ data, setData, onNext }) => {
                                                     <option value="">Select Month</option>
 
                                                     {months.map((m, index) => (
-                                                        <option key={index} value={m.id} >{m.value}</option>
+                                                        <option key={index} value={m.key} >{m.value}</option>
                                                     ))}
                                                 </select>
 

@@ -338,7 +338,7 @@ const InternshipForm = ({ data, setData, onNext }) => {
                                 >
                                     <option value="">Month</option>
                                     {months.map((m, index) => (
-                                        <option key={index} value={m.id} >{m.value}</option>
+                                        <option key={index} value={m.key} >{m.value}</option>
                                     ))}
                                 </select>
                                 {errors.startMonth && (
@@ -380,7 +380,7 @@ const InternshipForm = ({ data, setData, onNext }) => {
                                     >
                                         <option value="">Month</option>
                                         {months.map((m, index) => (
-                                            <option key={index} value={m.id} >{m.value}</option>
+                                            <option key={index} value={m.key} >{m.value}</option>
                                         ))}
                                     </select>
                                     {errors.endMonth && (

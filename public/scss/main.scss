@@ -1985,7 +1985,7 @@ in 2 tab of Company Profile
 
 .duration-row select,
 .duration-row input {
-  height: 45px;
+  height: 40px;
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #b9c6ef;
@@ -5160,7 +5160,7 @@ in 2 tab of Company Profile
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 0px;
 }
 
 .custom-pagination {
@@ -5473,3 +5473,383 @@ in 2 tab of Company Profile
 }
 
 /********************/
+
+
+.candidate-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  height: 30px;
+  padding: 0 10px;
+
+  border-radius: 999px;
+
+  background: #fff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all .25s ease;
+}
+
+.action-btn i {
+  font-size: 16px;
+}
+
+/* Shortlist */
+
+.shortlist-btn {
+  color: #34a863;
+  border: 1px solid #34a863;
+}
+
+.shortlist-btn:hover {
+  background: #34a863;
+  color: #fff;
+}
+
+/* Maybe */
+
+.maybe-btn {
+  color: #ff9800;
+  border: 1px solid #ff9800;
+}
+
+.maybe-btn:hover {
+  background: #ff9800;
+  color: #fff;
+}
+
+/* Reject */
+
+.reject-btn {
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.reject-btn:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+/* Delete */
+
+.delete-btn {
+  width: 35px;
+  height: 35px;
+  padding: 0;
+
+  color: #777;
+  border: 1px solid #dcdcdc;
+  background: #fff;
+}
+
+.delete-btn:hover {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.response-count {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.response-count a {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1967d2;
+  transition: .25s;
+}
+
+.response-count a:hover {
+  color: #0f4db8;
+}
+
+.shortlisted-link {
+  color: #1ca44b !important;
+}
+
+.shortlisted-link:hover {
+  color: #13863c !important;
+}
+
+.candidate-extra {
+  margin-top: 8px;
+  border-top: 1px solid #ececec;
+  padding-top: 10px;
+}
+
+.extra-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.left-side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.right-side {
+  display: flex;
+  gap: 8px;
+}
+
+.contact-btn {
+  border: none;
+  background: #fff;
+  color: #1967d2;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+}
+
+.status-dropdown {
+  border: none;
+  outline: none;
+  font-weight: 500;
+  background: transparent;
+  cursor: pointer;
+}
+
+.icon-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: .3s;
+  font-size: 13px;
+}
+
+.icon-circle:hover {
+  background: #1967d2;
+  color: #fff;
+  border-color: #1967d2;
+}
+
+.match-strip {
+  width: 100%;
+  background: #fff6df;
+  border-radius: 6px;
+  padding: 4px 5px;
+  display: flex;
+  flex-wrap: wrap;
+  /* Allow items to wrap */
+  gap: 10px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.match-strip span {
+  display: flex;
+  align-items: center;
+  white-space: normal;
+  /* Allow text to wrap */
+  word-break: break-word;
+}
+
+.comment-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.comment-link {
+  border: none;
+  background: none;
+  color: #1967d2;
+  font-weight: 500;
+  font-size: 10pt;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+}
+
+.comment-box {
+  margin-top: 15px;
+}
+
+.comment-box textarea {
+  border-radius: 8px;
+  min-height: 90px;
+}
+
+.candidate-contact-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d9dce5;
+  border-radius: 7px;
+  overflow: hidden;
+  width: 190px;
+  height: 36px;
+  background: #fff;
+}
+
+.contact-link {
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 14px;
+  color: #1967d2;
+  font-weight: 500;
+  transition: .3s;
+}
+
+.contact-link:hover {
+  background: #f5f8ff;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background: #d9dce5;
+}
+
+.status-link {
+  width: 72px;
+  height: 100%;
+  border: none;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+}
+
+.status-link:hover {
+  background: #f5f8ff;
+}
+
+.status-select {
+  width: 78px;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: #fff;
+  padding: 0 5px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 5px center;
+}
+
+.tab-btn .warning {
+  color: #ff9800 !important;
+
+}
+
+.shortlist-btn:disabled {
+  background: #fffafa;
+  opacity: .95;
+  cursor: not-allowed;
+}
+
+.maybe-btn:disabled {
+  background: #fffafa;
+  opacity: .95;
+  cursor: not-allowed;
+}
+
+.reject-btn:disabled {
+  background: #fffafa;
+  opacity: .95;
+  cursor: not-allowed;
+}
+
+.action-btn:disabled:hover {
+  color: #000;
+}
+
+.comments-list {
+  margin-top: 15px;
+}
+
+.comment-item {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 5px;
+  margin-bottom: 5px;
+  background: #fff;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.comment-content {
+  flex: 1;
+}
+
+.comment-content p {
+  margin-bottom: 6px;
+}
+
+.comment-content small {
+  color: #777;
+  font-size: 9pt;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.comment-actions button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+.comment-actions button:hover {
+  background: #f3f4f6;
+}
+
+
+.comment-item p {
+  margin: 0;
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: 0px !important;
+  color: #30383e;
+}

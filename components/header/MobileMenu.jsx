@@ -1,8 +1,50 @@
+
+'use client'
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import MobileSidebar from "./mobile-sidebar";
 import Image from "next/image";
 
 const MobileMenu = () => {
+
+
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState("");
+
+
+  useEffect(() => {
+    getCookiesValue();
+  }, []);
+
+  const getCookiesValue = async () => {
+    try {
+      const response = await fetch("/api/cookies-details", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      const data = await response.json();
+      const role = data?.role ?? "";
+
+      if (role != "") {
+        setUserRole(role);
+        setIsLoggedIn(true);
+      }
+      else {
+        setUserRole("");
+        setIsLoggedIn(false);
+      }
+
+    } catch (error) {
+      console.error(error);
+      setUserRole("");
+      setIsLoggedIn(false);
+    }
+  };
+
+
   return (
     // <!-- Main Header-->
     <header className="main-header main-header-mobile">
@@ -31,14 +73,26 @@ const MobileMenu = () => {
 
           <div className="outer-box">
             <div className="login-box">
-              <a
-                href="#"
-                className="call-modal"
-                data-bs-toggle="modal"
-                data-bs-target="#loginPopupModal"
-              >
-                <span className="icon icon-user"></span>
-              </a>
+              {isLoggedIn ? (
+                <Link
+                  href={
+                    userRole === "employer"
+                      ? "/employers-dashboard/dashboard"
+                      : "/candidates-dashboard/dashboard"
+                  }
+                >
+                  <span className="icon la la-home"></span>
+                </Link>
+              ) : (
+                <a
+                  href="#"
+                  className="call-modal"
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginPopupModal"
+                >
+                  <span className="icon icon-user"></span>
+                </a>
+              )}
             </div>
             {/* login popup end */}
 
@@ -53,8 +107,8 @@ const MobileMenu = () => {
             {/* right humberger menu */}
           </div>
         </div>
-      </div>
-    </header>
+      </div >
+    </header >
   );
 };
 

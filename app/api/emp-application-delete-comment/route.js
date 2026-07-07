@@ -9,6 +9,8 @@ export async function POST(req) {
   const token = req.cookies.get("regToken")?.value;
   const url = req.nextUrl.pathname;
 
+  const { details } = await req.json();
+
   let user = {};
   try {
     user = JSON.parse(token);
@@ -20,12 +22,10 @@ export async function POST(req) {
 
   try {
     const {
-      OldPassword,
-      NewPassword,
-    } = await req.json();
-
-    console.log("Login attempt email:", user.external.uqId);
-    console.log("Login attempt role:", user.external.role);
+      jobpostId,
+      applicationId,
+      commentSrno,
+    } = details;
 
     // 1. Basic validation
     if (!user.external.uqId || !user.external.role) {
@@ -35,14 +35,6 @@ export async function POST(req) {
       );
     }
 
-    if (!OldPassword || !NewPassword) {
-      return NextResponse.json(
-        { message: "Old password  and new password fields are required" },
-        { status: 400 }
-      );
-    }
-
-
     const LoginIp =
       headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       headersList.get("x-real-ip") ||
@@ -50,9 +42,12 @@ export async function POST(req) {
       "Unknown";
 
     const loginBody = {
+
+      jobpostId: jobpostId,
+      applicationId: applicationId,
+      commentSrno: commentSrno,
+
       uqId: user.external.uqId,
-      OldPassword: OldPassword, // Placeholder, replace with actual old password from request
-      NewPassword: NewPassword, // Placeholder, replace with actual new password from request
       LoginIp: LoginIp,
       Role: user.external.role,
       Token: user.external.accessToken,
@@ -71,11 +66,11 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-    console.log("External API Base URL 00:", externalApiBaseUrl);
+    console.log("External API Base URL :", externalApiBaseUrl);
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
-      `${externalApiBaseUrl.replace(/\/+$/, "")}/Employer/employer/CompanyChangePassword`;
+      `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/applicationCommentDelete`;
 
     console.log("External API URL :", externalApiUrl);
     console.log("External API Request Body:", loginBody);
@@ -88,32 +83,31 @@ export async function POST(req) {
     const responseData = JSON.parse(await externalResponse.text());
 
     console.log("External Candi API response:", responseData);
-
     console.log("External API Response Status:", responseData.message || externalResponse.status);
-
 
 
     if (!externalResponse.ok) {
       console.error(
-        "External login failed:",
+        "External request failed:",
         responseData.success,
         responseData.message
       );
 
       return NextResponse.json(
         {
-          message: responseData.message || "Update Failed1",
+          message: responseData.message || "Request Failed.",
         },
         { status: responseData.status || 500 }
       );
     }
 
-    console.log("Password changed successfully");
+    console.log("Comment deleted successfully");
 
     // 6. Send response with cookies
     const response = NextResponse.json(
       {
-        message: responseData.message || "Password changed successfully",
+        message: responseData.message || "Comment deleted successfully",
+        srno: responseData.data.srno
       },
       { status: 201 }
     );
@@ -123,7 +117,7 @@ export async function POST(req) {
     console.error("UPDATE ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to change password" },
+      { message: "Failed to update details" },
       { status: 500 }
     );
   }

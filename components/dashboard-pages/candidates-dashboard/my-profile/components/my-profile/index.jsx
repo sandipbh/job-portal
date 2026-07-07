@@ -207,7 +207,7 @@ const Index = () => {
       console.log("Response from /api/candi-update-profile:", user);
 
       if (!res.ok) {
-        toast.error(user.message || "Profile update failed");
+        toast.error(user.message || "Request failed");
         setLoading(false);
         return;
       }
@@ -216,7 +216,7 @@ const Index = () => {
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error(error);
-      toast.error("Profile update failed. Please try again.");
+      toast.error("Request failed. Please try again.");
     } finally {
       setLoading(false);
     }

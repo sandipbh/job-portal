@@ -1110,9 +1110,9 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     }
     if (!formData.minSalary) {
       newErrors.minSalary = "Enter minimum salary";
-    } else if (Number(formData.minSalary) <= 5000) {
+    } else if (Number(formData.minSalary) < 100000) {
       newErrors.minSalary =
-        "Minimum monthly salary must be greater than ₹5,000";
+        "Minimum monthly salary must be greater than ₹ 100000";
     }
 
     if (!formData.maxSalary) {
@@ -1402,7 +1402,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         console.log("Response from /api/emp-job-post:", user);
 
         if (!res.ok) {
-          toast.error(user.message || "Profile update failed");
+          toast.error(user.message || "Request failed");
           setLoading(false);
           return;
         }
@@ -1412,7 +1412,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         toast.success(user.message);
       } catch (error) {
         console.error(error);
-        toast.error("Profile update failed. Please try again.");
+        toast.error("Request failed. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -1663,7 +1663,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
 
               <div className="form-group col-lg-6">
-                <label>Salary per month</label>
+                <label>Annual salary offered for this job</label>
 
                 <div className="row">
                   <div className="col-md-6 col-sm-12">

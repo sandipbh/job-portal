@@ -395,7 +395,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
                 console.log("Response from /api/emp-update-profile-kyc:", user);
 
                 if (!res.ok) {
-                    toast.error(user.message || "Profile update failed");
+                    toast.error(user.message || "Request failed");
                     setLoading(false);
                     return;
                 }
@@ -414,7 +414,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
                 toast.success(user.message);
             } catch (error) {
                 console.error(error);
-                toast.error("Profile update failed. Please try again.");
+                toast.error("Request failed. Please try again.");
             } finally {
                 setLoading(false);
             }

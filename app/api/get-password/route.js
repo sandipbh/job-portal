@@ -7,7 +7,7 @@ export async function POST(req) {
 
     if (!email || !role) {
       return NextResponse.json(
-        { message: "Email and role are required." },
+        { message: "Your login has expired, relogin your account." },
         { status: 400 }
       );
     }
@@ -23,7 +23,7 @@ export async function POST(req) {
         { status: 500 }
       );
     }
- 
+
 
     const resendUrl =
       process.env.RESEND_OTP_API_URL ||

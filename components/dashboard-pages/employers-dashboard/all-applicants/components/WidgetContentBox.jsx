@@ -1,25 +1,73 @@
 "use client";
 
-import candidatesData from "../../../../../data/candidates";
+//import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import WidgetTopFilterBox from "./WidgetTopFilterBox";
+import ApplicantCard from "./ApplicantCard";
+//import jobs from "../../../../../data/job-featured";
+
+import { useSearchParams } from "next/navigation";
 
 const WidgetContentBox = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [location, setLocation] = useState("");
-  const [selectedJobs, setSelectedJobs] = useState([]);
+
   const [selectedLocation, setSelectedLocation] = useState([]);
   const [selectedExperience, setSelectedExperience] = useState([]);
   const [selectedQualification, setSelectedQualification] = useState([]);
   const [selectedGender, setSelectedGender] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
+  const [candidates, setCandidates] = useState([]);
 
 
+  const [selectedJobs, setSelectedJobs] = useState([]);
 
-  const filteredCandidates = candidatesData.filter((candidate) => {
+  const searchParams = useSearchParams();
+
+  const jobId = Number(searchParams.get("jobId"));
+
+
+  const [jobList, setJobList] = useState([]);
+
+  useEffect(() => {
+    getJobList();
+  }, [jobId]);
+
+  const getJobList = async () => {
+    try {
+      const response = await fetch(`/api/emp-job-applied-list?JobPostId=${jobId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const result = await response.json();
+
+      const listData = result?.data;
+      console.log('listData  ', listData)
+
+      if (listData) {
+
+        setCandidates(listData);
+
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const selectedJob = candidates.find(job => job.id === jobId);
+
+  console.log(selectedJob)
+
+  const jobCandidates = candidates.filter(
+    candidate => candidate.jobId === jobId
+  );
+
+  const filteredCandidates = candidates.filter((candidate) => {
     const matchesJob =
       selectedJobs.length === 0 ||
       selectedJobs.includes(candidate.designation);
@@ -89,12 +137,74 @@ const WidgetContentBox = () => {
     selectedCategory,
   ])
 
-  const approvedCandidates = filteredCandidates.filter(
-    (candidate) => candidate.status === "Approved"
+
+  const updateCandidateStatus = (id, status) => {
+    setCandidates((prev) =>
+      prev.map((candidate) =>
+        candidate.id === id
+          ? { ...candidate, status }
+          : candidate
+      )
+    );
+  };
+
+  const updateCandidateCallStatus = (id, callStatus) => {
+    setCandidates((prev) =>
+      prev.map((candidate) =>
+        candidate.id === id
+          ? { ...candidate, callStatus }
+          : candidate
+      )
+    );
+  };
+
+  const updateCandidateComments = (id, comments) => {
+    setCandidates((prev) =>
+      prev.map((candidate) =>
+        candidate.id === id
+          ? { ...candidate, comments }
+          : candidate
+      )
+    );
+  };
+
+  const handleStatus = (id, ttype) => {
+    updateCandidateStatus(id, ttype);
+  };
+  const handleCallStatus = (id, ttype) => {
+    updateCandidateCallStatus(id, ttype);
+  };
+
+
+
+  const handleShortlist = (id) => {
+    updateCandidateStatus(id, "Shortlisted");
+  };
+
+  const handleMaybe = (id) => {
+    updateCandidateStatus(id, "Maybe");
+  };
+
+  const handleReject = (id) => {
+    updateCandidateStatus(id, "Rejected");
+  };
+
+  const handleDelete = (id) => {
+    setCandidates((prev) =>
+      prev.filter((candidate) => candidate.id !== id)
+    );
+  };
+
+  const shortlistedCandidates = filteredCandidates.filter(
+    candidate => candidate.status === "Shortlisted"
   );
 
   const rejectedCandidates = filteredCandidates.filter(
     (candidate) => candidate.status === "Rejected"
+  );
+
+  const maybeCandidates = filteredCandidates.filter(
+    candidate => candidate.status === "Maybe"
   );
 
   const PaginationControls = () => {
@@ -121,6 +231,7 @@ const WidgetContentBox = () => {
 
       return pages;
     };
+
 
     return (
       <div className="custom-pagination job-style">
@@ -182,6 +293,16 @@ const WidgetContentBox = () => {
       </div>
     );
   };
+
+  const currentShortlisted = shortlistedCandidates.slice(
+    startIndex,
+    endIndex
+  );
+
+  const currentRejected = rejectedCandidates.slice(
+    startIndex,
+    endIndex
+  );
   return (
     <div className="widget-content">
       <div className="tabs-box">
@@ -319,7 +440,7 @@ const WidgetContentBox = () => {
 
         <Tabs>
           <div className="aplicants-upper-bar">
-            <h6>Senior Product Designer</h6>
+            <h6>{selectedJob?.jobTitle}</h6>
 
             <TabList className="aplicantion-status tab-buttons clearfix">
               <Tab className="tab-btn totals">
@@ -327,11 +448,15 @@ const WidgetContentBox = () => {
               </Tab>
 
               <Tab className="tab-btn approved">
-                Approved: {approvedCandidates.length}
+                Shortlisted ({shortlistedCandidates.length})
+              </Tab>
+
+              <Tab className="tab-btn " style={{ color: "#ff9800 !important" }}>
+                Maybe ({maybeCandidates.length})
               </Tab>
 
               <Tab className="tab-btn rejected">
-                Rejected(s): {rejectedCandidates.length}
+                Rejected(s) {rejectedCandidates.length}
               </Tab>
             </TabList>
           </div>
@@ -339,85 +464,23 @@ const WidgetContentBox = () => {
           <div className="tabs-content">
             <TabPanel>
               <div className="row">
-                {filteredCandidates.length === 0 ? (
+                {currentJobs.length === 0 ? (
                   <div className="col-12 text-center py-5">
                     <h5>No applicants found</h5>
                   </div>
                 ) : (
                   currentJobs.map((candidate) => (
-                    <div
-                      className="candidate-block-three col-lg-6 col-md-12 col-sm-12"
+                    <ApplicantCard
                       key={candidate.id}
-                    >
-
-                      <div className="inner-box">
-                        <div className="content">
-                          <figure className="image">
-                            <Image
-                              width={90}
-                              height={90}
-                              src={candidate.avatar}
-                              alt="candidates"
-                            />
-                          </figure>
-                          <h4 className="name">
-                            <Link href={`/candidates-single-v1/${candidate.id}`}>
-                              {candidate.name}
-                            </Link>
-                          </h4>
-
-                          <ul className="candidate-info">
-                            <li className="designation">
-                              {candidate.designation}
-                            </li>
-                            <li>
-                              <span className="icon flaticon-map-locator"></span>{" "}
-                              {candidate.location}
-                            </li>
-                            <li>
-                              <span className="icon flaticon-money"></span> $
-                              {candidate.hourlyRate} / hour
-                            </li>
-                          </ul>
-                          {/* End candidate-info */}
-
-                          <ul className="post-tags">
-                            {candidate.tags.map((val, i) => (
-                              <li key={i}>
-                                <a href="#">{val}</a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        {/* End content */}
-
-                        <div className="option-box">
-                          <ul className="option-list">
-                            <li>
-                              <button data-text="View Aplication">
-                                <span className="la la-eye"></span>
-                              </button>
-                            </li>
-                            <li>
-                              <button data-text="Approve Aplication">
-                                <span className="la la-check"></span>
-                              </button>
-                            </li>
-                            <li>
-                              <button data-text="Reject Aplication">
-                                <span className="la la-times-circle"></span>
-                              </button>
-                            </li>
-                            <li>
-                              <button data-text="Delete Aplication">
-                                <span className="la la-trash"></span>
-                              </button>
-                            </li>
-                          </ul>
-                        </div>
-                        {/* End admin options box */}
-                      </div>
-                    </div>
+                      candidate={candidate}
+                      onUpdateStatus={handleStatus}
+                      onUpdateCallStatus={handleCallStatus}
+                      // onShortlist={handleShortlist}
+                      // onMaybe={handleMaybe}
+                      // onReject={handleReject}
+                      onDelete={handleDelete}
+                      onUpdateComments={updateCandidateComments}
+                    />
                   ))
                 )}
               </div>
@@ -426,79 +489,16 @@ const WidgetContentBox = () => {
 
             <TabPanel>
               <div className="row">
-                {currentJobs.map((candidate) => (
-                  <div
-                    className="candidate-block-three col-lg-6 col-md-12 col-sm-12"
+                {currentShortlisted.map((candidate) => (
+                  <ApplicantCard
                     key={candidate.id}
-                  >
-                    <div className="inner-box">
-                      <div className="content">
-                        <figure className="image">
-                          <Image
-                            width={90}
-                            height={90}
-                            src={candidate.avatar}
-                            alt="candidates"
-                          />
-                        </figure>
-                        <h4 className="name">
-                          <Link href={`/candidates-single-v1/${candidate.id}`}>
-                            {candidate.name}
-                          </Link>
-                        </h4>
-
-                        <ul className="candidate-info">
-                          <li className="designation">
-                            {candidate.designation}
-                          </li>
-                          <li>
-                            <span className="icon flaticon-map-locator"></span>{" "}
-                            {candidate.location}
-                          </li>
-                          <li>
-                            <span className="icon flaticon-money"></span> $
-                            {candidate.hourlyRate} / hour
-                          </li>
-                        </ul>
-                        {/* End candidate-info */}
-
-                        <ul className="post-tags">
-                          {candidate.tags.map((val, i) => (
-                            <li key={i}>
-                              <a href="#">{val}</a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      {/* End content */}
-
-                      <div className="option-box">
-                        <ul className="option-list">
-                          <li>
-                            <button data-text="View Aplication">
-                              <span className="la la-eye"></span>
-                            </button>
-                          </li>
-                          <li>
-                            <button data-text="Approve Aplication">
-                              <span className="la la-check"></span>
-                            </button>
-                          </li>
-                          <li>
-                            <button data-text="Reject Aplication">
-                              <span className="la la-times-circle"></span>
-                            </button>
-                          </li>
-                          <li>
-                            <button data-text="Delete Aplication">
-                              <span className="la la-trash"></span>
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-                      {/* End admin options box */}
-                    </div>
-                  </div>
+                    candidate={candidate}
+                    onShortlist={handleShortlist}
+                    onMaybe={handleMaybe}
+                    onReject={handleReject}
+                    onDelete={handleDelete}
+                    onUpdateComments={updateCandidateComments}
+                  />
                 ))}
               </div>
             </TabPanel>
@@ -506,79 +506,32 @@ const WidgetContentBox = () => {
 
             <TabPanel>
               <div className="row">
-                {currentJobs.map((candidate) => (
-                  <div
-                    className="candidate-block-three col-lg-6 col-md-12 col-sm-12"
+                {maybeCandidates.map((candidate) => (
+                  <ApplicantCard
                     key={candidate.id}
-                  >
-                    <div className="inner-box">
-                      <div className="content">
-                        <figure className="image">
-                          <Image
-                            width={90}
-                            height={90}
-                            src={candidate.avatar}
-                            alt="candidates"
-                          />
-                        </figure>
-                        <h4 className="name">
-                          <Link href={`/candidates-single-v1/${candidate.id}`}>
-                            {candidate.name}
-                          </Link>
-                        </h4>
+                    candidate={candidate}
+                    onShortlist={handleShortlist}
+                    onMaybe={handleMaybe}
+                    onReject={handleReject}
+                    onDelete={handleDelete}
+                    onUpdateComments={updateCandidateComments}
+                  />
+                ))}
+              </div>
+            </TabPanel>
 
-                        <ul className="candidate-info">
-                          <li className="designation">
-                            {candidate.designation}
-                          </li>
-                          <li>
-                            <span className="icon flaticon-map-locator"></span>{" "}
-                            {candidate.location}
-                          </li>
-                          <li>
-                            <span className="icon flaticon-money"></span> $
-                            {candidate.hourlyRate} / hour
-                          </li>
-                        </ul>
-                        {/* End candidate-info */}
-
-                        <ul className="post-tags">
-                          {candidate.tags.map((val, i) => (
-                            <li key={i}>
-                              <a href="#">{val}</a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      {/* End content */}
-
-                      <div className="option-box">
-                        <ul className="option-list">
-                          <li>
-                            <button data-text="View Aplication">
-                              <span className="la la-eye"></span>
-                            </button>
-                          </li>
-                          <li>
-                            <button data-text="Approve Aplication">
-                              <span className="la la-check"></span>
-                            </button>
-                          </li>
-                          <li>
-                            <button data-text="Reject Aplication">
-                              <span className="la la-times-circle"></span>
-                            </button>
-                          </li>
-                          <li>
-                            <button data-text="Delete Aplication">
-                              <span className="la la-trash"></span>
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-                      {/* End admin options box */}
-                    </div>
-                  </div>
+            <TabPanel>
+              <div className="row">
+                {currentRejected.map((candidate) => (
+                  <ApplicantCard
+                    key={candidate.id}
+                    candidate={candidate}
+                    onShortlist={handleShortlist}
+                    onMaybe={handleMaybe}
+                    onReject={handleReject}
+                    onDelete={handleDelete}
+                    onUpdateComments={updateCandidateComments}
+                  />
                 ))}
               </div>
             </TabPanel>
