@@ -1,4 +1,8 @@
+import { Suspense } from "react";
 import AllApplicants from "@/components/dashboard-pages/employers-dashboard/all-applicants";
+
+import JobCardSkeleton from "@/components/skeleton/Job-list";
+
 
 export const metadata = {
   title: "All Applicants || RatinGrow - Hiring Verified",
@@ -8,7 +12,10 @@ export const metadata = {
 const index = () => {
   return (
     <>
-      <AllApplicants />
+
+      <Suspense fallback={<JobCardSkeleton />}>
+        <AllApplicants />
+      </Suspense>
     </>
   );
 };
