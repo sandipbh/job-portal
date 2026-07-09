@@ -59,9 +59,8 @@ const WidgetContentBox = () => {
       console.error(error);
     }
   };
-  const selectedJob = candidates.find(job => job.id === jobId);
+  const selectedJob = candidates.find(job => job.jobId === jobId);
 
-  console.log(selectedJob)
 
   const jobCandidates = candidates.filter(
     candidate => candidate.jobId === jobId
@@ -440,7 +439,7 @@ const WidgetContentBox = () => {
 
         <Tabs>
           <div className="aplicants-upper-bar">
-            <h6>{selectedJob?.jobTitle}</h6>
+            <h6>{candidates[0]?.jobTitle} </h6>
 
             <TabList className="aplicantion-status tab-buttons clearfix">
               <Tab className="tab-btn totals">

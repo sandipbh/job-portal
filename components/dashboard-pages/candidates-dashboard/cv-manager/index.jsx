@@ -9,58 +9,37 @@ import MenuToggler from "../../MenuToggler";
 
 const index = () => {
   return (
-    <div className="page-wrapper dashboard">
-      <span className="header-span"></span>
-      {/* <!-- Header Span for hight --> */}
 
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+    <section className="user-dashboard">
+      <div className="dashboard-outer">
+        <BreadCrumb title="CV Manager!" />
+        {/* breadCrumb */}
 
-      <DashboardCandidatesHeader />
-      {/* End Header */}
+        {/* <MenuToggler /> */}
+        {/* Collapsible sidebar button */}
 
-      <MobileMenu />
-      {/* End MobileMenu */}
-
-      <DashboardCandidatesSidebar />
-      {/* <!-- End Candidates Sidebar Menu --> */}
-
-      {/* <!-- Dashboard --> */}
-      <section className="user-dashboard">
-        <div className="dashboard-outer">
-          <BreadCrumb title="CV Manager!" />
-          {/* breadCrumb */}
-
-          {/* <MenuToggler /> */}
-          {/* Collapsible sidebar button */}
-
-          <div className="row">
-            <div className="col-lg-12">
-              {/* <!-- Ls widget --> */}
-              <div className="cv-manager-widget ls-widget">
-                <div className="widget-title">
-                  <h4>Cv Manager</h4>
-                </div>
-                {/* End widget-title */}
-                <div className="widget-content">
-                  <CvUploader />
-                </div>
-                {/* End widget-content */}
+        <div className="row">
+          <div className="col-lg-12">
+            {/* <!-- Ls widget --> */}
+            <div className="cv-manager-widget ls-widget">
+              <div className="widget-title">
+                <h4>Cv Manager</h4>
               </div>
-              {/* End Ls widget */}
+              {/* End widget-title */}
+              <div className="widget-content">
+                <CvUploader />
+              </div>
+              {/* End widget-content */}
             </div>
-            {/* End .col */}
+            {/* End Ls widget */}
           </div>
-          {/* End .row */}
+          {/* End .col */}
         </div>
-        {/* End dashboard-outer */}
-      </section>
-      {/* <!-- End Dashboard --> */}
+        {/* End .row */}
+      </div>
+      {/* End dashboard-outer */}
+    </section>
 
-      <CopyrightFooter />
-      {/* <!-- End Copyright --> */}
-    </div>
-    // End page-wrapper
   );
 };
 

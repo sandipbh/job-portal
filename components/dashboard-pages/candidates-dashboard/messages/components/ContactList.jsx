@@ -62,7 +62,7 @@ const ChatboxContactList = () => {
               />
             </div>
             <div className="user_info">
-              <span>Arlene McCoy</span>
+              <span>Samir Chandekar</span>
               <p>Head of Development</p>
             </div>
             <span className="info">

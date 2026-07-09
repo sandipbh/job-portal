@@ -374,15 +374,51 @@ const ApplicantCard = ({
                     </ul>
                     {/* End candidate-info */}
 
-                    <ul className="post-tags">
-                        {candidate.tags.map((val, i) => (
-                            <li key={i} style={{ padding: "1px 2px" }}>
-                                <a href="#">{val}</a>
-                            </li>
-                        ))}
-                    </ul>
+
                 </div>
                 {/* End content */}
+                <div className="candidate-row">
+                    <div className="label1">Current</div>
+                    <div className="value">
+                        {candidate.currentCompany}
+
+                    </div>
+                </div>
+
+                {/* <div className="candidate-row">
+                    <div className="label1">Previous</div>
+                    <div className="value">
+                        {candidate.previousDesignation} at{" "}
+                        <strong>{candidate.previousCompany}</strong>
+                    </div>
+                </div> */}
+
+                <div className="candidate-row">
+                    <div className="label1">Education</div>
+
+                    <div className="value">
+                        {candidate.education}
+                    </div>
+                </div>
+
+                <div className="candidate-row">
+                    <div className="label1">Pref. Location</div>
+                    <div className="value">
+                        {candidate.workingLocation}
+                    </div>
+                </div>
+
+                <div className="candidate-row skills-row">
+                    <div className="label1">Key Skills</div>
+                    <div className="value">
+                        {candidate.tags.map((val, i) => (
+                            <span key={i} style={{ padding: "1px 2px" }}>
+                                {val}, {" "}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+
 
                 <div className="candidate-actions d-flex flex-wrap align-items-center">
 
@@ -465,7 +501,7 @@ const ApplicantCard = ({
 
                                     return (
                                         <span key={index}>
-                                            ✓ {question} {" "} <strong>{answer}</strong>
+                                            ✓ {question} {" "} <strong>{" "} {answer}</strong>
                                         </span>
                                     );
                                 })}

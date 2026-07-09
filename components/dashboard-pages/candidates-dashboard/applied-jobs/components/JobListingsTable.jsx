@@ -74,7 +74,7 @@ const JobListingsTable = () => {
 
   return (
     <div className="tabs-box">
-      <div className="widget-title">
+      <div className="widget-title ">
         <h4>My Applied Jobs</h4>
 
         <div className="chosen-outer">
@@ -89,17 +89,18 @@ const JobListingsTable = () => {
         </div>
       </div>
       {/* End filter top bar */}
-      <div className="row">
+      <div className="">
 
-        <div className="col-lg-12 col-xl-12 sidebar-apply p-0">
-          <div className="p-3 border-bottom">
-            {jobList.map((item) => (
+        <div className="col-lg-12 col-xl-12 sidebar-apply p-1">
+          <div className="p-1 ">
+            {jobList.map((item, index) => (
               <div
-                className={`job-card-apply border-bottom  `}
+                className={`job-card-apply   `}
                 onClick={toggleDetails}
+                key={index}
               >
                 <div className="d-flex flex-column gap-3" style={{ width: '100%' }}>
-                  <div className="p-2">
+                  <div className="p-1">
 
                     <div className="d-flex align-items-start">
                       <div style={{ width: "75px", flexShrink: 0 }}>
@@ -113,20 +114,19 @@ const JobListingsTable = () => {
 
                       <div className="flex-grow-1 ms-3">
                         <div className="d-flex justify-content-between align-items-start">
-
                           <div>
                             <h6 className="mb-1 fw-semibold">
-                              {item.jobTitle}
+                              <Link href={`/job-single-v2/${item.id}`}>
+                                {item.jobTitle}
+                              </Link>
                             </h6>
-
                             <p className="text-muted mb-1 small">
                               {item.company}
                             </p>
-
-                            <div className="d-flex align-items-center gap-1 text-warning">
+                            {/* <div className="d-flex align-items-center gap-1 text-warning">
                               ★ 2.6
                               <span className="text-muted ms-1">(48 Reviews)</span>
-                            </div>
+                            </div> */}
                           </div>
 
                           <span className="text-muted rounded-pill px-3 py-2">
@@ -135,9 +135,52 @@ const JobListingsTable = () => {
 
                         </div>
 
-                        <div className="mt-2 text-success small d-flex align-items-center gap-2">
-                          <i className="fas fa-check-circle"></i>
-                          {item.status}
+                        <div className="text-success small d-flex align-items-center gap-2">
+                          <div
+                            className={
+                              item.status === "Applied"
+                                ? "text-primary"
+                                : item.status === "Shortlisted"
+                                  ? "text-success"
+                                  : item.status === "Maybe"
+                                    ? "text-warning"
+                                    : item.status === "Rejected"
+                                      ? "text-danger"
+                                      : item.status === "Deleted"
+                                        ? "text-secondary"
+                                        : ""
+                            }
+                          >
+                            {item.status === "Applied" && (
+                              <>
+                                <i className="fas fa-check-circle me-2"></i> Applied
+                              </>
+                            )}
+
+                            {item.status === "Shortlisted" && (
+                              <>
+                                <i className="fas fa-user-check me-2"></i> Shortlisted
+                              </>
+                            )}
+
+                            {item.status === "Maybe" && (
+                              <>
+                                <i className="fas fa-question-circle me-2"></i> Maybe
+                              </>
+                            )}
+
+                            {item.status === "Rejected" && (
+                              <>
+                                <i className="fas fa-times-circle me-2"></i> Rejected
+                              </>
+                            )}
+
+                            {item.status === "Deleted" && (
+                              <>
+                                <i className="fas fa-trash-alt me-2"></i> Deleted
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -149,18 +192,37 @@ const JobListingsTable = () => {
                       <div className="border rounded-3 bg-white p-3">
                         <div className="timeline">
 
-                          <div className="timeline-item">
-                            <div className="timeline-number">1</div>
+                          {item.statusList
+                            ?.split("#")
+                            .filter(Boolean)
+                            .map((item, index) => {
+                              const [date, applicationId, status] = item.split("^");
 
+                              return (
+                                <div className="timeline-item" key={index}>
+                                  <div className="timeline-number">{index + 1}</div>
+
+                                  <div className="timeline-content ">
+                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                      <p className="text-dark mb-0">{status}</p>
+
+                                      <small className="text-muted">
+                                        {date}
+                                      </small>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+
+                          {/* <div className="timeline-item">
+                            <div className="timeline-number">1</div>
                             <div className="timeline-content  shadow-sm">
                               <div className="">
                                 <div className="d-flex justify-content-between align-items-center mb-2">
-                                  <h6 className="text-dark">Application Submitted</h6>
+                                  <p className="text-dark">Application Submitted</p>
                                   <small className="text-muted">04 Jul 2026</small>
                                 </div>
-                                <p className="mb-0 text-muted">
-                                  Candidate successfully submitted the job application.
-                                </p>
                               </div>
                             </div>
                           </div>
@@ -170,13 +232,9 @@ const JobListingsTable = () => {
                             <div className="timeline-content  shadow-sm">
                               <div className="">
                                 <div className="d-flex justify-content-between align-items-center mb-2">
-                                  <h6 className="text-dark">Resume Reviewed</h6>
+                                  <p className="text-dark">Resume Reviewed</p>
                                   <small className="text-muted">11:15 AM</small>
                                 </div>
-
-                                <p className="mb-0 text-muted">
-                                  HR reviewed the submitted resume.
-                                </p>
                               </div>
                             </div>
                           </div>
@@ -187,16 +245,12 @@ const JobListingsTable = () => {
                             <div className="timeline-content  shadow-sm">
                               <div className="">
                                 <div className="d-flex justify-content-between align-items-center mb-2">
-                                  <h6 className="text-dark">Interview Scheduled</h6>
+                                  <p className="text-dark">Interview Scheduled</p>
                                   <small className="text-muted">06 Jul 2026</small>
                                 </div>
-
-                                <p className="mb-0 text-muted">
-                                  Technical interview scheduled for 08 Jul 2026.
-                                </p>
                               </div>
                             </div>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     </div>

@@ -6,6 +6,10 @@ import SearchBox from "../components/SearchBox";
 import DatePosted from "../components/DatePosted";
 import Experience from "../components/Experience";
 import Qualification from "../components/Qualification";
+import Skills from "../components/Skills";
+import ExperienceLevel from "../components/ExperienceLevel";
+import Industry from "../components/Industry";
+import Education from "../components/Education";
 
 const FilterSidebar = () => {
     return (
@@ -65,6 +69,26 @@ const FilterSidebar = () => {
                     <Experience />
                 </div>
                 {/* <!-- Filter Block --> */}
+                <div className="checkbox-outer">
+                    <h4>Skills</h4>
+                    <Skills />
+                </div>
+
+                <div className="checkbox-outer">
+                    <h4>Education</h4>
+                    <Education />
+                </div>
+
+
+                <div className="switchbox-outer">
+                    <h4>Industry</h4>
+                    <Industry />
+                </div>
+
+                <div className="checkbox-outer">
+                    <h4>Experience Level</h4>
+                    <ExperienceLevel />
+                </div>
 
                 <div className=" checkbox-outer">
                     <h4>Qualification</h4>

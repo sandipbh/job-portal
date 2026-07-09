@@ -3,43 +3,38 @@ import DashboardHeader from "../../../header/DashboardHeader";
 import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardEmployerSidebar from "../../../header/DashboardEmployerSidebar";
 import BreadCrumb from "../../BreadCrumb";
-import MyProfile from "./components/my-profile";
-import SocialNetworkBox from "./components/my-profile/SocialNetworkBox";
-import ContactInfoBox from "./components/my-profile/ContactInfoBox";
 import CopyrightFooter from "../../CopyrightFooter";
 import MenuToggler from "../../MenuToggler";
+import SearchFilterBox from "./components/SearchFilterBox";
 
 const index = () => {
     return (
 
-
-
         <section className="user-dashboard">
             <div className="dashboard-outer">
-                <BreadCrumb title="Company Profile!" />
+                <BreadCrumb title="Search Filters!" />
                 {/* breadCrumb */}
 
-                {/* <MenuToggler /> */}
+                <MenuToggler />
                 {/* Collapsible sidebar button */}
 
                 <div className="row">
                     <div className="col-lg-12">
-                        <div className="ls-widget">
-                            <div className="tabs-box">
-                                <div className="widget-title">
-                                    <h4>We Use this information to know about your company</h4>
-                                </div>
-                                <MyProfile />
+                        <div className="applicants-widget ls-widget">
+                            <div className="widget-title">
+                                <h4>Search Candidates will appear here</h4>
+                                {/* <WidgetToFilterBox /> */}
                             </div>
+                            {/* End widget top filter box */}
+                            <SearchFilterBox />
                         </div>
-
+                        {/* <!-- applicants Widget --> */}
                     </div>
                 </div>
-
+                {/* End .row */}
             </div>
-
+            {/* End dashboard-outer */}
         </section>
-
 
     );
 };

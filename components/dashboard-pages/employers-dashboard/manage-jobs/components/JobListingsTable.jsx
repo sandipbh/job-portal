@@ -711,7 +711,6 @@ const JobListingsTable = () => {
                         >
                           {item.applyCount} Responses
                         </Link>
-
                         <Link
                           href={`/employers-dashboard/all-applicants?jobId=${item.id}&status=Shortlisted`}
                           className="shortlisted-link"
@@ -729,9 +728,13 @@ const JobListingsTable = () => {
                       <div className="option-box">
                         <ul className="option-list">
                           <li>
-                            <button data-text="View Aplication">
-                              <span className="la la-eye"></span>
-                            </button>
+                            <Link
+                              href={`/job-single-v2/${item.id}`}
+                            >
+                              <button data-text="View Aplication">
+                                <span className="la la-eye"></span>
+                              </button>
+                            </Link>
                           </li>
                           <li>
                             <Link
@@ -743,11 +746,11 @@ const JobListingsTable = () => {
                             </Link>
 
                           </li>
-                          <li>
+                          {/* <li>
                             <button data-text="Delete Aplication">
                               <span className="la la-trash"></span>
                             </button>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
                     </td>

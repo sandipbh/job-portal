@@ -23,12 +23,12 @@
   -webkit-box-shadow: 0px 6px 15px rgba(64, 79, 104, 0.05);
   box-shadow: 0px 6px 15px rgba(64, 79, 104, 0.05);
   border-radius: 8px;
-  padding: 30px 30px 17px;
+  padding: 5px 5px 1px;
 }
 
 .dashboard-option .dropdown-menu:before {
   position: absolute;
-  right: 30px;
+  right: 10px;
   top: -8px;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
@@ -78,8 +78,8 @@
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  padding: 10px 30px;
-  line-height: 30px;
+  padding: 9px 9px;
+  line-height: 25px;
   font-weight: 400;
   font-size: 15px;
   color: #696969;
@@ -327,7 +327,7 @@ Dashboard
 
 .dashboard .upper-title-box h3 {
   font-weight: 500;
-  font-size: 30px;
+  font-size: 25px;
   line-height: 41px;
   color: #202124;
   margin-bottom: 10px;
@@ -1511,7 +1511,7 @@ Chat Widget
   border-bottom: 1px solid #ecedf2;
   -webkit-box-shadow: 0px 6px 15px rgba(64, 79, 104, 0.05);
   box-shadow: 0px 6px 15px rgba(64, 79, 104, 0.05);
-  padding: 20px 40px;
+  padding: 10px 20px;
 }
 
 .chat-widget .msg_head .btn-box {
@@ -1607,7 +1607,7 @@ Chat Widget
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   background: transparent;
-  padding: 20px 20px 10px;
+  padding: 10px 10px 10px;
   min-height: 60px;
 }
 
@@ -1642,7 +1642,7 @@ Chat Widget
 .widget-title .chosen-single {
   position: relative;
   height: 45px;
-  padding: 10px 20px;
+  padding: 5px 17px;
   font-size: 14px;
   color: #696969;
   line-height: 25px;
@@ -1710,7 +1710,7 @@ Chat Widget
 
 .ls-widget .widget-content {
   position: relative;
-  padding: 0px 10px 10px;
+  padding: 10px 15px 10px;
 }
 
 .ls-widget .widget-content p {

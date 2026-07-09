@@ -9,50 +9,31 @@ import MenuToggler from "../../MenuToggler";
 
 const index = () => {
   return (
-    <div className="page-wrapper dashboard">
-      <span className="header-span"></span>
-      {/* <!-- Header Span for hight --> */}
-
-      <LoginPopup />
-      {/* End Login Popup Modal */}
-
-      <DashboardHeader />
-      {/* End Header */}
-
-      <MobileMenu />
-      {/* End MobileMenu */}
-
-      <DashboardEmployerSidebar />
-      {/* <!-- End User Sidebar Menu --> */}
-
-      {/* <!-- Dashboard --> */}
-      <section className="user-dashboard">
-        <div className="dashboard-outer">
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <BreadCrumb title="Change Password!" />
-            {/* breadCrumb */}
-
-            {/* Collapsible sidebar button */}
-          </div>
 
 
-          <div className="ls-widget">
+    <section className="user-dashboard">
+      <div className="dashboard-outer">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <BreadCrumb title="Change Password!" />
+          {/* breadCrumb */}
 
-
-            <div className="widget-content">
-              <Form />
-            </div>
-          </div>
-          {/* <!-- Ls widget --> */}
+          {/* Collapsible sidebar button */}
         </div>
-        {/* End dashboard-outer */}
-      </section>
-      {/* <!-- End Dashboard --> */}
 
-      <CopyrightFooter />
-      {/* <!-- End Copyright --> */}
-    </div>
-    // End page-wrapper
+
+        <div className="ls-widget">
+
+
+          <div className="widget-content">
+            <Form />
+          </div>
+        </div>
+        {/* <!-- Ls widget --> */}
+      </div>
+      {/* End dashboard-outer */}
+    </section>
+
+
   );
 };
 

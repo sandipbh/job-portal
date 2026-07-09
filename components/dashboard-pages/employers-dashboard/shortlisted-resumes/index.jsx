@@ -10,54 +10,33 @@ import MenuToggler from "../../MenuToggler";
 
 const index = () => {
   return (
-    <div className="page-wrapper dashboard">
-      <span className="header-span"></span>
-      {/* <!-- Header Span for hight --> */}
 
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+    <section className="user-dashboard">
+      <div className="dashboard-outer">
+        <BreadCrumb title="Shortlisted Resumes!" />
+        {/* breadCrumb */}
 
-      <DashboardHeader />
-      {/* End Header */}
+        {/* <MenuToggler /> */}
+        {/* Collapsible sidebar button */}
 
-      <MobileMenu />
-      {/* End MobileMenu */}
-
-      <DashboardEmployerSidebar />
-      {/* <!-- End User Sidebar Menu --> */}
-
-      {/* <!-- Dashboard --> */}
-      <section className="user-dashboard">
-        <div className="dashboard-outer">
-          <BreadCrumb title="Shortlisted Resumes!" />
-          {/* breadCrumb */}
-
-          {/* <MenuToggler /> */}
-          {/* Collapsible sidebar button */}
-
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="applicants-widget ls-widget">
-                <div className="widget-title">
-                  <h4>Shorlist Resumes</h4>
-                  {/* <WidgetToFilterBox /> */}
-                </div>
-                {/* End widget top filter box */}
-                <WidgetContentBox />
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="applicants-widget ls-widget">
+              <div className="widget-title">
+                <h4>Shorlist Resumes</h4>
+                {/* <WidgetToFilterBox /> */}
               </div>
-              {/* <!-- applicants Widget --> */}
+              {/* End widget top filter box */}
+              <WidgetContentBox />
             </div>
+            {/* <!-- applicants Widget --> */}
           </div>
-          {/* End .row */}
         </div>
-        {/* End dashboard-outer */}
-      </section>
-      {/* <!-- End Dashboard --> */}
+        {/* End .row */}
+      </div>
+      {/* End dashboard-outer */}
+    </section>
 
-      <CopyrightFooter />
-      {/* <!-- End Copyright --> */}
-    </div>
-    // End page-wrapper
   );
 };
 

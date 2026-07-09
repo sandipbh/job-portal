@@ -1,8 +1,42 @@
+'use client';
+
+import { useEffect, useState } from "react";
+
 import Link from "next/link.js";
-import jobs from "../../../../../data/job-featured.js";
+import { formatDate, getTimeAgo } from "@/lib/dateUtils";
 import Image from "next/image.js";
 
 const JobFavouriteTable = () => {
+
+  const [jobList, setJobList] = useState([]);
+
+
+  useEffect(() => {
+    getShortListedJobs();
+  }, []);
+
+  const getShortListedJobs = async () => {
+    try {
+      const response = await fetch("/api/candi-applied-jobs-shortlisted", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      const result = await response.json();
+      const listData = result?.data;
+
+      console.log("Applied Jobs Data:", listData);
+      if (listData) {
+        setJobList(listData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+
   return (
     <div className="tabs-box">
       <div className="widget-title">
@@ -29,14 +63,15 @@ const JobFavouriteTable = () => {
               <thead>
                 <tr>
                   <th>Job Title</th>
-                  <th>Date Applied</th>
+                  <th> Applied Date</th>
                   <th>Status</th>
-                  <th>Action</th>
+                  <th>Posted Date</th>
+                  <th>JobType</th>
                 </tr>
               </thead>
 
               <tbody>
-                {jobs.slice(8, 12).map((item) => (
+                {jobList.map((item) => (
                   <tr key={item.id}>
                     <td>
                       {/* <!-- Job Block --> */}
@@ -45,34 +80,36 @@ const JobFavouriteTable = () => {
                           <div className="content">
                             <span className="company-logo">
                               <Image
-                                width={48}
-                                height={48}
+                                width={75}
+                                height={75}
                                 src={item.logo}
                                 alt="logo"
                               />
                             </span>
                             <h4>
-                              <Link href={`/job-single-v3/${item.id}`}>
+                              <Link href={`/job-single-v2/${item.id}`}>
                                 {item.jobTitle}
                               </Link>
                             </h4>
                             <ul className="job-info">
                               <li>
                                 <span className="icon flaticon-briefcase"></span>
-                                Segment
+                                {item.company}
                               </li>
                               <li>
                                 <span className="icon flaticon-map-locator"></span>
-                                London, UK
+                                {item.location}
                               </li>
                             </ul>
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td>Dec 5, 2020</td>
-                    <td className="status">Active</td>
-                    <td>
+                    <td>{getTimeAgo(item.apply_at)}</td>
+                    <td className="status"> {item.status}</td>
+                    <td  > {getTimeAgo(item.created_at)}</td>
+                    <td  > {item.jobType[0].type}</td>
+                    {/* <td>
                       <div className="option-box">
                         <ul className="option-list">
                           <li>
@@ -87,7 +124,7 @@ const JobFavouriteTable = () => {
                           </li>
                         </ul>
                       </div>
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>

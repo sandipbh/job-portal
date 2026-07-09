@@ -13,8 +13,8 @@ import Image from "next/image";
 
 export const metadata = {
   title:
-    "Candidate Single Dyanmic V1 || RatinGrow - Hiring Verified",
-  description: "RatinGrow - Hiring Verified",
+    "Candidate Single Dyanmic V1 || Superio - Job Borad React NextJS Template",
+  description: "Superio - Job Borad React NextJS Template",
 };
 
 const CandidateSingleDynamicV1 = ({ params }) => {
@@ -96,14 +96,10 @@ const CandidateSingleDynamicV1 = ({ params }) => {
 
         <div className="candidate-detail-outer">
           <div className="auto-container">
-            <div className="row">
+            <div className="row align-items-start">
               <div className="content-column col-lg-8 col-md-12 col-sm-12">
                 <div className="job-detail">
-                  <div className="video-outer">
-                    <h4>Candidates About</h4>
-                    <AboutVideo />
-                  </div>
-                  {/* <!-- About Video Box --> */}
+                  <h4>Candidates About</h4>
                   <p>
                     Hello my name is Nicole Wells and web developer from
                     Portland. In pharetra orci dignissim, blandit mi semper,
@@ -123,13 +119,6 @@ const CandidateSingleDynamicV1 = ({ params }) => {
                     condimentum lorem ut elementum aliquam. Mauris nec erat ut
                     libero vulputate pulvinar.
                   </p>
-
-                  {/* <!-- Portfolio --> */}
-                  <div className="portfolio-outer">
-                    <div className="row">
-                      <GalleryBox />
-                    </div>
-                  </div>
 
                   {/* <!-- Candidate Resume Start --> */}
                   {candidateResume.map((resume) => (
@@ -230,7 +219,7 @@ const CandidateSingleDynamicV1 = ({ params }) => {
                   {/* End .sidebar-widget social-media-widget */}
 
                   <div className="sidebar-widget">
-                    <h4 className="widget-title">Professional Skills</h4>
+                    <h4 className="widget-title candidate-row skills-row">Professional Skills</h4>
                     <div className="widget-content">
                       <ul className="job-skills">
                         <JobSkills />

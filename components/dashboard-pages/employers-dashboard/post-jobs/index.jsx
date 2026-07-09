@@ -17,61 +17,40 @@ const index = () => {
 
 
   return (
-    <div className="page-wrapper dashboard">
-      <span className="header-span"></span>
-      {/* <!-- Header Span for hight --> */}
 
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+    <section className="user-dashboard">
+      <div className="dashboard-outer">
+        <BreadCrumb title="Post a Job" />
+        {/* breadCrumb */}
 
-      <DashboardHeader />
-      {/* End Header */}
+        {/* <MenuToggler /> */}
+        {/* Collapsible sidebar button */}
 
-      <MobileMenu />
-      {/* End MobileMenu */}
+        <div className="row">
+          <div className="col-lg-12">
+            {/* <!-- Ls widget --> */}
+            <div className="ls-widget">
+              <div className="tabs-box">
+                <div className="widget-title">
+                  <h4>Fill the job-post form</h4>
+                </div>
 
-      <DashboardEmployerSidebar />
-      {/* <!-- End User Sidebar Menu --> */}
-
-      {/* <!-- Dashboard --> */}
-      <section className="user-dashboard">
-        <div className="dashboard-outer">
-          <BreadCrumb title="Post a Job" />
-          {/* breadCrumb */}
-
-          {/* <MenuToggler /> */}
-          {/* Collapsible sidebar button */}
-
-          <div className="row">
-            <div className="col-lg-12">
-              {/* <!-- Ls widget --> */}
-              <div className="ls-widget">
-                <div className="tabs-box">
-                  <div className="widget-title">
-                    <h4>Fill the job-post form</h4>
-                  </div>
-
-                  <div className="widget-content">
-                    {/* <PostJobSteps /> */}
-                    {/* End job steps form */}
-                    <PostBoxForm activeTab={activeTab} setActiveTab={setActiveTab}></PostBoxForm>
-                    {/* <Verification activeTab={activeTab} setActiveTab={setActiveTab} /> */}
-                    {/* End post box form */}
-                  </div>
+                <div className="widget-content">
+                  {/* <PostJobSteps /> */}
+                  {/* End job steps form */}
+                  <PostBoxForm activeTab={activeTab} setActiveTab={setActiveTab}></PostBoxForm>
+                  {/* <Verification activeTab={activeTab} setActiveTab={setActiveTab} /> */}
+                  {/* End post box form */}
                 </div>
               </div>
             </div>
           </div>
-          {/* End .row */}
         </div>
-        {/* End dashboard-outer */}
-      </section>
-      {/* <!-- End Dashboard --> */}
+        {/* End .row */}
+      </div>
+      {/* End dashboard-outer */}
+    </section>
 
-      <CopyrightFooter />
-      {/* <!-- End Copyright --> */}
-    </div>
-    // End page-wrapper
   );
 };
 

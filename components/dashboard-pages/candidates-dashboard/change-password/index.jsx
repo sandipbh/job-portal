@@ -9,47 +9,26 @@ import MenuToggler from "../../MenuToggler";
 
 const index = () => {
   return (
-    <div className="page-wrapper dashboard">
-      <span className="header-span"></span>
-      {/* <!-- Header Span for hight --> */}
 
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+    <section className="user-dashboard">
+      <div className="dashboard-outer">
+        <BreadCrumb title="Change Password!" />
+        {/* breadCrumb */}
 
-      <DashboardCandidatesHeader />
-      {/* End Header */}
+        {/* <MenuToggler /> */}
+        {/* Collapsible sidebar button */}
 
-      <MobileMenu />
-      {/* End MobileMenu */}
+        <div className="ls-widget">
 
-      <DashboardCandidatesSidebar />
-      {/* <!-- End Candidates Sidebar Menu --> */}
-
-      {/* <!-- Dashboard --> */}
-      <section className="user-dashboard">
-        <div className="dashboard-outer">
-          <BreadCrumb title="Change Password!" />
-          {/* breadCrumb */}
-
-          {/* <MenuToggler /> */}
-          {/* Collapsible sidebar button */}
-
-          <div className="ls-widget">
-
-            <div className="widget-content">
-              <Form />
-            </div>
+          <div className="widget-content">
+            <Form />
           </div>
-          {/* <!-- Ls widget --> */}
         </div>
-        {/* End dashboard-outer */}
-      </section>
-      {/* <!-- End Dashboard --> */}
+        {/* <!-- Ls widget --> */}
+      </div>
+      {/* End dashboard-outer */}
+    </section>
 
-      <CopyrightFooter />
-      {/* <!-- End Copyright --> */}
-    </div>
-    // End page-wrapper
   );
 };
 

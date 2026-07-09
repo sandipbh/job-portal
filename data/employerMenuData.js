@@ -13,13 +13,7 @@ module.exports = [
     routePath: "/employers-dashboard/kyc-verification",
     active: "",
   },
-  {
-    id: 10,
-    name: "Change Password",
-    icon: "la-lock",
-    routePath: "/employers-dashboard/change-password",
-    active: "",
-  },
+
   {
     id: 3,
     name: "Post a New Job",
@@ -50,36 +44,48 @@ module.exports = [
   },
   {
     id: 7,
+    name: "Search Profile",
+    icon: "la-search",
+    routePath: "/employers-dashboard/search-filter",
+    active: "",
+  },
+  {
+    id: 8,
     name: "Packages",
     icon: "la-box",
     routePath: "/employers-dashboard/packages",
     active: "",
   },
   {
-    id: 8,
+    id: 9,
     name: "Messages",
     icon: "la-comment-o",
     routePath: "/employers-dashboard/messages",
     active: "",
   },
   {
-    id: 9,
+    id: 10,
     name: "Resume Alerts",
     icon: "la-bell",
     routePath: "/employers-dashboard/resume-alerts",
     active: "",
   },
-
-
   {
     id: 11,
+    name: "Change Password",
+    icon: "la-lock",
+    routePath: "/employers-dashboard/change-password",
+    active: "",
+  },
+  {
+    id: 12,
     name: "Logout",
     icon: "la-sign-out",
     routePath: "/logout",
     active: "",
   },
   {
-    id: 12,
+    id: 13,
     name: "Delete Profile",
     icon: "la-trash",
     routePath: "/",

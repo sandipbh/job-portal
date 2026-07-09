@@ -10,7 +10,7 @@ const BreadCrumb = ({ title = "" }) => {
         <h3>{title}</h3>
         <MenuToggler />
       </div>
-      <div className="text">Ready to jump back in?</div>
+      {/* <div className="text">Ready to jump back in?</div> */}
     </div>
   );
 };
