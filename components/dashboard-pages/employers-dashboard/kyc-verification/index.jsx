@@ -15,23 +15,7 @@ const Index = () => {
     const router = useRouter();
 
     return (
-        <div className="page-wrapper dashboard">
-            <span className="header-span"></span>
-            {/* <!-- Header Span for hight --> */}
-
-            <LoginPopup />
-            {/* End Login Popup Modal */}
-
-            <DashboardHeader />
-            {/* End Header */}
-
-            <MobileMenu />
-            {/* End MobileMenu */}
-
-            <DashboardEmployerSidebar />
-            {/* <!-- End User Sidebar Menu --> */}
-
-            {/* <!-- Dashboard --> */}
+        <>
             <section className="user-dashboard">
                 <div className="dashboard-outer">
                     <BreadCrumb title="KYC Verification" />
@@ -62,12 +46,7 @@ const Index = () => {
                 </div>
                 {/* End dashboard-outer */}
             </section>
-            {/* <!-- End Dashboard --> */}
-
-            <CopyrightFooter />
-            {/* <!-- End Copyright --> */}
-        </div>
-        // End page-wrapper
+        </>
     );
 };
 
