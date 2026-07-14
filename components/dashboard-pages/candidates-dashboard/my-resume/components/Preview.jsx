@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from "react";
-
+import { formatDate, getTimeAgo, getMonthName } from "@/lib/dateUtils";
 import dynamic from "next/dynamic";
 
 const Preview = ({ data }) => {
@@ -21,14 +21,11 @@ const Preview = ({ data }) => {
   const [internship, setInternship] = useState([]);
   const [project, setProject] = useState([]);
 
-
   const [tenthData, setTenthData] = useState({});
   const [twelfthData, setTwelfthData] = useState({});
   const [graduateData, setGraduateData] = useState({});
   const [mastersData, setMastersData] = useState({});
   const [PhDData, setPhDData] = useState({});
-
-
 
 
 
@@ -156,7 +153,11 @@ const Preview = ({ data }) => {
               <ul className="resume-list">
                 <li>State: {personal?.state}</li>
                 <li>City: {personal?.city}</li>
-                <li>Date of Birth: {personal?.dob}</li>
+                <li>Date of Birth:
+                  {formatDate(personal?.dob)
+                  }
+
+                </li>
                 <li>Gender: {personal?.gender}</li>
               </ul>
             </section>
@@ -371,11 +372,11 @@ const Preview = ({ data }) => {
 
                     <strong>{item.projectName}</strong>
                     <div className="resume-subtitle">
-                      Company Name :  {item.companyName}  &nbsp;&nbsp; <span className="text-muted"> Period : </span>   {item.fromMonth} {item.fromYear}
+                      Company Name :  {item.companyName}  &nbsp;&nbsp; <span className="text-muted"> Period : </span>   {getMonthName(item.fromMonth)} {item.fromYear}
                       {" - "}
                       {item.currentCompany == "True"
                         ? "Present"
-                        : `${item.toMonth || ""} ${item.toYear || ""}`}
+                        : `${getMonthName(item.toMonth) || ""} ${item.toYear || ""}`}
                     </div>
                     <div className="resume-subtitle">
                       Skills :  {item.skills.replaceAll("^", ", ")}
@@ -405,11 +406,11 @@ const Preview = ({ data }) => {
                       <div className="resume-subtitle d-flex justify-content-between align-items-center">
                         <span>Designation : {exp.designation}</span>
                         <span>
-                          {exp.fromMonth} {exp.fromYear}
+                          {getMonthName(exp.fromMonth)} {exp.fromYear}
                           {" - "}
                           {exp.currentCompany == "True"
                             ? "Present"
-                            : `${exp.toMonth || ""} ${exp.toYear || ""}`}
+                            : `${getMonthName(exp.toMonth) || ""} ${exp.toYear || ""}`}
                         </span>
                       </div>
 
@@ -434,11 +435,11 @@ const Preview = ({ data }) => {
                       <div className="resume-subtitle d-flex justify-content-between align-items-center">
                         <strong>{proj.projectName}</strong>
                         <span>
-                          {proj.fromMonth} {proj.fromYear}
+                          {getMonthName(proj.fromMonth)} {proj.fromYear}
                           {" - "}
-                          {proj.currentlyCompany == "True"
+                          {proj.currentCompany == "True"
                             ? "Present"
-                            : `${proj.toMonth || ""} ${proj.toYear || ""}`}
+                            : `${getMonthName(proj.toMonth) || ""} ${proj.toYear || ""}`}
                         </span>
                       </div>
                       <p style={{ paddingTop: "0px" }}>

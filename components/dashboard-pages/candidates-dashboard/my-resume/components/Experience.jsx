@@ -558,7 +558,7 @@ const ExperienceForm = ({ data, setData, onNext }) => {
                 {item.company} ,  {item.location}
               </p>
               <p className="mb-0">
-                From    {months.find(x => x.key === Number(item.workingStartMonth))?.value || ""}, {item.workingStartYear} - {" "}
+                {months.find(x => x.key === Number(item.workingStartMonth))?.value || ""}, {item.workingStartYear} - {" "}
                 {item.currentlyWorking
                   ? "Present"
                   : `${months.find(x => x.key === Number(item.workingEndMonth))?.value || ""}, ${item.workingEndYear}`}

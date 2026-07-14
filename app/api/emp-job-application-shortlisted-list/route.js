@@ -2,12 +2,15 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { apiFetch } from "../apiFetch";
 
+
 // GET Method 
 export async function GET(req) {
   const headersList = await headers();
 
   const token = req.cookies.get("regToken")?.value;
   const url = req.nextUrl.pathname;
+
+  const JobPostId = req.nextUrl.searchParams.get("JobPostId");
 
   let user = {};
   try {
@@ -23,6 +26,7 @@ export async function GET(req) {
       uqId: user.external.uqId,
       Role: user.external.role,
       Token: user.external.accessToken,
+      JobPostId: JobPostId
     };
 
     // Allow self-signed certs in local development only.
@@ -40,8 +44,7 @@ export async function GET(req) {
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
-      `${externalApiBaseUrl.replace(/\/+$/, "")}/Candidate/candi/getExperience`;
-
+      `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/getJobApplicationShortlistedList`;
 
     const externalResponse = await apiFetch(externalApiUrl, {
       method: "POST",
@@ -68,7 +71,7 @@ export async function GET(req) {
   }
 }
 
-// POST Method 
+
 export async function POST(req) {
   const headersList = await headers();
 
@@ -86,19 +89,71 @@ export async function POST(req) {
 
   try {
     const {
-      designation,
-      company,
-      location,
-      workingStartMonth,
-      workingStartYear,
-      workingEndMonth,
-      workingEndYear,
-      currentlyWorking,
-      description
-    } = await req.json();
+      jobpostId,
+      companyName,
+      jobTitle,
+      jobTitleId,
+      minExperience,
+      maxExperience,
+      fresherAllowed,
+      jobType,
+      workMode,
 
-    console.log("Login attempt email:", user.external.uqId);
-    console.log("Login attempt role:", user.external.role);
+
+      minSalary,
+      maxSalary,
+
+      incentives,
+
+      department,
+      departmentId,
+      jobRole,
+      jobRoleId,
+      jobLocation,
+      jobLocationId,
+      qualification,
+
+      degree,
+      degreeId,
+
+      specialization,
+      specializationId,
+      skills,
+      industryIds,
+
+      languages,
+      languagesId,
+
+      gender,
+
+      contactMethod,
+      cemail,
+      cphone,
+      callFrom,
+      callTo,
+      applicationMethod,
+      externalLink,
+      allowDirectCall,
+      days,
+      jobDesc,
+      aboutCompany,
+      screeningQuestions,
+
+      isWalkIn,
+      walkInStartDate,
+      walkInEndDate,
+      walkInTimingFrom,
+      walkInTimingTo,
+      recruiterName,
+      walkInPhone,
+      venueAddress,
+      googleMapsUrl,
+      collaborators,
+      newCollaborator,
+      dailyDigest
+
+
+    } = await req.json();
 
     // 1. Basic validation
     if (!user.external.uqId || !user.external.role) {
@@ -108,7 +163,6 @@ export async function POST(req) {
       );
     }
 
-
     const LoginIp =
       headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       headersList.get("x-real-ip") ||
@@ -117,17 +171,69 @@ export async function POST(req) {
 
     const loginBody = {
 
+      jobpostId: jobpostId,
+      companyName: companyName,
+      jobTitle: jobTitle,
+      jobTitleId: jobTitleId,
+      minExperience: minExperience,
+      maxExperience: maxExperience,
+      fresherAllowed: fresherAllowed ?? false,
+      jobType: jobType,
+      workMode: workMode,
 
-      designation: designation,
-      company: company,
-      location: location,
-      workingStartMonth: workingStartMonth,
-      workingStartYear: workingStartYear,
-      workingEndMonth: workingEndMonth,
-      workingEndYear: workingEndYear,
+      minSalary: minSalary,
+      maxSalary: maxSalary,
 
-      currentlyWorking: item.currentCompany === "True" ? true : false,
-      description: description,
+      incentives: incentives,
+
+      department: department,
+      departmentId: departmentId,
+      jobRole: jobRole,
+      jobRoleId: jobRoleId,
+      jobLocation: jobLocation,
+      jobLocationId: jobLocationId,
+      qualification: qualification,
+
+      degree: degree,
+      degreeId: degreeId,
+
+      specialization: specialization,
+      specializationId: specializationId,
+      skills: skills,
+      industryIds: industryIds,
+      languages: languages,
+      languagesId: languagesId,
+
+
+      gender: gender,
+
+      contactMethod: contactMethod,
+      cemail: cemail,
+      cphone: cphone,
+      callFrom: callFrom,
+      callTo: callTo,
+      applicationMethod: applicationMethod,
+      externalLink: externalLink,
+      allowDirectCall: allowDirectCall,
+      days: days,
+
+      jobDesc: jobDesc,
+      aboutCompany: aboutCompany,
+      screeningQuestions: screeningQuestions,
+
+
+      isWalkIn: isWalkIn,
+      walkInStartDate: walkInStartDate,
+      walkInEndDate: walkInEndDate,
+      walkInTimingFrom: walkInTimingFrom,
+      walkInTimingTo: walkInTimingTo,
+      recruiterName: recruiterName,
+      walkInPhone: walkInPhone,
+      venueAddress: venueAddress,
+      googleMapsUrl: googleMapsUrl,
+      collaborators: collaborators,
+      newCollaborator: newCollaborator,
+      dailyDigest: dailyDigest,
 
       uqId: user.external.uqId,
       LoginIp: LoginIp,
@@ -148,11 +254,11 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-    console.log("External API Base URL 00:", externalApiBaseUrl);
+    console.log("External API Base URL :", externalApiBaseUrl);
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
-      `${externalApiBaseUrl.replace(/\/+$/, "")}/Candidate/candi/saveExperience`;
+      `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/postJob`;
 
     console.log("External API URL :", externalApiUrl);
     console.log("External API Request Body:", loginBody);
@@ -170,25 +276,25 @@ export async function POST(req) {
 
     if (!externalResponse.ok) {
       console.error(
-        "External UpdateProfile failed:",
+        "External jobpost failed:",
         responseData.success,
         responseData.message
       );
 
       return NextResponse.json(
         {
-          message: responseData.message || "Update Failed",
+          message: responseData.message || "Job Post Failed",
         },
         { status: responseData.status || 500 }
       );
     }
 
-    console.log("Exam details successfully");
+    console.log("Job Posted successfully");
 
     // 6. Send response with cookies
     const response = NextResponse.json(
       {
-        message: responseData.message || "Exam details successfully",
+        message: responseData.message || "Job Posted successfully",
       },
       { status: 201 }
     );
@@ -198,7 +304,7 @@ export async function POST(req) {
     console.error("UPDATE ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to update details" },
+      { message: "Failed to update Profile" },
       { status: 500 }
     );
   }

@@ -73,7 +73,8 @@ const Project = ({ data, setData, onNext }) => {
                     projectStartYear: item.fromYear,
                     projectEndMonth: item.toMonth,
                     projectEndYear: item.toYear,
-                    currentlyWorking: item.currentCompany,
+
+                    currentlyWorking: item.currentCompany === "True" ? true : false,
 
                 }));
                 setList(projectList);
@@ -400,13 +401,14 @@ const Project = ({ data, setData, onNext }) => {
                         <div>
                             <h5>{item.projectName}</h5>
 
-                            <p className="mb-1">
-                                {item.projectStartMonth} {item.projectStartYear}
-                                {" - "}
+                            <p className="mb-0">
+                                {months.find(x => x.key === Number(item.projectStartMonth))?.value || ""}, {item.projectStartYear} - {" "}
                                 {item.currentlyWorking
                                     ? "Present"
-                                    : `${item.projectEndMonth} ${item.projectEndYear}`}
+                                    : `${months.find(x => x.key === Number(item.projectEndMonth))?.value || ""}, ${item.projectEndYear}`}
                             </p>
+
+
 
                             {item.projectUrl && (
                                 <p>{item.projectUrl}</p>

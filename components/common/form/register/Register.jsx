@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ToastContainer, toast } from 'react-toastify';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import OtpReg from "./OtpReg";
 
 
 const freeEmailProviders = [
@@ -53,7 +54,7 @@ const officialPrefixes = [
 ];
 
 const Register = () => {
-
+  const [showOtp, setShowOtp] = useState(false);
   const router = useRouter();
   const [role, setRole] = useState("candidate");
 
@@ -122,69 +123,75 @@ const Register = () => {
     // Check official prefix
     return officialPrefixes.includes(prefix);
   }
-
   const openOtpModal = () => {
-    if (typeof window === "undefined") return;
+    setShowOtp(true);
 
-    const registerModalEl = document.getElementById("registerModal");
-    const otpModalEl = document.getElementById("otpModal");
-    const otpTrigger = document.querySelector(
-      '[data-bs-toggle="modal"][data-bs-target="#otpModal"]'
-    );
-
-    const showOtpModal = () => {
-      if (window.bootstrap && otpModalEl) {
-        const otpModal =
-          window.bootstrap.Modal.getInstance(otpModalEl) ||
-          new window.bootstrap.Modal(otpModalEl);
-        otpModal.show();
-        return;
-      }
-
-      if (otpTrigger) {
-        otpTrigger.click();
-        return;
-      }
-
-      if (otpModalEl) {
-        otpModalEl.classList.add("show");
-        otpModalEl.style.display = "block";
-        otpModalEl.setAttribute("aria-modal", "true");
-        otpModalEl.removeAttribute("aria-hidden");
-      }
-    };
-
-    if (window.bootstrap && registerModalEl) {
-      const registerModal =
-        window.bootstrap.Modal.getInstance(registerModalEl) ||
-        new window.bootstrap.Modal(registerModalEl);
-
-      const onHidden = () => {
-        registerModalEl.removeEventListener("hidden.bs.modal", onHidden);
-        showOtpModal();
-      };
-
-      registerModalEl.addEventListener("hidden.bs.modal", onHidden);
-      registerModal.hide();
-      return;
-    }
-
-    const registerClose = registerModalEl?.querySelector(
-      '[data-bs-dismiss="modal"]'
-    );
-    if (registerClose) {
-      registerClose.click();
-      setTimeout(showOtpModal, 300);
-      return;
-    }
-
-    if (registerModalEl) {
-      registerModalEl.classList.remove("show");
-      registerModalEl.style.display = "none";
-      registerModalEl.setAttribute("aria-hidden", "true");
-    }
-    showOtpModal();
   };
+  // const openOtpModal = () => {
+  //   if (typeof window === "undefined") return;
+
+  //   const registerModalEl = document.getElementById("registerModal");
+  //   const otpModalEl = document.getElementById("otpModal");
+  //   const otpTrigger = document.querySelector(
+  //     '[data-bs-toggle="modal"][data-bs-target="#otpModal"]'
+  //   );
+
+  //   const showOtpModal = () => {
+  //     if (window.bootstrap && otpModalEl) {
+  //       const otpModal =
+  //         window.bootstrap.Modal.getInstance(otpModalEl) ||
+  //         new window.bootstrap.Modal(otpModalEl);
+  //       otpModal.show();
+  //       return;
+  //     }
+
+  //     if (otpTrigger) {
+  //       otpTrigger.click();
+  //       return;
+  //     }
+
+  //     if (otpModalEl) {
+  //       otpModalEl.classList.add("show");
+  //       otpModalEl.style.display = "block";
+  //       otpModalEl.setAttribute("aria-modal", "true");
+  //       otpModalEl.removeAttribute("aria-hidden");
+  //     }
+  //   };
+
+  //   if (window.bootstrap && registerModalEl) {
+  //     const registerModal =
+  //       window.bootstrap.Modal.getInstance(registerModalEl) ||
+  //       new window.bootstrap.Modal(registerModalEl);
+
+  //     const onHidden = () => {
+  //       registerModalEl.removeEventListener("hidden.bs.modal", onHidden);
+  //       showOtpModal();
+  //     };
+
+  //     registerModalEl.addEventListener("hidden.bs.modal", onHidden);
+  //     registerModal.hide();
+  //     return;
+  //   }
+
+  //   const registerClose = registerModalEl?.querySelector(
+  //     '[data-bs-dismiss="modal"]'
+  //   );
+  //   if (registerClose) {
+  //     registerClose.click();
+  //     setTimeout(showOtpModal, 300);
+  //     return;
+  //   }
+
+  //   if (registerModalEl) {
+  //     registerModalEl.classList.remove("show");
+  //     registerModalEl.style.display = "none";
+  //     registerModalEl.setAttribute("aria-hidden", "true");
+  //   }
+  //   showOtpModal();
+  // };
+
+
+
 
   // ✅ HANDLE CHANGE
   const handleChange = (e) => {
@@ -258,127 +265,50 @@ const Register = () => {
       [name]: error
     }));
   };
-
-  // ✅ HANDLE SUBMIT
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-
-
+  const validateForm = () => {
     let newErrors = {};
 
-    // FINAL VALIDATION CHECK
+    // Name
     if (!formData.name) {
       newErrors.name = "Name is required";
-      toast.error(newErrors.name);
-      setErrors((prev) => ({
-        ...prev,
-        name: newErrors.name
-      }));
-      return;
     } else if (formData.name.trim().length < 5) {
       newErrors.name = "Enter valid full name";
-      toast.error(newErrors.name);
-      setErrors((prev) => ({
-        ...prev,
-        name: newErrors.name
-      }));
-      return;
     } else if (!/^[A-Za-z ]+$/.test(formData.name)) {
       newErrors.name = "Only alphabets and spaces allowed";
-      toast.error(newErrors.name);
-      setErrors((prev) => ({
-        ...prev,
-        name: newErrors.name
-      }));
-      return;
     }
 
+    // Company Name (Employer only)
     if (role === "employer") {
       if (!formData.companyName) {
         newErrors.companyName = "Company name is required";
-        toast.error(newErrors.companyName);
-        setErrors((prev) => ({
-          ...prev,
-          companyName: newErrors.companyName
-        }));
-        return;
       } else if (formData.companyName.trim().length < 2) {
         newErrors.companyName = "Enter a valid company name";
-        toast.error(newErrors.companyName);
-        setErrors((prev) => ({
-          ...prev,
-          companyName: newErrors.companyName
-        }));
-        return;
       }
     }
 
+    // Email
     if (!formData.email) {
       newErrors.email = "Email is required";
-      toast.error(newErrors.email);
-      setErrors((prev) => ({
-        ...prev,
-        email: newErrors.email
-      }));
-      return;
     } else if (
-      !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(
-        formData.email
-      )
+      !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(formData.email)
     ) {
       newErrors.email = "Enter valid email address";
-      toast.error(newErrors.email);
-      setErrors((prev) => ({
-        ...prev,
-        email: newErrors.email
-      }));
-      return;
     }
 
+    // Mobile
     if (!formData.mobile) {
       newErrors.mobile = "Mobile is required";
-      toast.error(newErrors.mobile);
-      setErrors((prev) => ({
-        ...prev,
-        mobile: newErrors.mobile
-      }));
-      return;
-
     } else if (!/^\d{10}$/.test(formData.mobile)) {
       newErrors.mobile = "Mobile must be exactly 10 digits";
-      toast.error(newErrors.mobile);
-      setErrors((prev) => ({
-        ...prev,
-        mobile: newErrors.mobile
-      }));
-      return;
     }
 
+    // Password
     if (!formData.password) {
       newErrors.password = "Password is required";
-      toast.error(newErrors.password);
-      setErrors((prev) => ({
-        ...prev,
-        password: newErrors.password
-      }));
-      return;
     } else if (formData.password.length < 6) {
       newErrors.password = "Minimum 6 characters required";
-      toast.error(newErrors.password);
-      setErrors((prev) => ({
-        ...prev,
-        password: newErrors.password
-      }));
-      return;
     } else if (formData.password.length > 20) {
       newErrors.password = "Password must not exceed 20 characters";
-      toast.error(newErrors.password);
-      setErrors((prev) => ({
-        ...prev,
-        password: newErrors.password
-      }));
-      return;
     } else if (
       !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()_\-+=])[A-Za-z\d@$!%*#?&^()_\-+=]{6,20}$/.test(
         formData.password
@@ -386,40 +316,33 @@ const Register = () => {
     ) {
       newErrors.password =
         "Password must contain at least one letter, one number, and one special character";
-      toast.error(newErrors.password);
-      setErrors((prev) => ({
-        ...prev,
-        password: newErrors.password
-      }));
-      return;
     }
 
-    setErrors((prev) => ({
-      ...prev,
-      ...newErrors
-    }));
-
+    // Terms & Conditions
     if (!accepted) {
-
-      toast.error("All fields are required and must be valid");
-      setLoading(false);
-      return;
+      newErrors.accepted = "Please accept Terms & Conditions";
     }
 
-    if (Object.keys(newErrors).length > 0) {
-      toast.error("All fields are required and must be valid");
-      setLoading(false);
+    return {
+      isValid: Object.keys(newErrors).length === 0,
+      errors: newErrors,
+    };
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const { isValid, errors } = validateForm();
+
+    setErrors(errors);
+
+    if (!isValid) {
+      // Show first error in toast
+      toast.error(Object.values(errors)[0]);
       return;
     }
 
     try {
-
       setLoading(true);
-
-      // console.log("Request body sent to external API:", JSON.stringify({
-      //   ...formData,
-      //   role
-      // }));
 
       const res = await fetch("/api/register", {
         method: "POST",
@@ -428,16 +351,14 @@ const Register = () => {
         },
         body: JSON.stringify({
           ...formData,
-          role
+          role,
         }),
       });
 
       const user = await res.json();
-      console.log("Response from /api/register:", user);
 
       if (!res.ok) {
         toast.error(user.message || "Registration failed");
-        setLoading(false);
         return;
       }
 
@@ -449,16 +370,9 @@ const Register = () => {
           user?.user?.id ??
           "";
 
-        console.log("Storing in localStorage 1:", {
-          otpUserEmail: formData.email,
-          otpUserMobile: formData.mobile,
-          otpUserUqId,
-          userData: user?.user,
-        });
-
-        window.localStorage.setItem("otpUserEmail", formData.email);
-        window.localStorage.setItem("otpUserMobile", formData.mobile);
-        window.localStorage.setItem("otpUserUqId", otpUserUqId);
+        localStorage.setItem("otpUserEmail", formData.email);
+        localStorage.setItem("otpUserMobile", formData.mobile);
+        localStorage.setItem("otpUserUqId", otpUserUqId);
         window.dispatchEvent(new Event("otpUserDataUpdated"));
       }
 
@@ -471,7 +385,6 @@ const Register = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="form-inner">
       <h3>Create a Free {process.env.NEXT_PUBLIC_APP_NAME} Account </h3>
@@ -618,6 +531,39 @@ const Register = () => {
 
 
       </form>
+      <div
+        className={`modal fade ${showOtp ? "show d-block" : ""}`}
+        id="otpModal"
+        style={{
+          background: "#212529a3",
+          display: showOtp ? "block" : "none"
+        }}
+      >
+        <div className="modal-dialog modal-lg modal-dialog-centered login-modal  ">
+          <div className="modal-content">
+            <button
+              type="button"
+              className="closed-modal"
+              onClick={() => setShowOtp(false)}
+            ></button>
+            {/* End close modal btn */}
+            <div className="modal-body">
+              {/* <!-- Login modal --> */}
+              <div id="login-modal">
+                {/* <!-- Login Form --> */}
+                <div className="login-form default-form">
+                  <OtpReg />
+                </div>
+                {/* <!--End Login Form --> */}
+              </div>
+              {/* <!-- End Login Module --> */}
+            </div>
+            {/* En modal-body */}
+          </div>
+          {/* End modal-content */}
+        </div>
+      </div>
+
       <div className="bottom-box">
         <div className="text">
           Already have an account?{" "}
@@ -625,7 +571,6 @@ const Register = () => {
             href="#"
             className="call-modal login"
             data-bs-toggle="modal"
-            data-bs-dismiss="modal"
             data-bs-target="#loginPopupModal"
           >
             Signin

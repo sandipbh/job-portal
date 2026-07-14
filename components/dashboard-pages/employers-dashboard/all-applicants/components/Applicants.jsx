@@ -14,8 +14,8 @@ const Applicants = () => {
             <div className="content">
               <figure className="image">
                 <Image
-                  width={90}
-                  height={90}
+                  width={75}
+                  height={75}
                   src={candidate.avatar}
                   alt="candidates"
                 />

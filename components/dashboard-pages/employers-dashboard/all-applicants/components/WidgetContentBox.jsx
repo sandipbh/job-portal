@@ -29,6 +29,20 @@ const WidgetContentBox = () => {
 
   const jobId = Number(searchParams.get("jobId"));
 
+  const status = searchParams.get("status");
+
+  const getDefaultTab = () => {
+    switch (status) {
+      case "Shortlisted":
+        return 1;
+      case "Maybe":
+        return 2;
+      case "Rejected":
+        return 3;
+      default:
+        return 0;
+    }
+  };
 
   const [jobList, setJobList] = useState([]);
 
@@ -437,9 +451,9 @@ const WidgetContentBox = () => {
           <PaginationControls />
         </div>
 
-        <Tabs>
+        <Tabs defaultIndex={getDefaultTab()}>
           <div className="aplicants-upper-bar">
-            <h6>{candidates[0]?.jobTitle} </h6>
+            <h6>{jobId > 0 ? candidates[0]?.jobTitle : ""} </h6>
 
             <TabList className="aplicantion-status tab-buttons clearfix">
               <Tab className="tab-btn totals">

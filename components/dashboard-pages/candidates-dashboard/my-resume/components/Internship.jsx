@@ -62,7 +62,8 @@ const InternshipForm = ({ data, setData, onNext }) => {
                     startMonth: item.fromMonth,
                     endYear: item.toYear,
                     endMonth: item.toMonth,
-                    currentlyWorking: item.currentCompany,
+
+                    currentlyWorking: item.currentCompany === "True" ? true : false,
                     description: item.workProfile
                 };
                 setForm(internList);

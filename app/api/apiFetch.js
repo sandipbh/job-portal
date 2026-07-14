@@ -40,7 +40,7 @@ export async function apiFetch(
     ...(body ? { body } : {}),
   });
 
-  console.log("API Fetch response status:", response );
+  //console.log("API Fetch response status:", response );
   if (response.status === 401) {
     throw new Error("Unauthorized");
   }

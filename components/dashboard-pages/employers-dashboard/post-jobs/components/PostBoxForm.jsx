@@ -1564,7 +1564,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   <option value="Full Time">Full Time</option>
                   <option value="Part Time">Part Time</option>
                   <option value="Internship">Internship</option>
-                  <option value="Remote">Remote</option>
+                  <option value="contract">contract</option>
                 </select>
                 {errors.jobType && (
                   <span className="error-text">{errors.jobType}</span>
@@ -1579,14 +1579,9 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   className="form-select"
                 >
                   <option value="">Select Work Mode</option>
-                  <option value="Full Time">Full Time</option>
-                  <option value="Part Time">Part Time</option>
-                  <option value="Remote">Remote</option>
+                  <option value="Onsite ">Onsite </option>
                   <option value="Hybrid">Hybrid</option>
-                  <option value="Contract">Contract</option>
-                  <option value="Internship">Internship</option>
-
-
+                  <option value="Remote">Remote</option>
                 </select>
                 {errors.workMode && (
                   <span className="error-text">{errors.workMode}</span>

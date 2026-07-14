@@ -617,33 +617,7 @@ const FormContent2 = () => {
 
       </form>
 
-      <div>
-        <div className="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" style={{ background: "#212529a3" }}>
-          <div className="modal-dialog modal-lg modal-dialog-centered login-modal  ">
-            <div className="modal-content">
-              <button
-                type="button"
-                className="closed-modal"
-                data-bs-dismiss="modal"
-              ></button>
-              {/* End close modal btn */}
-              <div className="modal-body">
-                {/* <!-- Login modal --> */}
-                <div id="login-modal">
-                  {/* <!-- Login Form --> */}
-                  <div className="login-form default-form">
-                    <OtpReg />
-                  </div>
-                  {/* <!--End Login Form --> */}
-                </div>
-                {/* <!-- End Login Module --> */}
-              </div>
-              {/* En modal-body */}
-            </div>
-            {/* End modal-content */}
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };

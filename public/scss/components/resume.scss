@@ -439,22 +439,79 @@
   color: rgba(25, 103, 210, 1);
 }
 
+/* Blue */
 .resume-outer.theme-blue .resume-block .edit-box .year,
 .resume-outer.theme-blue .resume-block .name {
   background: #eff4fc;
-  color: rgba(25, 103, 210, 1);
+  color: #1967d2;
 }
 
 .resume-outer.theme-blue .resume-block .info-box span {
-  color: rgba(25, 103, 210, 1);
+  color: #1967d2;
 }
 
+/* Yellow */
 .resume-outer.theme-yellow .resume-block .edit-box .year,
 .resume-outer.theme-yellow .resume-block .name {
   background: #fef2d9;
-  color: rgba(249, 171, 0, 1);
+  color: #f9ab00;
 }
 
 .resume-outer.theme-yellow .resume-block .info-box span {
-  color: rgba(249, 171, 0, 1);
+  color: #f9ab00;
+}
+
+/* Green */
+.resume-outer.theme-green .resume-block .edit-box .year,
+.resume-outer.theme-green .resume-block .name {
+  background: #e8f8ef;
+  color: #16a34a;
+}
+
+.resume-outer.theme-green .resume-block .info-box span {
+  color: #16a34a;
+}
+
+/* Red */
+.resume-outer.theme-red .resume-block .edit-box .year,
+.resume-outer.theme-red .resume-block .name {
+  background: #fdecec;
+  color: #dc2626;
+}
+
+.resume-outer.theme-red .resume-block .info-box span {
+  color: #dc2626;
+}
+
+/* Purple */
+.resume-outer.theme-purple .resume-block .edit-box .year,
+.resume-outer.theme-purple .resume-block .name {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.resume-outer.theme-purple .resume-block .info-box span {
+  color: #7c3aed;
+}
+
+/* Orange */
+.resume-outer.theme-orange .resume-block .edit-box .year,
+.resume-outer.theme-orange .resume-block .name {
+  background: #fff3e8;
+  color: #ea580c;
+}
+
+.resume-outer.theme-orange .resume-block .info-box span {
+  color: #ea580c;
+}
+
+/* Teal */
+.resume-outer.theme-teal .resume-block .edit-box .year,
+.resume-outer.theme-teal .resume-block .name {
+  background: #e6fffb;
+  color: #0f766e;
+}
+
+.resume-outer.theme-teal .resume-block .info-box span {
+  color: #0f766e;
 }

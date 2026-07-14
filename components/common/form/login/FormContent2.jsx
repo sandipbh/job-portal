@@ -18,73 +18,102 @@ const FormContent2 = () => {
   const [role, setRole] = useState("candidate");
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
 
 
   const openOtpModal = () => {
     if (typeof window === "undefined") return;
 
-    const registerModalEl = document.getElementById("loginPopupModal");
-    const otpModalEl = document.getElementById("otpModal");
-    const otpTrigger = document.querySelector(
-      '[data-bs-toggle="modal"][data-bs-target="#otpModal"]'
-    );
+    // Ensure OTP component is mounted, then open the modal.
+    setShowOtp(true);
 
-    const showOtpModal = () => {
-      if (window.bootstrap && otpModalEl) {
-        const otpModal =
-          window.bootstrap.Modal.getInstance(otpModalEl) ||
-          new window.bootstrap.Modal(otpModalEl);
-        otpModal.show();
-        return;
-      }
+    setTimeout(() => {
+      const registerModalEl = document.getElementById("loginPopupModal");
+      const otpModalEl = document.getElementById("otpModal");
+      const otpTrigger = document.querySelector(
+        '[data-bs-toggle="modal"][data-bs-target="#otpModal"]'
+      );
 
-      if (otpTrigger) {
-        otpTrigger.click();
-        return;
-      }
+      const showOtpModal = () => {
+        if (window.bootstrap && otpModalEl) {
+          const otpModal =
+            window.bootstrap.Modal.getInstance(otpModalEl) ||
+            new window.bootstrap.Modal(otpModalEl);
+          otpModal.show();
+          return;
+        }
 
-      if (otpModalEl) {
-        otpModalEl.classList.add("show");
-        otpModalEl.style.display = "block";
-        otpModalEl.setAttribute("aria-modal", "true");
-        otpModalEl.removeAttribute("aria-hidden");
-      }
-    };
+        if (otpTrigger) {
+          otpTrigger.click();
+          return;
+        }
 
-    if (window.bootstrap && registerModalEl) {
-      const registerModal =
-        window.bootstrap.Modal.getInstance(registerModalEl) ||
-        new window.bootstrap.Modal(registerModalEl);
-
-      const onHidden = () => {
-        registerModalEl.removeEventListener("hidden.bs.modal", onHidden);
-        showOtpModal();
+        if (otpModalEl) {
+          otpModalEl.classList.add("show");
+          otpModalEl.style.display = "block";
+          otpModalEl.setAttribute("aria-modal", "true");
+          otpModalEl.removeAttribute("aria-hidden");
+        }
       };
 
-      registerModalEl.addEventListener("hidden.bs.modal", onHidden);
-      registerModal.hide();
-      return;
-    }
+      if (window.bootstrap && registerModalEl) {
+        const registerModal =
+          window.bootstrap.Modal.getInstance(registerModalEl) ||
+          new window.bootstrap.Modal(registerModalEl);
 
-    const registerClose = registerModalEl?.querySelector(
-      '[data-bs-dismiss="modal"]'
-    );
-    if (registerClose) {
-      registerClose.click();
-      setTimeout(showOtpModal, 300);
-      return;
-    }
+        const onHidden = () => {
+          registerModalEl.removeEventListener("hidden.bs.modal", onHidden);
+          showOtpModal();
+        };
 
-    if (registerModalEl) {
-      registerModalEl.classList.remove("show");
-      registerModalEl.style.display = "none";
-      registerModalEl.setAttribute("aria-hidden", "true");
-    }
-    showOtpModal();
+        registerModalEl.addEventListener("hidden.bs.modal", onHidden);
+        registerModal.hide();
+        return;
+      }
+
+      const registerClose = registerModalEl?.querySelector(
+        '[data-bs-dismiss="modal"]'
+      );
+      if (registerClose) {
+        registerClose.click();
+        setTimeout(showOtpModal, 300);
+        return;
+      }
+
+      if (registerModalEl) {
+        registerModalEl.classList.remove("show");
+        registerModalEl.style.display = "none";
+        registerModalEl.setAttribute("aria-hidden", "true");
+      }
+      showOtpModal();
+    }, 50);
   };
+
+  // Unmount OTP component when modal is hidden
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!showOtp) return;
+
+    const modalEl = document.getElementById("otpModal");
+    if (!modalEl) return;
+
+    const onHidden = () => {
+      setShowOtp(false);
+    };
+
+    modalEl.addEventListener("hidden.bs.modal", onHidden);
+
+    // fallback: close button
+    const closeBtn = modalEl.querySelector(".closed-modal");
+    const onClickClose = () => setShowOtp(false);
+    closeBtn?.addEventListener("click", onClickClose);
+
+    return () => {
+      modalEl.removeEventListener("hidden.bs.modal", onHidden);
+      closeBtn?.removeEventListener("click", onClickClose);
+    };
+  }, [showOtp]);
   const handleLogin = async (e) => {
-
-
 
     e.preventDefault();
 
@@ -267,14 +296,7 @@ const FormContent2 = () => {
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
-          {/* <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your password"
-              required
-            /> */}
+
         </div>
         {/* password */}
 
@@ -287,7 +309,7 @@ const FormContent2 = () => {
               </label>
             </div>
             <a href="/getPassword" className="pwd">
-              Forgot password?.
+              Forgot password?..
             </a>
           </div>
         </div>
@@ -333,33 +355,35 @@ const FormContent2 = () => {
         <LoginWithSocial />
       </div>
       {/* End bottom-box LoginWithSocial */}
-      <div>
-        <div className="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" style={{ background: "#212529a3" }}>
-          <div className="modal-dialog modal-lg modal-dialog-centered login-modal  ">
-            <div className="modal-content">
-              <button
-                type="button"
-                className="closed-modal"
-                data-bs-dismiss="modal"
-              ></button>
-              {/* End close modal btn */}
-              <div className="modal-body">
-                {/* <!-- Login modal --> */}
-                <div id="login-modal">
-                  {/* <!-- Login Form --> */}
-                  <div className="login-form default-form">
-                    <OtpReg />
+      {showOtp && (
+        <div>
+          <div className="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" style={{ background: "#212529a3" }}>
+            <div className="modal-dialog modal-lg modal-dialog-centered login-modal  ">
+              <div className="modal-content">
+                <button
+                  type="button"
+                  className="closed-modal"
+                  data-bs-dismiss="modal"
+                ></button>
+                {/* End close modal btn */}
+                <div className="modal-body">
+                  {/* <!-- Login modal --> */}
+                  <div id="login-modal">
+                    {/* <!-- Login Form --> */}
+                    <div className="login-form default-form">
+                      <OtpReg />
+                    </div>
+                    {/* <!--End Login Form --> */}
                   </div>
-                  {/* <!--End Login Form --> */}
+                  {/* <!-- End Login Module --> */}
                 </div>
-                {/* <!-- End Login Module --> */}
+                {/* En modal-body */}
               </div>
-              {/* En modal-body */}
+              {/* End modal-content */}
             </div>
-            {/* End modal-content */}
           </div>
         </div>
-      </div>
+      )}
 
     </div>
   );

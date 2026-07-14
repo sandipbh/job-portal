@@ -1,40 +1,32 @@
 import { NextResponse } from "next/server";
 
-export async function middleware(req) {
+export function middleware(req) {
   const token = req.cookies.get("regToken")?.value;
-  const url = req.nextUrl.pathname;
 
-  // No cookie found
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  let user;
+  let role;
 
   try {
-    user = JSON.parse(token);
-  } catch (err) {
-    console.error("Invalid regToken:", err);
+    role = JSON.parse(token)?.external?.role;
+  } catch {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Empty object check
-  if (!user || Object.keys(user).length === 0) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
+  const { pathname } = req.nextUrl;
 
-  // Candidate routes
   if (
-    url.startsWith("/candidates-dashboard") &&
-    user?.external?.role !== "candidate"
+    pathname.startsWith("/candidates-dashboard") &&
+    role !== "candidate"
   ) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Employer routes
   if (
-    url.startsWith("/employers-dashboard") &&
-    user?.external?.role !== "employer"
+    pathname.startsWith("/employers-dashboard") &&
+    role !== "employer"
   ) {
     return NextResponse.redirect(new URL("/login", req.url));
   }

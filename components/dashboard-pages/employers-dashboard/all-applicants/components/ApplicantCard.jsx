@@ -343,11 +343,12 @@ const ApplicantCard = ({
                         </figure>
 
                         <h4 className="name mb-0">
-                            <div className="d-flex justify-content-between">
+                            <div className="d-flex  ">
+                                <input type="checkbox" className="me-2"></input>
                                 <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
                                     {candidate.candiName}
                                 </Link>
-                                <input type="checkbox" className=""></input>
+
                             </div>
                             <ul className="candidate-info">
                                 <li className="  icon flaticon-briefcase" style={{ paddingLeft: "0" }} >{" "}

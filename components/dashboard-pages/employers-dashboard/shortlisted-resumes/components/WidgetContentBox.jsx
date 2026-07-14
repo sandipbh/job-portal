@@ -3,7 +3,9 @@ import Applicants from "./Applicants";
 import { useState, useEffect } from "react";
 import WidgetToFilterBox from "./WidgetToFilterBox";
 import Link from "next/link";
-import candidatesData from "../../../../../data/candidates";
+
+
+import { useSearchParams } from "next/navigation";
 
 
 const WidgetContentBox = () => {
@@ -15,6 +17,37 @@ const WidgetContentBox = () => {
   const [selectedQualification, setSelectedQualification] = useState([]);
   const [selectedGender, setSelectedGender] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
+
+  const searchParams = useSearchParams();
+  const jobId = Number(searchParams.get("jobId"));
+
+  const [candidatesData, setCandidatesData] = useState([]);
+
+
+  useEffect(() => {
+    getJobList();
+  }, [jobId]);
+
+  const getJobList = async () => {
+    try {
+      const response = await fetch(`/api/emp-job-application-shortlisted-list?JobPostId=${jobId}`, {
+        method: "GET",
+      });
+
+      const result = await response.json();
+
+      const listData = result?.data;
+      console.log('listData  ', listData)
+
+      if (listData) {
+
+        setCandidatesData(listData);
+
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const filteredCandidates = candidatesData.filter((candidate) => {
     const matchesJob =
@@ -58,7 +91,41 @@ const WidgetContentBox = () => {
     );
   });
 
+  const updateCandidateStatus = (id, status) => {
+    setCandidatesData((prev) =>
+      prev.map((candidate) =>
+        candidate.id === id
+          ? { ...candidate, status }
+          : candidate
+      )
+    );
+  };
+  const handleCallStatus = (id, ttype) => {
+    updateCandidateCallStatus(id, ttype);
+  };
 
+  const updateCandidateCallStatus = (id, callStatus) => {
+    setCandidatesData((prev) =>
+      prev.map((candidate) =>
+        candidate.id === id
+          ? { ...candidate, callStatus }
+          : candidate
+      )
+    );
+  };
+  const handleStatus = (id, ttype) => {
+    updateCandidateStatus(id, ttype);
+  };
+
+  const updateCandidateComments = (id, comments) => {
+    setCandidatesData((prev) =>
+      prev.map((candidate) =>
+        candidate.id === id
+          ? { ...candidate, comments }
+          : candidate
+      )
+    );
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -138,51 +205,39 @@ const WidgetContentBox = () => {
 
         {/* Controls */}
         <div className="page-controls">
-
-          {/* First */}
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(1)}
           >
-            «
+            <i className="la la-angle-double-left"></i>
           </button>
 
-          {/* Prev */}
           <button
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
           >
-            ‹
+            <i className="la la-angle-left"></i>
           </button>
 
-          {/* Pages */}
-          {getPages().map((page) => (
-            <button
-              key={page}
-              className={currentPage === page ? "active" : ""}
-              onClick={() => setCurrentPage(page)}
-            >
-              {page}
-            </button>
-          ))}
+          <div className="page-box">
+            Page {currentPage} of {totalPages || 1}
+          </div>
 
-          {/* Next */}
           <button
             disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
           >
-            ›
+            <i className="la la-angle-right"></i>
           </button>
 
-          {/* Last */}
           <button
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(totalPages)}
           >
-            »
+            <i className="la la-angle-double-right"></i>
           </button>
-
         </div>
+
       </div>
     );
   };
@@ -325,13 +380,20 @@ const WidgetContentBox = () => {
 
       <div className="row">
         {currentJobs.length > 0 ? (
-          <Applicants candidates={currentJobs} />
+          currentJobs.map((candidate) => (
+            <Applicants
+              key={candidate.id}
+              candidate={candidate}
+              onUpdateComments={updateCandidateComments}
+              onUpdateStatus={handleStatus}
+              onUpdateCallStatus={handleCallStatus}
+            />))
         ) : (
           <div className="col-12 text-center py-5">
             <h5>No applicants found</h5>
           </div>
         )}
-        <Applicants candidates={currentJobs} />
+
       </div>
       <PaginationControls />
     </div>
