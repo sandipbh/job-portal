@@ -300,25 +300,29 @@ const ExperienceForm = ({ data, setData, onNext }) => {
   return (
     <form className="default-form" onSubmit={handleSubmit}>
 
-      <div className="form-header">
-        <h4>Work Experience</h4>
-        <p>Add Employment details if you are already working / have worked before in an organization</p>
+      <div className="exam-header">
+        <div>
+          <h4>Work Experience</h4>
+          <p>Add Employment details if you are already working / have worked before in an organization</p>
+        </div>
+        {!showForm && (
+          <button
+            type="button"
+            className="btn-sm add-exam-btn"
+            onClick={() => {
+              setForm(emptyExperience);
+              setEditIndex(null);
+              setShowForm(true);
+              handleFocus();
+            }}
+          >
+            + Add Experience
+          </button>
+        )}
+
       </div>
 
-      {!showForm && (
-        <button
-          type="button"
-          className="btn btn-sm btn-style-four mb-4"
-          onClick={() => {
-            setForm(emptyExperience);
-            setEditIndex(null);
-            setShowForm(true);
-            handleFocus();
-          }}
-        >
-          + Add Work Experience
-        </button>
-      )}
+
       {showForm && (
         <>
           <div className="exam-form-box">

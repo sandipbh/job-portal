@@ -10,7 +10,6 @@ const JobListingsTable = () => {
 
   const [jobList, setJobList] = useState([]);
 
-
   useEffect(() => {
     getAppliedJobs();
   }, []);

@@ -39,7 +39,7 @@ export async function POST(req) {
 
         const loginBody = {
             uqId: user.external.uqId,
-            term: term,    
+            term: term,
             LoginIp: LoginIp,
             Role: user.external.role,
             Token: user.external.accessToken,
@@ -58,12 +58,12 @@ export async function POST(req) {
                 { status: 500 }
             );
         }
-        console.log("External API Base URL 00:", externalApiBaseUrl);
+        //console.log("External API Base URL 00:", externalApiBaseUrl);
 
-      let externalApiUrl = process.env.REGISTER_API_URL;
+        let externalApiUrl = process.env.REGISTER_API_URL;
 
         if (!externalApiUrl) {
-        const baseUrl = externalApiBaseUrl.replace(/\/+$/, "");
+            const baseUrl = externalApiBaseUrl.replace(/\/+$/, "");
 
             if (eduType === "PhD") {
                 externalApiUrl = `${baseUrl}/api/MasterList/phd/search`;
@@ -75,7 +75,7 @@ export async function POST(req) {
         }
 
         console.log("External API URL :", externalApiUrl);
-          console.log("External API Request Body:", loginBody);
+        console.log("External API Request Body:", loginBody);
 
         const externalResponse = await apiFetch(externalApiUrl, {
             method: "POST",

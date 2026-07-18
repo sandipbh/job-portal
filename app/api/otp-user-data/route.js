@@ -1,14 +1,14 @@
-export const dynamic = 'force-static';
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 export async function GET() {
-
   try {
-
-
-    const regTokenCookie = (await cookies()).get("regToken")?.value;
+    //const regTokenCookie = cookies().get("regToken")?.value;
+    const cookieStore = await cookies();
+    const regTokenCookie = cookieStore.get("regToken")?.value;
     if (!regTokenCookie) {
       return NextResponse.json(
         { otpUserEmail: null, otpUserMobile: null, otpUserUqId: null },
@@ -19,7 +19,7 @@ export async function GET() {
     let regToken;
     try {
       regToken = JSON.parse(regTokenCookie);
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { otpUserEmail: null, otpUserMobile: null, otpUserUqId: null },
         { status: 200 }

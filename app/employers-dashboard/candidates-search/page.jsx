@@ -8,12 +8,21 @@ export const metadata = {
   description: "RatinGrow - Hiring Verified",
 };
 
-const index = () => {
+const index = ({ searchParams }) => {
+  let initialSearchData = null;
+
+  try {
+    if (searchParams?.searchData) {
+      initialSearchData = JSON.parse(decodeURIComponent(searchParams.searchData));
+    }
+  } catch (error) {
+    console.error("Failed to parse search data:", error);
+  }
+
   return (
     <>
-
       <Suspense fallback={<JobCardSkeleton />}>
-        <CandidatesSearches />
+        <CandidatesSearches initialSearchData={initialSearchData} />
       </Suspense>
     </>
   );

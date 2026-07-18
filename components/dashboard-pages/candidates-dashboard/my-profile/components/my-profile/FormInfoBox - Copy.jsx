@@ -6,7 +6,7 @@ import { FaMale, FaFemale } from "react-icons/fa";
 import { MdOutlineTransgender } from "react-icons/md";
 
 
-import { statesData } from '../../../../../../data/states';
+import { statesData } from '@/data/states'
 
 const FormInfoBox = ({ formData,
   setFormData,

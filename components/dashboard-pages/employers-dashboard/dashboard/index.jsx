@@ -1,29 +1,29 @@
-import MobileMenu from "../../../header/MobileMenu";
-import DashboardHeader from "../../../header/DashboardHeader";
-import LoginPopup from "../../../common/form/login/LoginPopup";
-import DashboardEmployerSidebar from "../../../header/DashboardEmployerSidebar";
 import BreadCrumb from "../../BreadCrumb";
 import TopCardBlock from "./components/TopCardBlock";
 import ProfileChart from "./components/ProfileChart";
 import Notification from "./components/Notification";
 import Applicants from "./components/Applicants";
-import CopyrightFooter from "../../CopyrightFooter";
-import MenuToggler from "../../MenuToggler";
+;
 import { cookies } from "next/headers";
 
+
 const Index = () => {
+
 
   const cookieStore = cookies();
   const token = cookieStore.get("regToken")?.value;
   let user = {};
   try {
     user = JSON.parse(token);
-    console.log(user.external.fullName);
+    //console.log(user.external.fullName);
 
   } catch (err) {
-    console.error("Invalid JSON token:", err);
+    // console.error("Invalid JSON token:", err);
     user = {};
   }
+
+
+
 
 
   return (

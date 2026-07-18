@@ -232,7 +232,7 @@ Candidates Section Two
   transition: all 300ms ease;
 }
 
-.candidate-block-three .inner-box::before {
+.candidate-block-three .inner-box.show-check::before {
   content: "";
   position: absolute;
   top: 0;
@@ -243,7 +243,7 @@ Candidates Section Two
   border-left: 35px solid transparent;
 }
 
-.candidate-block-three .inner-box::after {
+.candidate-block-three .inner-box.show-check::after {
   content: "✓";
   position: absolute;
   top: -3px;

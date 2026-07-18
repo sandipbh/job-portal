@@ -59,7 +59,7 @@ export async function POST(req) {
 
         const externalApiUrl =
             process.env.REGISTER_API_URL ||
-            `${externalApiBaseUrl.replace(/\/+$/, "")}/api/MasterList/location/search`;
+            `${externalApiBaseUrl.replace(/\/+$/, "")}/api/MasterList/getKeyWordList`;
 
         // console.log("External API URL :", externalApiUrl);
         // console.log("External API Request Body:", loginBody);

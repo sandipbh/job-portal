@@ -324,7 +324,7 @@ const ApplicantCard = ({
             className="candidate-block-three col-lg-6 col-md-12 col-sm-12"
 
         >
-            <div className="inner-box">
+            <div className={`inner-box ${candidate.status != "Applied" ? "show-check" : ""}`}>
                 <div className="content">
                     <div className="d-flex align-items-center gap-1">
                         <figure className="image mb-0 flex-shrink-0">

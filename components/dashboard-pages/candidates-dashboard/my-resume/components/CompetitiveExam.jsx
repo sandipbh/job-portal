@@ -158,12 +158,13 @@ const CompetitiveExam = ({
         }
         let newErrors = {};
 
+        if (!exam.examId) {
+            newErrors.examName = "Select exam";
+        }
         if (!exam.examName?.trim() || exam.examName.length < 2) {
             newErrors.examName = "Select exam";
         }
-        if (!exam.examId?.trim()) {
-            newErrors.examName = "Select exam";
-        }
+
         if (!exam.year?.trim() || exam.year.length < 4) {
             newErrors.year = "Select year";
         }
@@ -251,7 +252,7 @@ const CompetitiveExam = ({
                     className="btn-sm add-exam-btn"
                     onClick={handleAddExam}
                 >
-                    Add Competitive Exam
+                    + Add Exam
                 </button>
             </div>
 
@@ -279,7 +280,7 @@ const CompetitiveExam = ({
                                     <label>Exam</label>
 
                                     <select
-                                        disabled
+
                                         name="examName"
                                         value={exam.examId}
                                         onChange={(e) => {
@@ -294,7 +295,7 @@ const CompetitiveExam = ({
                                             }));
                                         }}
                                     >
-                                        <option value="{exam.Examid}">Select Exam</option>
+
 
                                         {examListApi.map((item) => (
                                             <option key={item.key} value={item.key}>
@@ -315,7 +316,7 @@ const CompetitiveExam = ({
                                         }
                                         className="form-select"
                                     >
-                                        <option value="{exam.year}">{exam.year}</option>
+                                        {/* <option value="{exam.year}">{exam.year}</option> */}
 
                                         {Array.from(
                                             { length: 25 },

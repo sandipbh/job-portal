@@ -119,7 +119,6 @@ const FilterTopBox = ({
     sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
 
 
-
   const educationFilter = (item) =>
     education?.length
       ? education.some((edu) =>
@@ -138,7 +137,6 @@ const FilterTopBox = ({
     experienceLevels?.length
       ? experienceLevels.includes(item.experienceLevel)
       : true;
-
 
 
   let content = candidatesData

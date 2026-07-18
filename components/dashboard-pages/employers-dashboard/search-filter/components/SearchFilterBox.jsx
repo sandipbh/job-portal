@@ -1,16 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Select, { components } from "react-select";
 import CreatableSelect from "react-select/creatable";
-
+import AsyncCreatableSelect from "react-select/async-creatable";
+import { toast } from "react-toastify";
+import candidatesData from "@/data/candidatedata";
+import Link from "next/link";
+import Image from "next/image";
 
 const SearchFilterBox = () => {
+    const router = useRouter();
     const [keywordInput, setKeywordInput] = useState("");
     const [keywords, setKeywords] = useState([]);
     const [currency, setCurrency] = useState("INR");
     const [mandatoryKeywords, setMandatoryKeywords] = useState(false);
     const [selectedDepartments, setSelectedDepartments] = useState([]);
+    const [selectedLocations, setSelectedLocations] = useState([]);
     const [selectedIndustries, setSelectedIndustries] = useState([]);
     const [minExperience, setMinExperience] = useState("");
     const [maxExperience, setMaxExperience] = useState("");
@@ -27,6 +34,171 @@ const SearchFilterBox = () => {
     const [noticePeriod, setNoticePeriod] = useState("");
     const [relocate, setRelocate] = useState(false);
     const [remoteCandidates, setRemoteCandidates] = useState(false);
+
+    const [loading, setLoading] = useState(false);
+    const [keywordOptions, setKeywordOptions] = useState([]);
+    const [departmentOptions, setDepartmentOptions] = useState([]);
+    const [industryOptions, setIndustryOptions] = useState([])
+    const [locationOptions, setLocationOptions] = useState([])
+    const [selectedNoticePeriods, setSelectedNoticePeriods] = useState([]);
+
+    const [candidates, setCandidates] = useState([]);
+
+    const getKeywordOptions = async (inputValue) => {
+        try {
+            const response = await fetch("/api/list-keywords", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    term: inputValue,
+                    pageNo: 1
+                }),
+            });
+
+            const data = await response.json();
+
+            // const options = (data.data || []).map(x => ({
+            //     key: x.key,
+            //     value: x.value,        // unique id
+            //     label: x.value       // text to display
+            // }));
+            const options = data.data.map((x, index) => ({
+                key: x.key,
+                value: `${x.key}_${x.type}`,   // unique
+                label: x.value,
+                text: x.type
+            }));
+            //console.log(options)
+            return options || [];
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    };
+    const loadOptionsKeywords = (inputValue) => {
+        if (!inputValue || inputValue.trim().length < 2) {
+            return Promise.resolve([]);
+        }
+        return getKeywordOptions(inputValue);
+    };
+
+
+    const handleSearch = async () => {
+
+        const appliedFilters = [
+            selectedKeywords.length > 0,
+            minExperience,
+            maxExperience,
+            minSalary,
+            maxSalary,
+            selectedLocations.length > 0,
+            company?.trim(),
+            selectedNoticePeriods.length > 0,
+            selectedDepartments.length > 0,
+            selectedIndustries.length > 0
+        ].filter(Boolean).length;
+
+        if (appliedFilters < 2) {
+
+            toast.error("Please select at least 2 filters.");
+            return;
+        }
+        console.log('selectedKeywords ', JSON.stringify(selectedKeywords))
+        console.log('selectedNoticePeriods ', JSON.stringify(selectedNoticePeriods))
+
+        const payload = {
+            // Basic
+            UQ_ID: null,
+            JOB_POST_ID: 0,
+
+            // Keywords (combined from all sources)
+            KEYWORDS: selectedKeywords.map(x => x.label).join(",") || null,
+
+            DESIGNATION: selectedKeywords
+                .filter(x => x.value.endsWith("_Designation"))
+                .map(x => x.label)
+                .join(",") || null,
+
+            SKILLS: selectedKeywords
+                .filter(x => x.value.endsWith("_Skill"))
+                .map(x => x.label)
+                .join(",") || null,
+
+            ROLES: selectedKeywords
+                .filter(x => x.value.endsWith("_Role"))
+                .map(x => x.label)
+                .join(",") || null,
+
+            // Experience
+            MIN_EXPERIENCE: minExperience ? parseInt(minExperience) : 0,
+            MAX_EXPERIENCE: maxExperience ? parseInt(maxExperience) : 0,
+
+            // Salary
+            MIN_SALARY: minSalary ? parseFloat(minSalary) : 0,
+            MAX_SALARY: maxSalary ? parseFloat(maxSalary) : 0,
+            CURRENT_SALARY_FROM: minSalary ? parseFloat(minSalary) : 0,
+            CURRENT_SALARY_TO: maxSalary ? parseFloat(maxSalary) : 0,
+            EXPECTED_SALARY_FROM: minSalary ? parseFloat(minSalary) : 0,
+            EXPECTED_SALARY_TO: maxSalary ? parseFloat(maxSalary) : 0,
+
+            // Location
+            LOCATION: selectedLocations.map(k => k.label).join(",") || '',
+
+            // Company & Designation
+            COMPANY: company || '',
+            //DESIGNATION: designation || null,
+
+            // Notice Period (take first selected or join them)
+            NOTICE_PERIOD: selectedNoticePeriods.join(",") || 'Any',
+
+            // Optional - you can extend later
+            DEPARTMENT_IDS: selectedDepartments.map(d => d.label).join(",") || '',
+            INDUSTRY_IDS: selectedIndustries.map(i => i.label).join(",") || '',
+
+            // Pagination
+            PAGE_NO: 1,
+            PAGE_SIZE: 20
+        };
+        console.log('payload ', JSON.stringify(payload))
+
+        // return;
+        setLoading(true);
+        try {
+            const response = await fetch("/api/candidates-search", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Candidates fetched:", data.data);
+
+                const searchState = {
+                    payload,
+                    results: data,
+                };
+                console.log(JSON.stringify(data?.data))
+                setCandidates(data?.data);
+                // const encodedState = encodeURIComponent(JSON.stringify(searchState));
+                // router.push(`/employers-dashboard/candidates-search?searchData=${encodedState}`);
+
+                // TODO: Send data to parent component or use Context/Redux
+                // Example: onSearchResults(data.results, data.totalCount);
+            } else {
+                console.error("Search failed:", data);
+            }
+        } catch (error) {
+            console.error("API Error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
     const addKeyword = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
@@ -68,58 +240,116 @@ const SearchFilterBox = () => {
         setMaxSalary("");
         setSelectedNoticePeriods([]);
         setNoticePeriod("");
-
-
-    };
-    const handleSearch = () => {
-        const filters = {
-            keywords,
-            mandatoryKeywords,
-            experience: {
-                min: minExperience,
-                max: maxExperience,
-            },
-            location,
-            company,
-            designation,
-            salary: {
-                min: minSalary,
-                max: maxSalary,
-            },
-            noticePeriod,
-        };
-
-        console.log(filters);
     };
 
-    const keywordOptions = [
-        { value: "React", label: "React", type: "Skill" },
-        { value: "Next.js", label: "Next.js", type: "Skill" },
-        { value: "Node.js", label: "Node.js", type: "Skill" },
-        { value: "JavaScript", label: "JavaScript", type: "Skill" },
+    const getDepartmentOptions = async (inputValue) => {
+        try {
+            const response = await fetch("/api/list-department", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    term: inputValue,
+                    pageNo: 1,
+                }),
+            });
 
-        { value: "Frontend Developer", label: "Frontend Developer", type: "Designation" },
-        { value: "Software Engineer", label: "Software Engineer", type: "Designation" },
+            const data = await response.json();
 
-        { value: "Team Lead", label: "Team Lead", type: "Role" },
-        { value: "Project Manager", label: "Project Manager", type: "Role" },
-    ];
+            const options = (data.data || []).map(x => ({
+                key: x.key,
+                value: x.key,        // unique id
+                label: x.value       // text to display
+            }));
 
-    const departmentOptions = [
-        { value: "Software Development", label: "Engineering → Software Development" },
-        { value: "Backend Developer", label: "Engineering → Backend Developer" },
-        { value: "Frontend Developer", label: "Engineering → Frontend Developer" },
-        { value: "DBA", label: "Engineering → DBA / Data Warehouse" },
-        { value: "QA Engineer", label: "Engineering → QA Engineer" },
-    ];
+            setDepartmentOptions(options);
 
-    const industryOptions = [
-        { value: "Software Product", label: "Software Product" },
-        { value: "IT Services", label: "IT Services & Consulting" },
-        { value: "Emerging Tech", label: "Emerging Technologies" },
-        { value: "FinTech", label: "FinTech" },
-        { value: "Healthcare", label: "Healthcare" },
-    ];
+
+            return options || [];
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    };
+    const loadOptionsDepartment = (inputValue) => {
+        if (!inputValue || inputValue.trim().length < 2) {
+            return Promise.resolve([]);
+        }
+        return getDepartmentOptions(inputValue);
+    };
+
+    const getIndustryOptions = async (inputValue) => {
+        try {
+            const response = await fetch("/api/list-industry-search", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    term: inputValue,
+                    pageNo: 1
+                }),
+            });
+
+            const data = await response.json();
+            const options = (data.data || []).map(x => ({
+                key: x.key,
+                value: x.key,        // unique id
+                label: x.value       // text to display
+            }));
+
+            setIndustryOptions(options);
+
+            return options || [];
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    };
+    const loadOptionsIndustry = (inputValue) => {
+        if (!inputValue || inputValue.trim().length < 2) {
+            return Promise.resolve([]);
+        }
+        return getIndustryOptions(inputValue);
+    };
+
+    const getLocationOptions = async (inputValue) => {
+        try {
+            const response = await fetch("/api/list-location", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    term: inputValue,
+                    pageNo: 1
+                }),
+            });
+
+            const data = await response.json();
+            const options = (data.data || []).map(x => ({
+                key: x.key,
+                value: x.key,        // unique id
+                label: x.value       // text to display
+            }));
+
+            setLocationOptions(options);
+
+            return options || [];
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    };
+
+
+    const loadOptionsLocation = (inputValue) => {
+        if (!inputValue || inputValue.trim().length < 2) {
+            return Promise.resolve([]);
+        }
+        return getLocationOptions(inputValue);
+    };
 
     const companyTypeOptions = [
         "Indian MNC",
@@ -131,21 +361,19 @@ const SearchFilterBox = () => {
 
     const noticePeriodOptions = [
         "Any",
-        "0-15 Days",
-        "1 month",
-        "2 months",
-        "3 months",
-        "More than 3 months",
-        "Current Company Notice Period",
+        "Immediate joining",
+        "Less than 15days",
+        "Less than 30days",
+        "Less than 60days",
+        "Less than 90days",
+
     ];
 
-    const [selectedNoticePeriods, setSelectedNoticePeriods] = useState([]);
+
 
     const Option = (props) => (
         <components.Option {...props}>
-            {props.data.type === "Skill" && (
-                <span style={{ color: "#1967d2", marginRight: 6 }}>★</span>
-            )}
+
 
             {props.data.label}
 
@@ -156,17 +384,14 @@ const SearchFilterBox = () => {
                     fontSize: 12,
                 }}
             >
-                {props.data.type}
+                {props.data.text}
+
             </span>
         </components.Option>
     );
 
     const MultiValueLabel = (props) => (
         <components.MultiValueLabel {...props}>
-            {props.data.type === "Skill" && (
-                <span style={{ color: "#1967d2", marginRight: 4 }}>★</span>
-            )}
-
             {props.data.label}
         </components.MultiValueLabel>
     );
@@ -194,7 +419,7 @@ const SearchFilterBox = () => {
         <div className="tabs-box">
 
 
-            <div className="widget-content">
+            <div className="widget-content  ">
                 <form className="default-form">
                     <div className="row">
 
@@ -202,37 +427,37 @@ const SearchFilterBox = () => {
                         <div className="form-group col-lg-12">
                             <label>Keywords</label>
 
-                            <CreatableSelect
+                            <AsyncCreatableSelect
                                 instanceId="candidate-keywords"
                                 isMulti
-                                options={keywordOptions}
+                                cacheOptions
+                                defaultOptions={[]}
+                                loadOptions={loadOptionsKeywords}
                                 value={selectedKeywords}
                                 onChange={(selected) => setSelectedKeywords(selected || [])}
+
                                 placeholder="Search skills, designation, role..."
                                 classNamePrefix="custom-select"
-                                className="basic-multi-select"
+
                                 components={{
                                     Option,
                                     MultiValueLabel,
                                 }}
+                                getOptionValue={(option) => option.value}
+                                getOptionLabel={(option) => option.label}
                                 closeMenuOnSelect={false}
                                 hideSelectedOptions={false}
-                                formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
-                                onCreateOption={(inputValue) => {
-                                    const newOption = {
-                                        value: inputValue,
-                                        label: inputValue,
-                                        type: "Skill", // New keywords default to Skill
-                                    };
+                                isValidNewOption={() => false}
+                                noOptionsMessage={() => null}
 
-                                    setSelectedKeywords((prev) => [...prev, newOption]);
-                                }}
                             />
                         </div>
 
+
+
                         {/* Experience */}
 
-                        <div className="form-group col-lg-8">
+                        <div className="col-lg-4 col-md-6">
                             <label>Experience</label>
 
                             <div className="experience-wrapper">
@@ -241,7 +466,7 @@ const SearchFilterBox = () => {
                                     type="number"
                                     value={minExperience}
                                     onChange={(e) => setMinExperience(e.target.value)}
-                                    placeholder="Min experience"
+                                    placeholder="Min experience in Years"
                                 />
 
                                 <span className="experience-text">to</span>
@@ -250,56 +475,16 @@ const SearchFilterBox = () => {
                                     type="number"
                                     value={maxExperience}
                                     onChange={(e) => setMaxExperience(e.target.value)}
-                                    placeholder="Max experience"
+                                    placeholder="Max experience in Years"
                                 />
-
-                                <span className="experience-text">Years</span>
-
                             </div>
                         </div>
-                        {/* Location */}
-
-                        <div className="form-group col-lg-8 col-md-6">
-                            <label>Current location of candidate</label>
-
-                            <input
-                                type="text"
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                                placeholder="Current Location"
-                            />
-
-                            <div className="location-options">
-
-                                <label className="checkbox-option">
-                                    <input
-                                        type="checkbox"
-                                        checked={relocate}
-                                        onChange={(e) => setRelocate(e.target.checked)}
-                                    />
-                                    <strong>  Include candidates who prefer to relocate to above location</strong>
-                                </label>
-
-                                <label className="checkbox-option">
-                                    <input
-                                        type="checkbox"
-                                        checked={remoteCandidates}
-                                        onChange={(e) => setRemoteCandidates(e.target.checked)}
-                                    />
-                                    <span>Exclude candidate who have mentioned that they are open to remote work only</span>
-                                </label>
-
-                            </div>
-                        </div>
-
                         {/* Salary */}
-                        <div className="form-group col-lg-8 ">
+                        <div className="col-lg-4 col-md-6">
                             <label>Annual Salary</label>
-
                             <div className="salary-row">
-
                                 {/* Currency */}
-                                <select
+                                {/* <select
                                     className="chosen-single form-select salary-currency"
                                     value={currency}
                                     onChange={(e) => setCurrency(e.target.value)}
@@ -307,7 +492,7 @@ const SearchFilterBox = () => {
                                     <option value="INR">INR</option>
                                     <option value="USD">USD</option>
                                     <option value="EUR">EUR</option>
-                                </select>
+                                </select> */}
 
                                 {/* Min Salary */}
                                 <input
@@ -326,103 +511,161 @@ const SearchFilterBox = () => {
                                     onChange={(e) => setMaxSalary(e.target.value)}
                                     placeholder="Max Salary"
                                 />
-
-                                <span className="salary-label">Lacs</span>
-
                             </div>
-                            <div className="location-options">
+                            {/* <div className="location-options">
                                 <label className="checkbox-option">
                                     <input
                                         type="checkbox"
                                         checked={remoteCandidates}
                                         onChange={(e) => setRemoteCandidates(e.target.checked)}
                                     />
-                                    Include candidates who did not mention their current salary in their profile
+                                    <span>   Include candidates who did not mention their current salary in their profile</span>
                                 </label>
-
-                            </div>
-
+                            </div> */}
                         </div>
 
-                    </div>
+                        {/* Location */}
 
+                        <div className="col-lg-4 col-md-6">
+                            <label>Current location of candidate</label>
 
-                    <div className="row">
-                        {/* Company */}
-                        <div className="widget-title">
-                            <h4>Employment Details</h4>
-                            {/* <WidgetToFilterBox /> */}
-                        </div>
-                        {/* Department & Role */}
-
-                        <div className="form-group col-lg-8 col-md-6">
-                            <label>Department and Role</label>
-
-                            <CreatableSelect
-                                instanceId="department-role"
+                            <AsyncCreatableSelect
+                                instanceId="location"
                                 isMulti
-                                options={departmentOptions}
-                                value={selectedDepartments}
-                                onChange={(selected) => setSelectedDepartments(selected || [])}
-                                placeholder="Add Department / Role"
+                                cacheOptions
+                                defaultOptions={[]}
+                                loadOptions={loadOptionsLocation}
+                                value={selectedLocations}
+                                onChange={(selected) => setSelectedLocations(selected || [])}
+
+                                placeholder="Search Location"
                                 classNamePrefix="custom-select"
-                                className="basic-multi-select"
+                                // className="basic-multi-select"
                                 closeMenuOnSelect={false}
+                                hideSelectedOptions={false}
+                                isValidNewOption={() => false}
+                                noOptionsMessage={() => null}
                             />
 
-                            <div className="suggestion-tags mt-3">
-                                {departmentOptions.map((item) => (
-                                    <span
-                                        key={item.value}
-                                        className="suggestion-tag"
-                                        onClick={() => {
-                                            if (!selectedDepartments.find(x => x.value === item.value)) {
-                                                setSelectedDepartments([...selectedDepartments, item]);
-                                            }
-                                        }}
-                                    >
-                                        {item.label} +
-                                    </span>
-                                ))}
-                            </div>
+                            {/* <input
+                                type="text"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                                placeholder="Current Location"
+                            /> */}
+                            {/* 
+                        <div className="location-options">
+                            <label className="checkbox-option">
+                                <input
+                                    type="checkbox"
+                                    checked={relocate}
+                                    onChange={(e) => setRelocate(e.target.checked)}
+                                />
+                                <strong>  Include candidates who prefer to relocate to above location</strong>
+                            </label>
+
+                            <label className="checkbox-option">
+                                <input
+                                    type="checkbox"
+                                    checked={remoteCandidates}
+                                    onChange={(e) => setRemoteCandidates(e.target.checked)}
+                                />
+                                <span> Exclude candidate who have mentioned that they are open to remote work only</span>
+                            </label>
+                        </div> */}
                         </div>
+
+
+                        {/* Department & Role */}
+
+
+                        <div className="mt-3 mb-2" >
+                            <h5  >Employment Details</h5>
+                        </div>
+
+                        <div className="col-lg-6 col-md-6">
+
+                            <label>Department and Role</label>
+
+                            <AsyncCreatableSelect
+                                instanceId="department-role"
+                                isMulti
+                                cacheOptions
+                                defaultOptions={[]}
+                                loadOptions={loadOptionsDepartment}
+                                value={selectedDepartments}
+                                onChange={(selected) => setSelectedDepartments(selected || [])}
+
+                                placeholder="Search Department / Role"
+                                classNamePrefix="custom-select"
+                                //className="basic-multi-select"
+                                closeMenuOnSelect={false}
+                                hideSelectedOptions={false}
+                                isValidNewOption={() => false}
+                                noOptionsMessage={() => null}
+                            />
+
+                            {/* <div className="suggestion-tags mt-3">
+                                    <div className="suggestion-tags mt-3">
+                                        {departmentOptions.map((item) => (
+                                            <span
+                                                key={item.key}
+                                                className="suggestion-tag"
+                                                onClick={() => {
+                                                    if (!selectedDepartments.some(x => x.key === item.key)) {
+                                                        setSelectedDepartments(prev => [...prev, item]);
+                                                    }
+                                                }}
+                                            >
+                                                {item.value} +
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div> */}
+                        </div>
+
 
                         {/* Industry */}
 
-                        <div className="form-group col-lg-8 col-md-6">
+                        <div className="col-lg-6 col-md-6">
                             <label>Industry</label>
 
-                            <CreatableSelect
+                            <AsyncCreatableSelect
                                 instanceId="industry"
                                 isMulti
-                                options={industryOptions}
+                                cacheOptions
+                                defaultOptions={[]}
+                                loadOptions={loadOptionsIndustry}
                                 value={selectedIndustries}
                                 onChange={(selected) => setSelectedIndustries(selected || [])}
-                                placeholder="Add Industry"
-                                classNamePrefix="custom-select"
-                                className="basic-multi-select"
-                                closeMenuOnSelect={false}
-                            />
 
-                            <div className="suggestion-tags mt-3">
-                                {industryOptions.map((item) => (
-                                    <span
-                                        key={item.value}
-                                        className="suggestion-tag"
-                                        onClick={() => {
-                                            if (!selectedIndustries.find(x => x.value === item.value)) {
-                                                setSelectedIndustries([...selectedIndustries, item]);
-                                            }
-                                        }}
-                                    >
-                                        {item.label} +
-                                    </span>
-                                ))}
-                            </div>
+                                placeholder="Search Industry"
+                                classNamePrefix="custom-select"
+                                //className="basic-multi-select"
+                                closeMenuOnSelect={false}
+                                hideSelectedOptions={false}
+                                isValidNewOption={() => false}
+                                noOptionsMessage={() => null}
+                            />
+                            {/* <div className="suggestion-tags mt-3">
+                                    {industryOptions.map((item) => (
+                                        <span
+                                            key={item.key}
+                                            className="suggestion-tag"
+                                            onClick={() => {
+                                                if (!selectedIndustries.find(x => x.key === item.key)) {
+                                                    setSelectedIndustries([...selectedIndustries, item]);
+                                                }
+                                            }}
+                                        >
+                                            {item.value} +
+                                        </span>
+                                    ))}
+                                </div> */}
                         </div>
 
 
-                        <div className="form-group col-lg-12">
+                        {/* <div className="form-group col-lg-12">
                             <label>
                                 Company Type
                                 <span
@@ -472,11 +715,11 @@ const SearchFilterBox = () => {
                                     <option>Both</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> */}
 
 
                         {/* Notice Period */}
-                        <div className="form-group col-lg-12">
+                        <div className="col-lg-12 col-md-12">
                             <label>Notice Period</label>
 
                             <div className="company-type-tags">
@@ -498,38 +741,203 @@ const SearchFilterBox = () => {
                             </div>
                         </div>
 
+
+
+                        {/* Buttons */}
+
+                        <div className="d-flex justify-content-between justify-content-md-end" >
+                            <div className="d-flex gap-1">
+
+
+                                <button
+                                    type="button"
+                                    className="btn submit-btn"
+                                    style={{ background: "#797a7e" }}
+                                    onClick={clearFilters}
+                                >
+                                    Clear
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn submit-btn"
+                                    onClick={handleSearch}
+                                    disabled={loading}
+                                >
+                                    {loading ? "Searching..." : "Search Candidates"}
+                                </button>
+
+
+                            </div>
+                        </div >
+
                     </div>
-
-
-                    {/* Buttons */}
-
-                    <div className="d-flex justify-content-end">
-                        <div className="d-flex gap-3">
-
-
-                            <button
-                                type="button"
-                                className="btn submit-btn"
-                                onClick={clearFilters}
-                            >
-                                Clear
-                            </button>
-                            <button
-                                type="button"
-                                className="theme-btn btn-style-one"
-                                onClick={handleSearch}
-                            >
-                                Search Candidates
-                            </button>
-
-
-
-                        </div>
-                    </div>
-
                 </form>
-            </div>
-        </div>
+
+                <div className="mt-3">
+
+                    {candidates?.map((candidate) => (
+                        <div className="na-card" key={candidate.id}>
+                            {/* Left Section */}
+                            <div className="na-left">
+
+                                <div className="candidate-top">
+
+                                    <div className="candidate-top">
+                                        <div className="candidate-checkbox">
+                                            <input
+                                                type="checkbox"
+                                                className="check-input"
+                                                id={`candidate-${candidate.id}`}
+                                            // checked={selectedCandidates.includes(candidate.id)}
+                                            // onChange={(e) => {
+                                            //     if (e.target.checked) {
+                                            //         setSelectedCandidates(prev => [...prev, candidate.id]);
+                                            //     } else {
+                                            //         setSelectedCandidates(prev =>
+                                            //             prev.filter(id => id !== candidate.id)
+                                            //         );
+                                            //     }
+                                            // }}
+                                            />
+                                        </div>
+
+                                        <div className="candidate-basic">
+                                            <h4>
+                                                <Link href={`/candidates-single-v1/${candidate.id}`}>
+                                                    {candidate.name}
+                                                </Link>
+                                            </h4>
+
+                                            <div className="top-meta">
+                                                <span>
+                                                    <i className="flaticon-briefcase"></i>
+                                                    {" "}   {candidate.experience}
+                                                </span>
+
+                                                <span>
+                                                    <i className="flaticon-money"></i>
+                                                    {" "}    {candidate.salary}
+                                                </span>
+
+                                                <span>
+                                                    <i className="flaticon-map-locator"></i>
+                                                    {" "}   {candidate.location}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="candidate-row">
+                                    <div className="label1">Current</div>
+                                    <div className="value">
+                                        {candidate.currentDesignation} at{" "}
+                                        <strong>{candidate.currentCompany}</strong>
+                                    </div>
+                                </div>
+
+                                <div className="candidate-row">
+                                    <div className="label1">Previous</div>
+                                    <div className="value">
+                                        {candidate.previousDesignation} at{" "}
+                                        <strong>{candidate.previousCompany}</strong>
+                                    </div>
+                                </div>
+
+                                <div className="candidate-row">
+                                    <div className="label1">Education</div>
+
+                                    <div className="value">
+                                        {/* {candidate.education.map((edu, index) => (
+                                            <div key={index}>{edu}</div>
+                                        ))} */}
+                                    </div>
+                                </div>
+
+                                <div className="candidate-row">
+                                    <div className="label1">Pref. Location</div>
+                                    <div className="value">
+                                        {candidate.preferredLocation}
+                                    </div>
+                                </div>
+
+                                <div className="candidate-row skills-row">
+                                    <div className="label1">Key Skills</div>
+
+                                    <div className="value">
+                                        {/* {candidate.skills.map((skill, index) => (
+                                            <span className="skill-pill" key={index}>
+                                                {skill}
+                                            </span>
+                                        ))} */}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {/* Right Section */}
+
+                            <div className="na-right">
+
+                                <div className="profile-image">
+                                    <Image
+                                        src={candidate.avatar}
+                                        width={90}
+                                        height={90}
+                                        alt=""
+                                    />
+                                </div>
+                                <div className="profile-section">
+                                    <div className="candidate-side-actions">
+                                        <button className="action-icon-btn">
+                                            <i className="las la-comment"></i>
+                                        </button>
+
+                                        <button className="action-icon-btn">
+                                            <i className="lar la-bookmark"></i>
+                                        </button>
+
+                                        <button className="action-icon-btn">
+                                            <i className="las la-paper-plane"></i>
+                                        </button>
+
+                                        <button className="action-icon-btn">
+                                            <i className="las la-folder-plus"></i>
+                                        </button>
+
+                                        <button className="action-icon-btn">
+                                            <i className="las la-bell"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <p className="profile-summary">
+                                    {candidate.profileSummary}
+                                </p>
+
+                                <div className="candidate-action-buttons">
+                                    <Link
+                                        href={`/candidates-single-v1/${candidate.id}`}
+                                        className="theme-btn btn-style-one w-100 butn"
+                                    >
+                                        View Profile
+                                    </Link>
+
+                                    <button className="theme-btn btn-style-one w-100 butn">
+                                        Call Candidate
+                                    </button>
+                                </div>
+
+
+
+                            </div>
+                        </div >
+                    ))
+                    }
+                </div>
+            </div >
+        </div >
+
     );
 };
 

@@ -26,7 +26,7 @@ export async function POST(req) {
 
     //console.log("Search term:", term);
 
-    try { 
+    try {
 
         const LoginIp =
             headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -55,7 +55,7 @@ export async function POST(req) {
                 { status: 500 }
             );
         }
-        console.log("External API Base URL 00:", externalApiBaseUrl);
+        //console.log("External API Base URL 00:", externalApiBaseUrl);
 
         const externalApiUrl =
             process.env.REGISTER_API_URL ||
@@ -90,4 +90,3 @@ export async function POST(req) {
 }
 
 
- 

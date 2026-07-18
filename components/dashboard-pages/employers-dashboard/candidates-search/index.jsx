@@ -29,8 +29,9 @@ import {
     clearExperience,
     clearQualification,
 } from "@/features/candidate/candidateSlice";
-const index = () => {
+const index = ({ initialSearchData }) => {
     const [showFilter, setShowFilter] = useState(false);
+    const [searchResultData, setSearchResultData] = useState(initialSearchData);
     const {
         keyword,
         location,
@@ -172,12 +173,32 @@ const index = () => {
         dispatch(addPerPage({ start: 0, end: 0 }));
     };
 
+    useEffect(() => {
+        setSearchResultData(initialSearchData);
+    }, [initialSearchData]);
+
     const [selectedCandidates, setSelectedCandidates] = useState([]);
     return (
 
         <div className="dashboard-outer ls-section">
 
             <BreadCrumb title="Search Filters!" />
+
+            {searchResultData && (
+                <div className="alert alert-info mb-3">
+                    <strong>Search data received</strong>
+                    <div className="mt-2">
+                        <small>
+                            Payload: {searchResultData?.payload ? JSON.stringify(searchResultData.payload) : "No payload"}
+                        </small>
+                    </div>
+                    <div className="mt-2">
+                        <small>
+                            Results: {searchResultData?.results ? JSON.stringify(searchResultData.results) : "No results"}
+                        </small>
+                    </div>
+                </div>
+            )}
 
             <div className="row align-items-start">
 

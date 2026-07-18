@@ -62,7 +62,7 @@ const WidgetContentBox = () => {
       const result = await response.json();
 
       const listData = result?.data;
-      console.log('listData  ', listData)
+      // console.log('listData  ', listData)
 
       if (listData) {
 

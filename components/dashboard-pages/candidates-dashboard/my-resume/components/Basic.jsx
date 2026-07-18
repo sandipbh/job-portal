@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { FaMale, FaFemale } from "react-icons/fa";
 import { MdOutlineTransgender } from "react-icons/md";
-import { statesData } from '../../../../../data/states';
+import { statesData } from '@/data/states'
 import { toast } from "react-toastify";
+import { formatDate } from "@/lib/dateUtils";
 
 const Basic = ({ formData,
   setFormData,
@@ -126,7 +127,7 @@ const Basic = ({ formData,
       // console.log("Profile Details fetched:", result);
 
       const profile = result?.data;
-
+      // console.log("Profile Details fetched:", profile);
       if (profile) {
 
         setForm((prev) => ({
@@ -135,7 +136,7 @@ const Basic = ({ formData,
           fullName: profile.fullName || "",
           email: profile.email || "",
           phone: profile.mobile || "",
-          dob: profile.dob || "",
+          dob: profile.dob ? profile.dob.split("T")[0] : "",
           state: profile.state || "",
           city: profile.city || "",
           address: profile.address || "",
@@ -558,7 +559,7 @@ const Basic = ({ formData,
 
         {/* DOB */}
         <div className="form-group col-lg-6 col-md-12">
-          <label>Date of Birth</label>
+          <label>Date of Birth  </label>
           <div className="phone-input">
 
             <input

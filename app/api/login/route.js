@@ -54,8 +54,7 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-    console.log("External API Base URL 00:", externalApiBaseUrl);
-
+    // console.log("External API Base URL 00:", externalApiBaseUrl);
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
@@ -110,6 +109,10 @@ export async function POST(req) {
       { status: 201 }
     );
 
+    if (!externalData.isVefity) {
+
+      return response;
+    }
     // New cookie options
     const isSecure = headersList.get("x-forwarded-proto") === "https";
 

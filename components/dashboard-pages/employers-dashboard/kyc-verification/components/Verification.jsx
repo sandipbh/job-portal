@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { statesData } from '../../../../../data/states';
+import { statesData } from '@/data/states'
 import { toast } from "react-toastify";
 
 const Verification = ({ activeTab, setActiveTab }) => {

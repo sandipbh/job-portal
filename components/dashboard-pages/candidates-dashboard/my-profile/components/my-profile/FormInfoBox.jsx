@@ -5,7 +5,8 @@ import { useState, useEffect } from "react";
 import { FaMale, FaFemale } from "react-icons/fa";
 import { MdOutlineTransgender } from "react-icons/md";
 
-import { statesData } from '../../../../../../data/states';
+
+import { statesData } from '@/data/states'
 
 const FormInfoBox = ({ formData,
   setFormData,
@@ -503,14 +504,14 @@ const FormInfoBox = ({ formData,
         </div>
 
         <div className="form-group col-lg-6  col-md-12">
-          <label>Complete Address</label>
+          <label>Current Address</label>
           <input
 
             type="text"
             name="address"
             value={formData.address}
             onChange={handleChange}
-            placeholder="Complete Address"
+            placeholder="Current Address"
             maxLength={100}
           />
           {errors.address && (

@@ -2166,7 +2166,7 @@ in 2 tab of Company Profile
   line-height: 30px;
   padding: 3px 7px;
   font-size: 15px;
-  color: #696969;
+  color: #353434;
   background-color: #f0f5f7;
   border: 1px solid #b7c8ef;
   box-sizing: border-box;
@@ -2209,6 +2209,7 @@ in 2 tab of Company Profile
   color: #9aa3b2 !important;
   font-size: 14px;
 
+
 }
 
 .custom-select__single-value {
@@ -2237,7 +2238,7 @@ in 2 tab of Company Profile
 .custom-select__option {
   padding: 5px 5px !important;
   font-size: 15px !important;
-
+  height: 35px !important;
 }
 
 .custom-select__option--is-focused {
@@ -2245,8 +2246,8 @@ in 2 tab of Company Profile
 }
 
 .custom-select__option--is-selected {
-  background: #4c7cf0 !important;
-  color: #fff !important;
+  background: #b6caf8 !important;
+  color: #383737 !important;
 }
 
 .custom-select__indicator-separator {
@@ -5869,228 +5870,6 @@ in 2 tab of Company Profile
   color: #30383e;
 }
 
-/* /candidates-list-v1 card  css */
-.na-card {
-  display: flex;
-  justify-content: space-between;
-  background: #fff;
-  border: 1px solid #e8e8e8;
-  border-radius: 10px;
-  padding: 18px;
-  margin-bottom: 20px;
-}
-
-.na-left {
-  flex: 1;
-  padding-right: 30px;
-}
-
-.candidate-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 4px;
-}
-
-.candidate-checkbox {
-  margin-top: 4px;
-}
-
-.candidate-checkbox .check-input {
-  width: 17px;
-  height: 20px;
-  cursor: pointer;
-  align-items: center;
-}
-
-.candidate-basic {
-  flex: 1;
-}
-
-.candidate-basic h4 {
-  margin-bottom: 0px;
-  font-size: 22px;
-  font-weight: 600;
-}
-
-.top-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  font-size: 14px;
-  color: #666;
-}
-
-.top-meta {
-  display: flex;
-  gap: 20px;
-  font-size: 14px;
-  color: #666;
-  flex-wrap: wrap;
-}
-
-.candidate-row {
-  display: flex;
-  font-size: 14px;
-}
-
-.label1 {
-  width: 104px;
-  font-weight: 500;
-  color: #000000;
-}
-
-.value {
-  flex: 1;
-  line-height: 24px;
-}
-
-.skills-row {
-  align-items: flex-start;
-}
-
-.skill-pill {
-  display: inline-block;
-  background: #fff7cc;
-  padding: 4px 8px;
-  margin: 3px;
-  border-radius: 4px;
-  font-size: 13px;
-}
-
-.na-right {
-  width: 280px;
-  border-left: 1px solid #eee;
-  padding-left: 25px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.profile-image img {
-  border-radius: 50%;
-  margin-bottom: 15px;
-}
-
-.profile-summary {
-  font-size: 14px;
-  text-align: center;
-  color: #555;
-  margin-bottom: 20px;
-  line-height: 22px;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.verified-text {
-  margin-top: 15px;
-  color: #28a745;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.candidate-action-buttons {
-  display: flex;
-  gap: 12px;
-  width: 100%;
-}
-
-.candidate-action-buttons .theme-btn {
-  width: 100%;
-}
-
-.candidate-bottom-actions {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-top: 1px solid #e5e7eb;
-}
-
-.action-icon-btn {
-  width: 42px;
-  height: 42px;
-  border: none;
-  background: transparent;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.action-icon-btn i {
-  font-size: 20px;
-  color: #666;
-}
-
-.action-icon-btn:hover {
-  background: #f3f4f6;
-}
-
-.action-icon-btn:hover i {
-  color: #1967d2;
-}
-
-@media(max-width:991px) {
-
-  .na-card {
-    flex-direction: column;
-  }
-
-  .na-right {
-    width: 100%;
-    border-left: none;
-    border-top: 1px solid #eee;
-    padding-left: 0;
-    padding-top: 20px;
-    margin-top: 20px;
-  }
-
-  // .candidate-row {
-  //   flex-direction: column;
-  // }
-
-  .label {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-
-}
-
-.candidate-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  padding: 10px 15px;
-  background: #fff;
-  border: 1px solid #e6e8ec;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.toolbar-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.toolbar-right-group {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.toolbar-right-group .toolbar-select {
-  width: 170px;
-  min-width: 170px;
-}
-
 @media (max-width: 991px) {
   .toolbar-right-group {
     width: 100%;
@@ -6220,13 +5999,19 @@ in 2 tab of Company Profile
 }
 
 .experience-wrapper input {
-  width: 180px;
-  height: 52px;
-  border: 1px solid #ecedf2;
-  border-radius: 8px;
-  padding: 0 20px;
+  position: relative;
+  width: 100%;
+  display: block;
+  height: 40px;
+  line-height: 30px;
+  padding: 3px 7px;
   font-size: 15px;
-  background: #fff;
+  color: #353434;
+  background-color: #f0f5f7;
+  border: 1px solid #b7c8ef;
+  box-sizing: border-box;
+  border-radius: 8px;
+  transition: all 300ms ease;
 }
 
 .experience-text {
@@ -6272,13 +6057,19 @@ in 2 tab of Company Profile
 }
 
 .salary-row input {
-  flex: 1;
-  min-width: 170px;
-  height: 60px;
-  border: 1px solid #ecedf2;
+  position: relative;
+  width: 100%;
+  display: block;
+  height: 40px;
+  line-height: 30px;
+  padding: 3px 7px;
+  font-size: 15px;
+  color: #353434;
+  background-color: #f0f5f7;
+  border: 1px solid #b7c8ef;
+  box-sizing: border-box;
   border-radius: 8px;
-  padding: 0 20px;
-  background: #fff;
+  transition: all 300ms ease;
 }
 
 .salary-label {
@@ -6286,6 +6077,13 @@ in 2 tab of Company Profile
   font-weight: 500;
   color: #202124;
   white-space: nowrap;
+}
+
+.widget-content .default-form label {
+  font-size: 15px;
+  line-height: 20px;
+  color: #202124;
+  font-weight: 500;
 }
 
 .suggestion-tags {
@@ -6998,4 +6796,419 @@ in 2 tab of Company Profile
     gap: 10px;
     margin-top: 15px;
   }
+}
+
+
+.default-form .form-group input::placeholder,
+.default-form .form-group textarea::placeholder {
+  color: #9aa3b2 !important;
+  opacity: 1;
+}
+
+/* ===========================
+   Candidate Card
+=========================== */
+
+.na-card {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.na-left {
+  flex: 1;
+  padding-left: 30px;
+}
+
+.na-right {
+  width: 280px;
+  border-right: 1px solid #eee;
+  padding-right: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.candidate-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.candidate-checkbox {
+  margin-top: 4px;
+}
+
+.candidate-checkbox .check-input {
+  width: 17px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.candidate-basic {
+  flex: 1;
+}
+
+.candidate-basic h4 {
+  margin-bottom: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.top-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.top-meta>div {
+  flex: 1 1 180px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 180px;
+  color: #666;
+  font-size: 14px;
+}
+
+.top-meta>div i {
+  color: #1967d2;
+  font-size: 15px;
+  min-width: 18px;
+  margin-right: 4px !important;
+}
+
+.candidate-row {
+  display: flex;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.label1 {
+  width: 110px;
+  font-weight: 600;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.value {
+  flex: 1;
+  line-height: 24px;
+}
+
+.skills-row {
+  align-items: flex-start;
+}
+
+.skill-pill {
+  display: inline-block;
+  background: #fff7cc;
+  padding: 4px 8px;
+  margin: 3px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.profile-image img {
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.profile-summary {
+  font-size: 14px;
+  text-align: center;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 22px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.verified-text {
+  margin-top: 15px;
+  color: #28a745;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.candidate-action-buttons {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.candidate-action-buttons .theme-btn {
+  width: 100%;
+}
+
+.candidate-bottom-actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 15px;
+  padding-top: 15px;
+}
+
+.action-icon-btn {
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: .3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-icon-btn i {
+  font-size: 20px;
+  color: #666;
+}
+
+.action-icon-btn:hover {
+  background: #f3f4f6;
+}
+
+.action-icon-btn:hover i {
+  color: #1967d2;
+}
+
+
+/* ===========================
+   Toolbar
+=========================== */
+
+.candidate-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 15px;
+  background: #fff;
+  border: 1px solid #e6e8ec;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toolbar-right-group {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.toolbar-right-group .toolbar-select {
+  width: 170px;
+  min-width: 170px;
+}
+
+
+/* ===========================
+   Tablet
+=========================== */
+
+@media (max-width:991px) {
+
+  .na-card {
+    flex-direction: column-reverse;
+    padding: 15px;
+  }
+
+  .na-left {
+    padding: 0;
+  }
+
+  .na-right {
+    width: 100%;
+    padding: 0 0 20px;
+    margin: 0 0 20px;
+
+    border-right: none;
+    border-bottom: 1px solid #eee;
+
+    align-items: center;
+  }
+
+  .candidate-action-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .candidate-action-buttons .theme-btn {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .candidate-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar-group,
+  .toolbar-right-group {
+    width: 100%;
+  }
+
+  .toolbar-right-group {
+    justify-content: flex-start;
+  }
+
+  .toolbar-right-group .toolbar-select {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .top-meta>div {
+    flex: 1 1 100%;
+    min-width: 100%;
+    font-size: 11px;
+  }
+
+  .top-meta>div i {
+    font-size: 11px;
+    margin-right: 4px !important;
+  }
+
+}
+
+
+/* ===========================
+   Mobile
+=========================== */
+
+@media (max-width:767px) {
+
+  .na-card {
+    padding: 12px;
+  }
+
+  .candidate-top {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .candidate-basic h4 {
+    font-size: 18px;
+  }
+
+
+
+  .top-meta>div {
+    flex: 1 1 100%;
+    min-width: 100%;
+    font-size: 11px;
+  }
+
+  .top-meta>div i {
+    font-size: 11px;
+    margin-right: 4px !important;
+  }
+
+  .candidate-row {
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+
+  .label1 {
+    width: 100%;
+    margin-bottom: 3px;
+  }
+
+  .value {
+    width: 100%;
+  }
+
+  .candidate-action-buttons {
+    flex-direction: column;
+  }
+
+  .candidate-action-buttons .theme-btn {
+    width: 100%;
+  }
+
+  .profile-summary {
+    font-size: 13px;
+  }
+
+  .toolbar-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar-group>* {
+    width: 100%;
+  }
+
+  .toolbar-select {
+    width: 100% !important;
+    min-width: auto !important;
+  }
+
+}
+
+
+/* ===========================
+   Small Mobile
+=========================== */
+
+@media (max-width:575px) {
+
+  .na-card {
+    padding: 10px;
+  }
+
+  .candidate-basic h4 {
+    font-size: 17px;
+  }
+
+
+  .top-meta>div {
+    flex: 1 1 100%;
+    min-width: 100%;
+    font-size: 11px;
+  }
+
+  .top-meta>div i {
+    font-size: 11px;
+    margin-right: 4px !important;
+  }
+
+  .profile-image img {
+    width: 90px;
+    height: 90px;
+  }
+
+  .skill-pill {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  .action-icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .action-icon-btn i {
+    font-size: 17px;
+  }
+
 }

@@ -71,7 +71,7 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-    console.log("External API Base URL 00:", externalApiBaseUrl);
+    //console.log("External API Base URL 00:", externalApiBaseUrl);
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||

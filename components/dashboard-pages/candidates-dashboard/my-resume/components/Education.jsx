@@ -94,7 +94,7 @@ const EducationForm = ({
 
       const result = await response.json();
 
-      //console.log("Education Details fetched:", JSON.stringify(result));
+      console.log("Education Details fetched:", JSON.stringify(result));
 
       const profile = result?.data;
 
@@ -108,7 +108,7 @@ const EducationForm = ({
         const mastersData = educationData.filter(x => x.education === "Masters")[0];
         const PhDData = educationData.filter(x => x.education === "PhD")[0];
 
-        console.log('graduateData ', graduateData)
+        //console.log('graduateData ', graduateData)
         // console.log(tenthData.board)
 
         setFormData((prev) => ({

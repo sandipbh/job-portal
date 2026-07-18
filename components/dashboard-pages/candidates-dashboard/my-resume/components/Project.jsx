@@ -373,25 +373,28 @@ const Project = ({ data, setData, onNext }) => {
         <form ref={formRef} className="default-form project-form" onSubmit={handleSubmit}>
 
             {/* HEADER */}
-            <div className="form-header">
-                <h4>Projects</h4>
-                <p>Add your personal / professional projects</p>
+            <div className="exam-header">
+                <div>
+                    <h4>Projects</h4>
+                    <p>Add your personal / professional projects</p>
+                </div>
+                {!showForm && (
+                    <button
+                        type="button"
+                        className="btn-sm add-exam-btn"
+                        onClick={() => {
+                            setForm(emptyProject);
+                            setSkills([]);
+                            setEditIndex(null);
+                            setShowForm(true);
+                        }}
+                    >
+                        + Add Project
+                    </button>
+                )}
+
             </div>
 
-            {!showForm && (
-                <button
-                    type="button"
-                    className="btn btn-sm btn-info mb-4"
-                    onClick={() => {
-                        setForm(emptyProject);
-                        setSkills([]);
-                        setEditIndex(null);
-                        setShowForm(true);
-                    }}
-                >
-                    + Add Project
-                </button>
-            )}
 
             {list.map((item, index) => (
                 <div key={index} className="exam-card">
