@@ -136,16 +136,15 @@ const Applicants = ({ candidate,
                 />
               </figure>
 
-              <h4 className="name mb-0">
-
-                <div className="d-flex  ">
-                  <input type="checkbox" className="me-2"></input>
+              <div className="name mb-0">
+                <div className="d-flex">
+                  <input type="checkbox" className="me-2" />
                   <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
                     {candidate.candiName}
                   </Link>
                 </div>
                 <ul className="candidate-info">
-                  <li className="  icon flaticon-briefcase" style={{ paddingLeft: "0" }} >{" "}
+                  <li className="icon flaticon-briefcase" style={{ paddingLeft: "0" }}>
                     {candidate.experience}
                   </li>
                   <li>
@@ -153,7 +152,7 @@ const Applicants = ({ candidate,
                     {candidate.currentAddress}
                   </li>
                 </ul>
-              </h4>
+              </div>
             </div>
 
             <ul className="candidate-info">
@@ -400,7 +399,7 @@ const Applicants = ({ candidate,
                             <div className="comment-actions">
                               <small >{item.tdate} </small>
                               <div>
-                                <button onClick={() => updateComment(item.id, item.comment)}>
+                                <button  >
                                   <i className="la la-edit"></i>
                                 </button>
 
@@ -422,8 +421,8 @@ const Applicants = ({ candidate,
 
           </div>
           {/* End admin options box */}
-        </div >
-      </div >
+        </div>
+      </div>
 
     </>
   );

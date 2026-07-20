@@ -6,7 +6,7 @@ import Select, { components } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import { toast } from "react-toastify";
-import candidatesData from "@/data/candidatedata";
+
 import Link from "next/link";
 import Image from "next/image";
 
@@ -43,6 +43,8 @@ const SearchFilterBox = () => {
     const [selectedNoticePeriods, setSelectedNoticePeriods] = useState([]);
 
     const [candidates, setCandidates] = useState([]);
+
+    const [selectedSkillsList, setSelectedSkillsList] = useState();
 
     const getKeywordOptions = async (inputValue) => {
         try {
@@ -100,13 +102,13 @@ const SearchFilterBox = () => {
             selectedIndustries.length > 0
         ].filter(Boolean).length;
 
-        if (appliedFilters < 2) {
+        if (appliedFilters < 0) {
 
             toast.error("Please select at least 2 filters.");
             return;
         }
-        console.log('selectedKeywords ', JSON.stringify(selectedKeywords))
-        console.log('selectedNoticePeriods ', JSON.stringify(selectedNoticePeriods))
+        // console.log('selectedKeywords ', JSON.stringify(selectedKeywords))
+        // console.log('selectedNoticePeriods ', JSON.stringify(selectedNoticePeriods))
 
         const payload = {
             // Basic
@@ -161,11 +163,14 @@ const SearchFilterBox = () => {
             PAGE_NO: 1,
             PAGE_SIZE: 20
         };
-        console.log('payload ', JSON.stringify(payload))
+        //console.log('payload ', JSON.stringify(payload))
 
         // return;
         setLoading(true);
         try {
+
+
+
             const response = await fetch("/api/candidates-search", {
                 method: "POST",
                 headers: {
@@ -177,8 +182,18 @@ const SearchFilterBox = () => {
             const data = await response.json();
 
             if (response.ok) {
-                console.log("Candidates fetched:", data.data);
+                //console.log("Candidates fetched:", data.data);
 
+
+
+                if (payload?.SKILLS?.length > 0) {
+
+                    const selectedSkills = (payload?.SKILLS || "")
+                        .split(",")
+                        .map(s => s.trim().toLowerCase());
+
+                    setSelectedSkillsList(selectedSkills);
+                }
                 const searchState = {
                     payload,
                     results: data,
@@ -580,7 +595,7 @@ const SearchFilterBox = () => {
 
 
                         <div className="mt-3 mb-2" >
-                            <h5  >Employment Details</h5>
+                            <h5>Employment Details</h5>
                         </div>
 
                         <div className="col-lg-6 col-md-6">
@@ -768,175 +783,202 @@ const SearchFilterBox = () => {
 
 
                             </div>
-                        </div >
+                        </div>
 
                     </div>
                 </form>
 
-                <div className="mt-3">
+                {
 
-                    {candidates?.map((candidate) => (
-                        <div className="na-card" key={candidate.id}>
-                            {/* Left Section */}
-                            <div className="na-left">
+                    candidates?.length > 0 &&
 
-                                <div className="candidate-top">
+                    candidates?.map((candidate) => (
+                        <div className="mt-3" key={candidate.candiUqId}>
+                            <div className="na-card">
+                                {/* Left Section */}
+                                <div className="na-left">
 
-                                    <div className="candidate-top">
-                                        <div className="candidate-checkbox">
-                                            <input
-                                                type="checkbox"
-                                                className="check-input"
-                                                id={`candidate-${candidate.id}`}
-                                            // checked={selectedCandidates.includes(candidate.id)}
-                                            // onChange={(e) => {
-                                            //     if (e.target.checked) {
-                                            //         setSelectedCandidates(prev => [...prev, candidate.id]);
-                                            //     } else {
-                                            //         setSelectedCandidates(prev =>
-                                            //             prev.filter(id => id !== candidate.id)
-                                            //         );
-                                            //     }
-                                            // }}
-                                            />
-                                        </div>
+                                    <div className="">
 
-                                        <div className="candidate-basic">
-                                            <h4>
-                                                <Link href={`/candidates-single-v1/${candidate.id}`}>
-                                                    {candidate.name}
-                                                </Link>
-                                            </h4>
+                                        <div className="candidate-top">
+                                            <div className="candidate-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    className="check-input"
+                                                    id={`candidate-${candidate.candiUqId}`}
+                                                // checked={selectedCandidates.includes(candidate.id)}
+                                                // onChange={(e) => {
+                                                //     if (e.target.checked) {
+                                                //         setSelectedCandidates(prev => [...prev, candidate.id]);
+                                                //     } else {
+                                                //         setSelectedCandidates(prev =>
+                                                //             prev.filter(id => id !== candidate.id)
+                                                //         );
+                                                //     }
+                                                // }}
+                                                />
+                                            </div>
 
-                                            <div className="top-meta">
-                                                <span>
-                                                    <i className="flaticon-briefcase"></i>
-                                                    {" "}   {candidate.experience}
-                                                </span>
+                                            <div className="candidate-basic">
+                                                <h4>
+                                                    <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
+                                                        {candidate.candiName}
+                                                    </Link>
+                                                </h4>
 
-                                                <span>
-                                                    <i className="flaticon-money"></i>
-                                                    {" "}    {candidate.salary}
-                                                </span>
+                                                <div className="top-meta">
+                                                    <span>
+                                                        <i className="flaticon-briefcase"></i>
+                                                        {" "}   {candidate.experience}
+                                                    </span>
 
-                                                <span>
-                                                    <i className="flaticon-map-locator"></i>
-                                                    {" "}   {candidate.location}
-                                                </span>
+                                                    <span>
+                                                        <i className="flaticon-money"></i>
+                                                        {" "}  &#8377;  {candidate.curentSalary}
+                                                    </span>
+
+                                                    <span>
+                                                        <i className="flaticon-map-locator"></i>
+                                                        {" "}   {candidate.city}, {candidate.state}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="candidate-row">
-                                    <div className="label1">Current</div>
-                                    <div className="value">
-                                        {candidate.currentDesignation} at{" "}
-                                        <strong>{candidate.currentCompany}</strong>
+                                    <div className="candidate-row">
+                                        <div className="label1">Current</div>
+                                        <div className="value">
+                                            {candidate.currentCompany}
+                                            {/* <strong>{candidate.currentCompany}</strong> */}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="candidate-row">
-                                    <div className="label1">Previous</div>
-                                    <div className="value">
-                                        {candidate.previousDesignation} at{" "}
-                                        <strong>{candidate.previousCompany}</strong>
-                                    </div>
-                                </div>
+                                    {/* <div className="candidate-row">
+                                        <div className="label1">Previous</div>
+                                        <div className="value">
+                                            {candidate.previousDesignation} at{" "}
+                                            <strong>{candidate.previousCompany}</strong>
+                                        </div>
+                                    </div> */}
 
-                                <div className="candidate-row">
-                                    <div className="label1">Education</div>
+                                    <div className="candidate-row">
+                                        <div className="label1">Education</div>
 
-                                    <div className="value">
-                                        {/* {candidate.education.map((edu, index) => (
+                                        <div className="value">
+                                            {candidate.education}
+
+                                            {/* {candidate.education.map((edu, index) => (
                                             <div key={index}>{edu}</div>
                                         ))} */}
+                                        </div>
                                     </div>
+
+                                    <div className="candidate-row">
+                                        <div className="label1">Pref. Location</div>
+                                        <div className="value">
+                                            {candidate.workingLocation}
+                                        </div>
+                                    </div>
+                                    <div className="candidate-row">
+                                        <div className="label1">Notice Period</div>
+                                        <div className="value">
+                                            {candidate.noticePeriod}
+                                        </div>
+                                    </div>
+
+
+                                    <div className="candidate-row skills-row">
+                                        <div className="label1">Key Skills</div>
+                                        <div className="value">
+                                            {(candidate.skills || "")
+                                                .split(",")
+                                                .filter(Boolean)
+                                                .map((skill, index) => {
+                                                    const trimmedSkill = skill.trim();
+
+                                                    const isSelected = (selectedSkillsList || "")
+                                                        .toLowerCase()
+                                                        .split(",")
+                                                        .map(s => s.trim())
+                                                        .includes(trimmedSkill.toLowerCase());
+
+                                                    return (
+                                                        <span
+                                                            key={index}
+                                                            className={isSelected ? "skill-pill" : ""}
+                                                        >
+                                                            {trimmedSkill} {" "}
+                                                        </span>
+                                                    );
+                                                })}
+                                        </div>
+                                    </div>
+
                                 </div>
 
-                                <div className="candidate-row">
-                                    <div className="label1">Pref. Location</div>
-                                    <div className="value">
-                                        {candidate.preferredLocation}
+                                {/* Right Section */}
+
+                                <div className="na-right">
+
+                                    <div className="profile-image">
+                                        <Image
+                                            src={candidate.avatar ?? ""}
+                                            width={90}
+                                            height={90}
+                                            alt=""
+                                        />
                                     </div>
-                                </div>
+                                    <div className="profile-section">
+                                        <div className="candidate-side-actions">
+                                            <button className="action-icon-btn">
+                                                <i className="las la-comment"></i>
+                                            </button>
 
-                                <div className="candidate-row skills-row">
-                                    <div className="label1">Key Skills</div>
+                                            <button className="action-icon-btn">
+                                                <i className="lar la-bookmark"></i>
+                                            </button>
 
-                                    <div className="value">
-                                        {/* {candidate.skills.map((skill, index) => (
-                                            <span className="skill-pill" key={index}>
-                                                {skill}
-                                            </span>
-                                        ))} */}
+                                            <button className="action-icon-btn">
+                                                <i className="las la-paper-plane"></i>
+                                            </button>
+
+                                            <button className="action-icon-btn">
+                                                <i className="las la-folder-plus"></i>
+                                            </button>
+
+                                            <button className="action-icon-btn">
+                                                <i className="las la-bell"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
 
+                                    <p className="profile-summary">
+                                        {candidate.profileDesc}
+                                    </p>
+
+                                    <div className="candidate-action-buttons">
+                                        <Link
+                                            href={`/candidates-single-v1/${candidate.candiUqId}`}
+                                            className="theme-btn btn-style-one w-100 butn"
+                                        >
+                                            View Profile
+                                        </Link>
+
+                                        <button className="theme-btn btn-style-one w-100 butn">
+                                            Call Candidate
+                                        </button>
+                                    </div>
+
+                                </div>
                             </div>
-
-                            {/* Right Section */}
-
-                            <div className="na-right">
-
-                                <div className="profile-image">
-                                    <Image
-                                        src={candidate.avatar}
-                                        width={90}
-                                        height={90}
-                                        alt=""
-                                    />
-                                </div>
-                                <div className="profile-section">
-                                    <div className="candidate-side-actions">
-                                        <button className="action-icon-btn">
-                                            <i className="las la-comment"></i>
-                                        </button>
-
-                                        <button className="action-icon-btn">
-                                            <i className="lar la-bookmark"></i>
-                                        </button>
-
-                                        <button className="action-icon-btn">
-                                            <i className="las la-paper-plane"></i>
-                                        </button>
-
-                                        <button className="action-icon-btn">
-                                            <i className="las la-folder-plus"></i>
-                                        </button>
-
-                                        <button className="action-icon-btn">
-                                            <i className="las la-bell"></i>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <p className="profile-summary">
-                                    {candidate.profileSummary}
-                                </p>
-
-                                <div className="candidate-action-buttons">
-                                    <Link
-                                        href={`/candidates-single-v1/${candidate.id}`}
-                                        className="theme-btn btn-style-one w-100 butn"
-                                    >
-                                        View Profile
-                                    </Link>
-
-                                    <button className="theme-btn btn-style-one w-100 butn">
-                                        Call Candidate
-                                    </button>
-                                </div>
-
-
-
-                            </div>
-                        </div >
+                        </div>
                     ))
-                    }
-                </div>
-            </div >
-        </div >
+
+                }
+
+            </div>
+        </div>
 
     );
 };
