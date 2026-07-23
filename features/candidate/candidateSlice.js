@@ -61,6 +61,11 @@ const initialState = {
             name: "4 Year",
             value: "4-year",
             isChecked: false,
+        }, {
+            id: 6,
+            name: "5+ Year",
+            value: "5+-year",
+            isChecked: false,
         },
     ],
     qualification: [

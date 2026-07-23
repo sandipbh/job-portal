@@ -36,8 +36,8 @@ const FilterSidebar = () => {
                         <LocationBox />
                     </div>
 
-                    <p>Radius around selected destination</p>
-                    <DestinationRangeSlider />
+                    {/* <p>Radius around selected destination</p>
+                    <DestinationRangeSlider /> */}
                 </div>
                 {/* <!-- Filter Block --> */}
 

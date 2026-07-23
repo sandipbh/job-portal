@@ -79,6 +79,8 @@ const SearchFilterBox = () => {
             return [];
         }
     };
+
+
     const loadOptionsKeywords = (inputValue) => {
         if (!inputValue || inputValue.trim().length < 2) {
             return Promise.resolve([]);
@@ -169,8 +171,6 @@ const SearchFilterBox = () => {
         setLoading(true);
         try {
 
-
-
             const response = await fetch("/api/candidates-search", {
                 method: "POST",
                 headers: {
@@ -214,6 +214,7 @@ const SearchFilterBox = () => {
             setLoading(false);
         }
     };
+
     const addKeyword = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
@@ -287,6 +288,7 @@ const SearchFilterBox = () => {
             return [];
         }
     };
+
     const loadOptionsDepartment = (inputValue) => {
         if (!inputValue || inputValue.trim().length < 2) {
             return Promise.resolve([]);

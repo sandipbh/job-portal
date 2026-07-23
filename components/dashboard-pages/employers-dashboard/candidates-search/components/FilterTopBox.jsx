@@ -139,7 +139,84 @@ const FilterTopBox = ({
       : true;
 
 
-  let content = candidatesData
+  const [candidates, setCandidates] = useState([]);
+
+  const getSkills = async () => {
+    try {
+      const response = await fetch("/api/list-skills", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          term: '',
+        }),
+      });
+      const data = await response.json();
+      //setSkillOptions(data && data.data ? data.data : []);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    getSkills();
+  }, [0]);
+
+
+  const getData = async () => {
+    try {
+
+      const payload = {}
+      const response = await fetch("/api/candidates-search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        //console.log("Candidates fetched:", data.data);
+
+        // if (payload?.SKILLS?.length > 0) {
+
+        //     const selectedSkills = (payload?.SKILLS || "")
+        //         .split(",")
+        //         .map(s => s.trim().toLowerCase());
+
+        //     setSelectedSkillsList(selectedSkills);
+        // }
+        const searchState = {
+          payload,
+          results: data,
+        };
+        console.log(JSON.stringify(data?.data))
+        setCandidates(data?.data);
+        // const encodedState = encodeURIComponent(JSON.stringify(searchState));
+        // router.push(`/employers-dashboard/candidates-search?searchData=${encodedState}`);
+
+        // setSelectedCandidates(prev =>
+        //   prev.filter(id =>
+        //     candidates.some(candidate => candidate.id === id)
+        //   )
+        // );
+
+        // TODO: Send data to parent component or use Context/Redux
+        // Example: onSearchResults(data.results, data.totalCount);
+      } else {
+        console.error("Search failed:", data);
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+    } finally {
+      //setLoading(false);
+    }
+  }
+
+  let content = candidates
     ?.slice(perPage.start, perPage.end === 0 ? 10 : perPage.end)
     .filter(keywordFilter)
     .filter(locationFilter)
@@ -349,14 +426,9 @@ const FilterTopBox = ({
     dispatch(addPerPage({ start: 0, end: 0 }));
   };
 
-
   useEffect(() => {
-    setSelectedCandidates(prev =>
-      prev.filter(id =>
-        contentData.some(candidate => candidate.id === id)
-      )
-    );
-  }, [candidatesData]);
+    getData();
+  }, []);
   return (
     <>
 

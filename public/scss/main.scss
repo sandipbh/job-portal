@@ -4656,8 +4656,9 @@ in 2 tab of Company Profile
 
 
 .industry-grid {
-  flex: 1;
-
+  flex: 1 1;
+  justify-items: stretch;
+  align-content: space-evenly;
   overflow-y: auto;
 
   padding: 0 28px 25px;

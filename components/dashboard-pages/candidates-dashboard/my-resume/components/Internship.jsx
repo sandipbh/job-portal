@@ -146,10 +146,7 @@ const InternshipForm = ({ data, setData, onNext }) => {
     };
 
     const getSkills = async () => {
-
-
         try {
-
             const response = await fetch("/api/list-skills", {
                 method: "POST",
                 headers: {
@@ -159,10 +156,8 @@ const InternshipForm = ({ data, setData, onNext }) => {
                     term: '',
                 }),
             });
-
             const data = await response.json();
             //console.log("exam fetched:", JSON.stringify(data.data));
-
             setSkillOptions(data && data.data ? data.data : []);
 
         } catch (error) {

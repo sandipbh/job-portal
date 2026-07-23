@@ -1,93 +1,66 @@
-'use client'
+'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setIndustry } from "../../../features/filter/candidateFilterSlice";;
-const industryList = [
-    {
-        category: "IT Services",
-        items: [
-            "IT Services & Consulting",
-            "Software Product",
-            "Internet",
-            "Electronic Components",
-            "Emerging Technologies",
-            "Hardware & Networking",
-        ],
-    },
-
-    {
-        category: "Education",
-        items: [
-            "Education / Training",
-            "E-Learning / EdTech",
-        ],
-    },
-
-    {
-        category: "BFSI",
-        items: [
-            "Financial Services",
-            "Banking",
-            "FinTech / Payments",
-            "Investment Banking",
-            "NBFC",
-        ],
-    },
-
-    {
-        category: "Media & Entertainment",
-        items: [
-            "Advertising",
-            "Film / Music",
-            "Animation / VFX",
-            "Events / MICE",
-            "TV / Radio",
-
-        ],
-    },
-];
+import { setIndustry } from "../../../features/filter/candidateFilterSlice";
 
 const Industry = () => {
     const dispatch = useDispatch();
 
     const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState("");
+    const [industryList, setIndustryList] = useState([]);
+    const [tempIndustries, setTempIndustries] = useState([]);
 
     const selectedIndustries =
         useSelector((state) => state.candidateFilter.industries) || [];
 
-    const [tempIndustries, setTempIndustries] = useState([]);
+    useEffect(() => {
+        getIndustries();
+    }, []);
 
-    const defaultIndustries = [
-        "IT Services & Consulting",
-        "Software Product",
-        "Financial Services",
-        "Education / Training",
-        "Internet",
-    ];
+    const getIndustries = async () => {
+        try {
+            const response = await fetch("/api/list-industries", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    term: "",
+                }),
+            });
+
+            const data = await response.json();
+
+            setIndustryList(data?.data || []);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Show first 5 in sidebar
+    const defaultIndustries = industryList
+        .slice(0, 5)
+        .map((x) => x.value);
 
     const sidebarIndustries =
         selectedIndustries.length > 0
             ? [
                 ...selectedIndustries,
                 ...defaultIndustries.filter(
-                    (item) => !selectedIndustries.includes(item)
+                    (x) => !selectedIndustries.includes(x)
                 ),
             ].slice(0, 5)
-            : defaultIndustries.slice(0, 5);
+            : defaultIndustries;
+
     const handleTempIndustry = (industry) => {
         if (tempIndustries.includes(industry)) {
             setTempIndustries(
-                tempIndustries.filter(
-                    (item) => item !== industry
-                )
+                tempIndustries.filter((x) => x !== industry)
             );
         } else {
-            setTempIndustries([
-                ...tempIndustries,
-                industry,
-            ]);
+            setTempIndustries([...tempIndustries, industry]);
         }
     };
 
@@ -98,7 +71,7 @@ const Industry = () => {
 
     const handleSidebarToggle = (industry) => {
         const updated = selectedIndustries.includes(industry)
-            ? selectedIndustries.filter((item) => item !== industry)
+            ? selectedIndustries.filter((x) => x !== industry)
             : [...selectedIndustries, industry];
 
         dispatch(setIndustry(updated));
@@ -113,10 +86,10 @@ const Industry = () => {
         setTempIndustries(selectedIndustries);
         setShowModal(false);
     };
+
     return (
         <>
             <div className="industry-filter">
-
                 {sidebarIndustries.map((industry) => (
                     <label
                         key={industry}
@@ -125,9 +98,7 @@ const Industry = () => {
                         <input
                             type="checkbox"
                             checked={selectedIndustries.includes(industry)}
-                            onChange={() =>
-                                handleSidebarToggle(industry)
-                            }
+                            onChange={() => handleSidebarToggle(industry)}
                         />
 
                         <span>{industry}</span>
@@ -149,12 +120,9 @@ const Industry = () => {
                 >
                     <div
                         className="industry-modal"
-                        onClick={(e) =>
-                            e.stopPropagation()
-                        }
+                        onClick={(e) => e.stopPropagation()}
                     >
                         <div className="industry-modal-header">
-
                             <h4>Industry</h4>
 
                             <button
@@ -177,51 +145,33 @@ const Industry = () => {
                             />
                         </div>
 
-                        <div className="industry-grid">
+                        <div className="education-grid">
+                            {industryList
+                                .filter((item) =>
+                                    item.value
+                                        ?.toLowerCase()
+                                        .includes(search.toLowerCase())
+                                )
+                                .map((item) => (
+                                    <label
+                                        key={item.key}
+                                        className="education-item"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={tempIndustries.includes(
+                                                item.value
+                                            )}
+                                            onChange={() =>
+                                                handleTempIndustry(item.value)
+                                            }
+                                        />
 
-                            {industryList.map((section) => (
-                                <div
-                                    key={section.category}
-                                    className="industry-column"
-                                >
-                                    <h5>{section.category}</h5>
-
-                                    {section.items
-                                        .filter((item) =>
-                                            item
-                                                .toLowerCase()
-                                                .includes(
-                                                    search.toLowerCase()
-                                                )
-                                        )
-                                        .map((item) => (
-                                            <label
-                                                key={item}
-                                                className="industry-item"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    checked={tempIndustries.includes(item)}
-
-                                                    onChange={() =>
-                                                        handleTempIndustry(item)
-                                                    }
-                                                />
-
-                                                <span>
-                                                    {item}
-                                                    <small>
-                                                        (
-                                                        {Math.floor(
-                                                            Math.random() * 500
-                                                        ) + 1}
-                                                        )
-                                                    </small>
-                                                </span>
-                                            </label>
-                                        ))}
-                                </div>
-                            ))}
+                                        <span>
+                                            {item.value}
+                                        </span>
+                                    </label>
+                                ))}
                         </div>
 
                         <div className="industry-footer">

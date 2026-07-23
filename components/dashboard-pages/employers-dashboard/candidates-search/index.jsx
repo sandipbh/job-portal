@@ -320,17 +320,12 @@ const index = ({ initialSearchData }) => {
                     aria-labelledby="offcanvasLabel"
                 >
                     <div className="offcanvas-header">
-
-
                         <h5 className="offcanvas-title">Filters</h5>
-
                         <button
                             type="button"
                             className="btn-close"
                             data-bs-dismiss="offcanvas"
                         ></button>
-
-
                     </div>
 
                     {/* <div className="filter-footer">

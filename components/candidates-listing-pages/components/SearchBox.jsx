@@ -29,8 +29,9 @@ const SearchBox = () => {
                 placeholder="Job title, keywords, or company"
                 onChange={keywordHandler}
                 value={keyword}
+                style={{ paddingLeft: "40px" }}
             />
-            <span className="icon flaticon-search-3"></span>
+            <span className="icon flaticon-search-3" style={{ left: "10px" }}></span>
         </>
     );
 };

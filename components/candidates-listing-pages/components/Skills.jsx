@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     addSkill,
     setSkills,
     clearSkills,
 } from "../../../features/filter/candidateFilterSlice";
-const skillsList = [
+
+const skillsList_ = [
     "React",
     "Next.js",
     "JavaScript",
@@ -32,20 +33,50 @@ const skillsList = [
     "Kubernetes"
 ];
 
+
 const Skills = () => {
     const dispatch = useDispatch();
 
     const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState("");
 
+
+    const [skillsList, setSkillsList] = useState([]);
+
+    useEffect(() => {
+        getSkills();
+    }, [0]);
+
+    const getSkills = async () => {
+        try {
+            const response = await fetch("/api/list-skills", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    term: '',
+                }),
+            });
+            const data = await response.json();
+            //console.log("skills fetched:", JSON.stringify(data.data));
+            setSkillsList(data && data.data ? data.data : []);
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
     const selectedSkills =
         useSelector((state) => state.candidateFilter.skills) || [];
 
     const filteredSkills = skillsList.filter((skill) =>
-        skill.toLowerCase().includes(search.toLowerCase())
+        skill.value.toLowerCase().includes(search.toLowerCase())
     );
 
     const [tempSkills, setTempSkills] = useState([]);
+
     const handleOpenModal = () => {
         setTempSkills([...selectedSkills]);
         setShowModal(true);
@@ -79,12 +110,11 @@ const Skills = () => {
         selectedSkills.length > 0
             ? [
                 ...selectedSkills,
-                ...skillsList.filter(
-                    (skill) => !selectedSkills.includes(skill)
-                ),
+                ...skillsList
+                    .map((x) => x.value)
+                    .filter((skill) => !selectedSkills.includes(skill)),
             ].slice(0, 5)
-            : skillsList.slice(0, 5);
-
+            : skillsList.slice(0, 5).map((x) => x.value);
 
     return (
         <>
@@ -147,21 +177,14 @@ const Skills = () => {
 
                         <div className="skills-grid">
                             {filteredSkills.map((skill) => (
-                                <label
-                                    key={skill}
-                                    className="skills-item"
-                                >
+                                <label key={skill.key} className="skills-item">
                                     <input
                                         type="checkbox"
-                                        checked={tempSkills.includes(skill)}
-                                        onChange={() => handleSkillToggle(skill)}
+                                        checked={tempSkills.includes(skill.value)}
+                                        onChange={() => handleSkillToggle(skill.value)}
                                     />
-
                                     <span>
-                                        {skill}
-                                        <small>
-                                            ({Math.floor(Math.random() * 500) + 10})
-                                        </small>
+                                        {skill.value}
                                     </span>
                                 </label>
                             ))}

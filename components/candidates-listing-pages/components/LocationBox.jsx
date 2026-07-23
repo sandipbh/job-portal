@@ -25,11 +25,12 @@ const LocationBox = () => {
             <input
                 type="text"
                 name="listing-search"
-                placeholder="City or postcode"
+                style={{ paddingLeft: "40px" }}
+                placeholder="City"
                 value={location}
                 onChange={locationHandler}
             />
-            <span className="icon flaticon-map-locator"></span>
+            <span className="icon flaticon-map-locator" style={{ left: "10px" }}></span>
         </>
     );
 };
