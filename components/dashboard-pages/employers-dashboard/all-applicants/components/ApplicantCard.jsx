@@ -245,7 +245,7 @@ const ApplicantCard = ({
             });
 
             const user = await res.json();
-            console.log("Response from /api/emp-application-comment:", user);
+            // console.log("Response from /api/emp-application-comment:", user);
 
             if (!res.ok) {
                 toast.error(user.message || "request failed");
