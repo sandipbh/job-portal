@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { apiFetch } from "../apiFetch";
@@ -10,8 +9,6 @@ export async function POST(req) {
   const token = req.cookies.get("regToken")?.value;
   const url = req.nextUrl.pathname;
 
-  const { details } = await req.json();
-
   let user = {};
   try {
     user = token ? JSON.parse(token) : {};
@@ -19,24 +16,22 @@ export async function POST(req) {
     console.error("Invalid JSON token:", err);
     user = {};
   }
-  console.log("dashboard user User Role :", user.external.role);
 
   try {
+
     const {
       jobpostId,
-      applicationId,
-      status,
-      candiUqId,
-    } = details;
-
-    // 1. Basic validation
-    if (!user.external.uqId || !user.external.role) {
-      return NextResponse.json(
-        { message: "Your login has expired, relogin your account" },
-        { status: 400 }
-      );
+      LoginUqid,
+    } = await req.json();
+    if (!user) {
+      // 1. Basic validation
+      if (!user.external.uqId || !user.external.role) {
+        return NextResponse.json(
+          { message: "Your login has expired, relogin your account" },
+          { status: 400 }
+        );
+      }
     }
-
     const LoginIp =
       headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       headersList.get("x-real-ip") ||
@@ -44,17 +39,12 @@ export async function POST(req) {
       "Unknown";
 
     const loginBody = {
-
       jobpostId: jobpostId,
-      applicationId: applicationId,
-      status: status,
-
-      uqId: user.external.uqId,
+      uqId: LoginUqid || "00000000-0000-0000-0000-000000000000",
       LoginIp: LoginIp,
-      Role: user.external.role,
-      Token: user.external.accessToken,
+      Role: user?.external?.role || "public",
+      Token: user?.external?.accessToken || "public-token",
     };
-    console.log("body Data:", loginBody);
 
     // Allow self-signed certs in local development only.
     if (process.env.NODE_ENV !== "production") {
@@ -68,46 +58,49 @@ export async function POST(req) {
         { status: 500 }
       );
     }
+    //console.log("External API Base URL 00:", externalApiBaseUrl);
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
-      `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/applicationContactStatus`;
+      `${externalApiBaseUrl.replace(/\/+$/, "")}/api/public/updateJobCount`;
 
-    console.log("External API URL :", externalApiUrl);
-    console.log("External API Request Body:", loginBody);
 
-    const externalResponse = await apiFetch(externalApiUrl, {
+
+    const externalResponse = await fetch(externalApiUrl, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(loginBody),
     });
 
     const responseData = JSON.parse(await externalResponse.text());
 
-    console.log("External Candi API response:", responseData);
-    console.log("External API Response Status:", responseData.message || externalResponse.status);
+    // console.log("External Candi API response:", responseData);
+    // console.log("External API Response Status:", responseData.message || externalResponse.status);
 
 
     if (!externalResponse.ok) {
       console.error(
-        "External request failed:",
+        "External Update JobView failed:",
         responseData.success,
         responseData.message
       );
 
       return NextResponse.json(
         {
-          message: responseData.message || "Request Failed.",
+          message: responseData.message || "Save Failed",
         },
         { status: responseData.status || 500 }
       );
     }
 
-    console.log("Status updated successfully");
+    //console.log("job saved successfully");
 
     // 6. Send response with cookies
     const response = NextResponse.json(
       {
-        message: responseData.message || "Status updated successfully",
+        message: responseData.message || "job view saved successfully",
       },
       { status: 201 }
     );
@@ -117,7 +110,7 @@ export async function POST(req) {
     console.error("UPDATE ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to update details" },
+      { message: "Failed to save job view" },
       { status: 500 }
     );
   }

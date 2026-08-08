@@ -64,11 +64,43 @@ const JobDetailsV2 = ({ id }) => {
         }
     }
 
+    useEffect(() => {
 
+        getJobDetails();
+
+    }, []);
 
     useEffect(() => {
-        getJobDetails();
-    }, []);
+        saveViewJob();
+    }, [jobId]);
+
+    const saveViewJob = async () => {
+        try {
+
+            if (loginType == "employer") {
+                //console.log("User is not a candidate. Skipping save view job.");
+                return;
+            }
+            const payload = {
+                LoginUqid: loginUqid,
+                jobpostId: jobId,
+            }
+
+            const response = await fetch("/api/save-job-view", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const result = await response.json();
+
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const getJobDetails = async () => {
         try {

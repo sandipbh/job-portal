@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { Modal } from "bootstrap";
 import { formatDate, getTimeAgo } from "@/lib/dateUtils";
 
+import { useRouter } from "next/navigation";
 import ResumeTemplate from "./ResumeTemplate";
 
 
@@ -27,6 +28,7 @@ const CandidateDetailsV2 = ({ id }) => {
     let candiId = id ?? 0;
 
     const resumeRef = useRef(null);
+    const router = useRouter();
 
     const [candidate, setCandidate] = useState({});
     const [loading, setLoading] = useState(true);
@@ -88,6 +90,42 @@ const CandidateDetailsV2 = ({ id }) => {
             setFullName(fullname);
             setLoginType(role);
             setLoginUqid(uqid);
+
+            if (role === "" || role === "candidate") {
+                toast.error("Login your account.");
+                router.replace("/login");
+                return;
+            }
+            saveViewProfile(uqid);
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+
+    }, []);
+
+    const saveViewProfile = async (uqid) => {
+        try {
+            debugger;
+
+            const payload = {
+                LoginUqid: uqid,
+                candiId: candiId,
+            }
+
+            const response = await fetch("/api/save-profile-view", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const result = await response.json();
+
 
         } catch (error) {
             console.error(error);
@@ -243,9 +281,7 @@ const CandidateDetailsV2 = ({ id }) => {
                                                 >
                                                     Download CV
                                                 </button>
-                                                <button className="bookmark-btn">
-                                                    <i className="flaticon-bookmark"></i>
-                                                </button>
+
                                             </div>
                                         </div>
                                     </div>

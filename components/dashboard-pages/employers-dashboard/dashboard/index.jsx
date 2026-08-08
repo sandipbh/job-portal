@@ -7,14 +7,15 @@ import Applicants from "./components/Applicants";
 import { cookies } from "next/headers";
 
 
-const Index = () => {
+const Index = async () => {
 
+  const cookieStore = await cookies();
 
-  const cookieStore = cookies();
   const token = cookieStore.get("regToken")?.value;
   let user = {};
   try {
-    user = JSON.parse(token);
+
+    user = token ? JSON.parse(token) : {};
     //console.log(user.external.fullName);
 
   } catch (err) {

@@ -8,7 +8,7 @@ export async function GET(req) {
             return NextResponse.json({}, { status: 401 });
         }
 
-        const user = JSON.parse(token);
+        const user = token ? JSON.parse(token) : {};
 
         return NextResponse.json(
             {

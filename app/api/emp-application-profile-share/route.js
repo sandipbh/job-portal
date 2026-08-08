@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { apiFetch } from "../apiFetch";
@@ -10,8 +9,6 @@ export async function POST(req) {
   const token = req.cookies.get("regToken")?.value;
   const url = req.nextUrl.pathname;
 
-  const { details } = await req.json();
-
   let user = {};
   try {
     user = token ? JSON.parse(token) : {};
@@ -19,15 +16,22 @@ export async function POST(req) {
     console.error("Invalid JSON token:", err);
     user = {};
   }
-  console.log("dashboard user User Role :", user.external.role);
 
+  console.log("dashboard user User Role :", user.external.role);
   try {
+
     const {
       jobpostId,
       applicationId,
-      status,
-      candiUqId,
-    } = details;
+      shareEmail,
+      shareRemark,
+      shareLink
+    } = await req.json();
+
+    console.log("shareRemark :", shareRemark)
+
+    console.log("Login attempt email:", user.external.uqId);
+    console.log("Login attempt role:", user.external.role);
 
     // 1. Basic validation
     if (!user.external.uqId || !user.external.role) {
@@ -44,17 +48,16 @@ export async function POST(req) {
       "Unknown";
 
     const loginBody = {
-
-      jobpostId: jobpostId,
       applicationId: applicationId,
-      status: status,
-
+      jobpostId: jobpostId,
+      shareEmail: shareEmail,
+      shareRemark: shareRemark,
+      shareLink: shareLink,
       uqId: user.external.uqId,
       LoginIp: LoginIp,
       Role: user.external.role,
       Token: user.external.accessToken,
     };
-    console.log("body Data:", loginBody);
 
     // Allow self-signed certs in local development only.
     if (process.env.NODE_ENV !== "production") {
@@ -68,10 +71,11 @@ export async function POST(req) {
         { status: 500 }
       );
     }
+    //console.log("External API Base URL 00:", externalApiBaseUrl);
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
-      `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/applicationContactStatus`;
+      `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/applicationShare`;
 
     console.log("External API URL :", externalApiUrl);
     console.log("External API Request Body:", loginBody);
@@ -83,31 +87,31 @@ export async function POST(req) {
 
     const responseData = JSON.parse(await externalResponse.text());
 
-    console.log("External Candi API response:", responseData);
-    console.log("External API Response Status:", responseData.message || externalResponse.status);
+    // console.log("External Candi API response:", responseData);
+    // console.log("External API Response Status:", responseData.message || externalResponse.status);
 
 
     if (!externalResponse.ok) {
       console.error(
-        "External request failed:",
+        "External UpdateProfile failed:",
         responseData.success,
         responseData.message
       );
 
       return NextResponse.json(
         {
-          message: responseData.message || "Request Failed.",
+          message: responseData.message || "Share Failed",
         },
         { status: responseData.status || 500 }
       );
     }
 
-    console.log("Status updated successfully");
+    console.log("Profile shared successfully");
 
     // 6. Send response with cookies
     const response = NextResponse.json(
       {
-        message: responseData.message || "Status updated successfully",
+        message: responseData.message || "Profile shared successfully",
       },
       { status: 201 }
     );
@@ -117,7 +121,7 @@ export async function POST(req) {
     console.error("UPDATE ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to update details" },
+      { message: "Failed to share profile" },
       { status: 500 }
     );
   }

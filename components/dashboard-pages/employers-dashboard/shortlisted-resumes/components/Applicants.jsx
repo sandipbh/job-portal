@@ -26,13 +26,13 @@ const Applicants = ({ candidate,
   console.log(JSON.stringify(candidate));
 
 
-  const review = candidate.review?.split('^') || [];
+  const review = candidate.review?.split("^") || [];
 
   const [ratings, setRatings] = useState({
-    communication: review[0] || 0,
-    interviewFeedback: review[1] || 0,
-    culturalFit: review[2] || 0,
-    overall: review[3] || 0,
+    communication: Number(review[0]) || 0,
+    interviewFeedback: Number(review[1]) || 0,
+    culturalFit: Number(review[2]) || 0,
+    overall: Number(review[3]) || 0,
   });
 
   const [fileName, setFileName] = useState(candidate.reviewFile || "");
@@ -40,9 +40,24 @@ const Applicants = ({ candidate,
   const [remark, setRemark] = useState(candidate.reviewRemark || "");
 
 
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareEmail, setShareEmail] = useState("");
+  const [shareRemark, setShareRemark] = useState("");
+  const [loadingShare, setLoadingShare] = useState(false);
+  const [isSaved, setIsSaved] = useState(candidate.isSave === "Y");
+  const [loadingBookmark, setLoadingBookmark] = useState(false);
 
+  useEffect(() => {
+    setIsSaved(candidate.isSave === "Y");
+  }, [candidate.isSave]);
 
-  const setRating = (type, value) => {
+  const setRating = (type, value, appId) => {
+
+    // Make sure this rating belongs to current candidate
+    if (Number(appId) !== Number(candidate.id)) {
+      return;
+    }
+
     setRatings((prev) => ({
       ...prev,
       [type]: value
@@ -53,6 +68,26 @@ const Applicants = ({ candidate,
     setCommentList(parseComments(candidate.comments, candidate.id));
   }, [candidate.comments, candidate.id]);
 
+
+  useEffect(() => {
+    const review = candidate.review?.split("^") || [];
+
+    setRatings({
+      communication: Number(review[0]) || 0,
+      interviewFeedback: Number(review[1]) || 0,
+      culturalFit: Number(review[2]) || 0,
+      overall: Number(review[3]) || 0,
+    });
+
+    setFileName(candidate.reviewFile || "");
+    setFile(null);
+    setRemark(candidate.reviewRemark || "");
+  }, [
+    candidate.id,
+    candidate.review,
+    candidate.reviewFile,
+    candidate.reviewRemark
+  ]);
 
   const parseComments = (commentsString, applicationId) => {
     if (!commentsString) return [];
@@ -85,7 +120,158 @@ const Applicants = ({ candidate,
       })
       .filter(item => Number(item.appId) === currentAppId);
   };
+  const formatComments = (list) => {
+    return list
+      .map(item => `${item.id}^${item.appId || candidate.id}^${item.comment || ""}^${item.tdate || ""}`)
+      .join("#");
+  };
+  const updateComment = (id, text) => {
+    setSrno(id);
+    setComment(text);
+    setEditingCommentId(id);
+  };
+  const validateInput = (value) => {
+    const regex = /^[a-zA-Z0-9\s.,!?()&'":;-]*$/;
+    return regex.test(value);
+  };
+  const deleteComment = async (id) => {
+    const updatedList1 = commentList.filter(item => item.id == id);
 
+    if (updatedList1.length == 0) {
+      toast.error("Request failed");
+      return;
+    }
+
+    if (updatedList1[0].id < 1 || updatedList1[0].appId < 1) {
+      setError("invalid request")
+      return;
+    }
+    try {
+      const details = {
+        applicationId: updatedList1[0].appId,
+        jobpostId: candidate.jobId,
+        commentSrno: id,
+      };
+
+      setLoading(true);
+      const res = await fetch("/api/emp-application-delete-comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          details,
+        }),
+      });
+
+      const user = await res.json();
+      // console.log("Response from /api/emp-application-change-call-status:", user);
+
+      if (!res.ok) {
+        toast.error(user.message || "request failed");
+        return;
+      }
+      else {
+
+        toast.success(user.message || "Comment deleted");
+
+        const updatedList = commentList.filter(item => item.id !== id);
+        setCommentList(updatedList);
+        if (onUpdateComments) {
+          onUpdateComments(candidate.id, formatComments(updatedList));
+        }
+      }
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Request failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleCommentSubmit = async (appId) => {
+
+    if (comment == "" || comment.length < 2) {
+      setError("enter your comments")
+      return;
+    }
+    if (appId == "" || appId < 1) {
+      setError("invalid request")
+      return;
+    }
+    try {
+      const details = {
+        applicationId: appId,
+        jobpostId: candidate.jobId,
+        commentSrno: srno,
+        comments: comment
+      };
+
+      setLoading(true);
+      const res = await fetch("/api/emp-application-comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          details,
+        }),
+      });
+
+      const user = await res.json();
+
+      if (!res.ok) {
+        toast.error(user.message || "request failed");
+        setLoading(false);
+        return;
+      }
+
+      const savedId = user?.srno || srno || 0;
+      const currentDate = new Date().toLocaleString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+
+      const updatedList = editingCommentId
+        ? commentList.map(item =>
+          item.id === editingCommentId
+            ? { ...item, comment, tdate: item.tdate || currentDate }
+            : item
+        )
+        : [
+          ...commentList,
+          {
+            id: Number(savedId) || commentList.length + 1,
+            appId: Number(appId),
+            comment,
+            tdate: currentDate,
+          },
+        ];
+
+      setCommentList(updatedList);
+      if (onUpdateComments) {
+        onUpdateComments(candidate.id, formatComments(updatedList));
+      }
+
+      setLoading(false);
+      setComment("");
+      setShowComment(true);
+      setEditingCommentId(null);
+      setSrno("0");
+      toast.success(user.message || "Comment saved");
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Request failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+
+  };
   const handleCallStatus = async (status, appId) => {
 
     if (status == "" || appId < 1) {
@@ -131,26 +317,52 @@ const Applicants = ({ candidate,
 
   };
 
-  const handleDeleteStatus = async (srno, appId) => {
+  const handleStatus = async (ttype, candiUqId, appId) => {
+
+    if (ttype == "" || candiUqId == "" || appId < 1) {
+      setError("invalid request")
+      return;
+    }
+    try {
+      const details = {
+        applicationId: appId,
+        jobpostId: candidate.jobId,
+        ttype: ttype,
+        candiUqId: candiUqId
+      };
+
+      setLoading(true);
+      const res = await fetch("/api/emp-application-change-status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          details,
+        }),
+      });
+
+      const user = await res.json();
+      // console.log("Response from /api/emp-application-comment:", user);
+
+      if (!res.ok) {
+        toast.error(user.message || "request failed");
+
+        return;
+      }
+      onUpdateStatus(appId, ttype)
+      toast.success(user.message);
+    } catch (error) {
+      console.error(error);
+      toast.error("Request failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
 
   };
 
-  const handleReviewSubmit = async (e) => {
+  const handleReviewSubmit = async (e, appId) => {
     e.preventDefault();
-
-    const formData = new FormData();
-
-    formData.append("applicationId", candidate.id);
-    formData.append("jobpostId", candidate.jobId);
-    formData.append("communication", ratings.communication);
-    formData.append("interviewFeedback", ratings.interviewFeedback);
-    formData.append("culturalFit", ratings.culturalFit);
-    formData.append("overall", ratings.overall);
-    formData.append("remark", remark || "");
-
-    if (file) {
-      formData.append("file", file);
-    }
 
     const fileToBase64 = (file) => {
       return new Promise((resolve, reject) => {
@@ -166,7 +378,7 @@ const Applicants = ({ candidate,
     const base64File = file ? await fileToBase64(file) : null;
 
     const payload = {
-      applicationId: candidate.id,
+      applicationId: appId,
       jobpostId: candidate.jobId,
       communication: ratings.communication,
       interviewFeedback: ratings.interviewFeedback,
@@ -176,7 +388,6 @@ const Applicants = ({ candidate,
       fileData: base64File,
     };
 
-    console.log("Payload for review submission:", formData);
     try {
 
       setLoadingReview(true);
@@ -195,17 +406,8 @@ const Applicants = ({ candidate,
         return;
       }
 
-      setRatings({
-        communication: 0,
-        interviewFeedback: 0,
-        culturalFit: 0,
-        overall: 0
-      });
 
-      setFile(null);
-      setRemark("");
-
-      toast.success("Feedback submitted successfully");
+      toast.success(user.message);
     } catch (error) {
       console.error(error);
       toast.error("Request failed. Please try again.");
@@ -214,7 +416,88 @@ const Applicants = ({ candidate,
     }
   };
 
-  const StarRating = ({ label, type }) => {
+  const handleBookmarkSubmit = async (e, appId) => {
+    if (e && typeof e.preventDefault === "function") {
+      e.preventDefault();
+    }
+
+    const payload = {
+      applicationId: appId,
+      jobpostId: candidate.jobId,
+    };
+
+    try {
+      setLoadingBookmark(true);
+      const res = await fetch("/api/emp-application-profile-bookmark", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const user = await res.json();
+
+      if (!res.ok) {
+        // toast.error(user.message || "Request failed");
+        return;
+      }
+
+      setIsSaved((prev) => !prev);
+      //toast.success(user.message);
+    } catch (error) {
+      console.error(error);
+      toast.error("Request failed. Please try again.");
+    } finally {
+      setLoadingBookmark(false);
+    }
+  };
+
+
+  const handleShareSubmit = async (e, appId) => {
+    e.preventDefault();
+
+    console.log("Email:", shareEmail);
+    console.log("Remark:", shareRemark);
+
+    const payload = {
+      applicationId: appId,
+      jobpostId: candidate.jobId,
+      shareEmail: shareEmail,
+      shareRemark: shareRemark,
+      shareLink: `${window.location.origin}/candidates-single-v1/${candidate.candiUqId}`,
+    };
+
+    try {
+
+      setLoadingShare(true);
+
+      const res = await fetch("/api/emp-application-profile-share", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      const user = await res.json();
+
+      if (!res.ok) {
+        toast.error(user.message || "Request failed");
+        setLoadingShare(false);
+        return;
+      }
+
+      setShowShareModal(false);
+      setShareEmail("");
+      setShareRemark("");
+
+      toast.success(user.message);
+    } catch (error) {
+      console.error(error);
+      toast.error("Request failed. Please try again.");
+    } finally {
+      setLoadingShare(false);
+    }
+  };
+
+  const StarRating = ({ label, type, appId }) => {
     return (
       <div className="mb-1 d-flex align-items-center gap-2">
         <label className="fs-6" style={{ fontWeight: "400" }}>
@@ -224,8 +507,8 @@ const Applicants = ({ candidate,
         <div>
           {[1, 2, 3, 4, 5].map((star) => (
             <span
-              key={star}
-              onClick={() => setRating(type, star)}
+              key={`${appId}-${type}-${star}`}
+              onClick={() => setRating(type, star, appId)}
               style={{
                 cursor: "pointer",
                 fontSize: "22px",
@@ -240,10 +523,34 @@ const Applicants = ({ candidate,
             </span>
           ))}
         </div>
-      </div >
+      </div>
     );
   };
 
+  const RatingStars = ({ rating = 0 }) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className="rating-stars">
+        {/* Filled */}
+        {[...Array(fullStars)].map((_, index) => (
+          <i key={`full-${index}`} className="la la-star filled"></i>
+        ))}
+
+        {/* Half */}
+        {hasHalfStar && (
+          <i className="la la-star-half-alt filled"></i>
+        )}
+
+        {/* Empty */}
+        {[...Array(emptyStars)].map((_, index) => (
+          <i key={`empty-${index}`} className="lar la-star empty"></i>
+        ))}
+      </div>
+    );
+  };
   return (
     <>
 
@@ -271,11 +578,27 @@ const Applicants = ({ candidate,
               </figure>
 
               <div className="name mb-0">
-                <div className="d-flex">
-                  <input type="checkbox" className="me-2" />
-                  <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
-                    {candidate.candiName}
-                  </Link>
+                <div className="d-flex justify-content-between align-items-center gap-2">
+                  <div>
+                    <input type="checkbox" className="me-2" />
+                    <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
+                      {candidate.candiName}
+
+                    </Link>
+                  </div>
+                  <div>
+                    <button
+                      type="button"
+                      className="action-icon-btn"
+                      onClick={(e) => handleBookmarkSubmit(e, candidate.id)}
+                      disabled={loadingBookmark}
+                    >
+                      <i
+                        style={{ fontSize: "16px" }}
+                        className={isSaved ? "fas fa-bookmark" : "far fa-bookmark"}
+                      ></i>
+                    </button>
+                  </div>
                 </div>
                 <ul className="candidate-info">
                   <li className="icon flaticon-briefcase" style={{ paddingLeft: "0" }}>
@@ -339,56 +662,50 @@ const Applicants = ({ candidate,
               ))}
             </div>
           </div>
+          <div className="candidate-row skills-row">
+            <div className="label1">Rating</div>
+            <div className="d-flex align-items-center">
+              <RatingStars rating={Number(candidate.avgRating).toFixed(1)} />
+              <span className="ms-2">
+                {Number(candidate.avgRating).toFixed(1)} ({candidate.totalRating} reviews)
+              </span>
+            </div>
+          </div>
+          <div className="candidate-row skills-row">
+            <div className="label1">Job Title :</div>
+            <div className="d-flex align-items-center">
+              <span style={{ fontSize: "12pt", fontWeight: "500" }}>  {candidate.jobTitle}</span>
+            </div>
+          </div>
 
 
-          <div className="candidate-actions d-flex flex-wrap align-items-center">
 
-            {candidate.status != "Applied" ? (
+          <div className="ccandidate-actions d-flex flex-wrap justify-content-between align-items-center gap-2">
+
+            {candidate.status != "Applied" &&
               candidate.status === "Shortlisted" ? (
-                <button className="action-btn shortlist-btn" disabled={true} >
-                  <i className="la la-check"></i> Shortlisted
-                </button>
-              ) : candidate.status === "Maybe" ? (
-                <button className="action-btn maybe-btn" disabled={true}>
-                  <i className="la la-clock-o"></i> Maybe
-                </button>
-              ) : candidate.status === "Rejected" ? (
-                <button className="action-btn reject-btn" disabled={true}>
-                  <i className="la la-times"></i> Rejected
-                </button>
-              ) : null
-            ) : (
-              <>
-                <button
-                  className="action-btn shortlist-btn"
-                  onClick={() => onUpdateStatus("Shortlisted", candidate.candiUqId, candidate.id)}
-                >
-                  <i className="la la-check"></i>
-                  Shortlist
-                </button>
-
-                <button
-                  className="action-btn maybe-btn"
-                  onClick={() => onUpdateStatus("Maybe", candidate.candiUqId, candidate.id)}
-                >
-                  <i className="la la-clock-o"></i>
-                  Maybe
-                </button>
-                <button
-                  className="action-btn reject-btn"
-                  onClick={() => onUpdateStatus("Rejected", candidate.candiUqId, candidate.id)}
-                >
-                  <i className="la la-times"></i>
-                  Reject
-                </button>
-              </>
-            )}
+              <button className="action-btn shortlist-btn" disabled={true} >
+                <i className="la la-check"></i> Shortlisted
+              </button>
+            ) : candidate.status === "Maybe" ? (
+              <button className="action-btn maybe-btn" disabled={true}>
+                <i className="la la-clock-o"></i> Maybe
+              </button>
+            ) : candidate.status === "Rejected" ? (
+              <button className="action-btn reject-btn" disabled={true}>
+                <i className="la la-times"></i> Rejected
+              </button>
+            ) : null
+            }
 
             <div className="right-side ms-0 ms-md-auto mt-2 mt-md-0">
               {candidate.status != "Deleted" ? (
                 <button
                   className="icon-circle"
-                  onClick={() => onUpdateStatus("Deleted", candidate.candiUqId, candidate.id)}
+                  onClick={() =>
+                    handleStatus("Deleted", candidate.candiUqId, candidate.id)
+
+                  }
                 >
                   <i className="la la-trash"></i>
                 </button>
@@ -399,7 +716,7 @@ const Applicants = ({ candidate,
                 <i className="la la-envelope-o"></i>
               </button>
 
-              <button className="icon-circle">
+              <button className="icon-circle" onClick={() => setShowShareModal(true)}>
                 <i className="la la-share"></i>
               </button>
             </div>
@@ -410,7 +727,6 @@ const Applicants = ({ candidate,
           <div className="candidate-extra">
 
             {/* Row 2 */}
-            <div className="mb-2">  <h6>Job Title : {candidate.jobTitle}</h6></div>
             <div className="match-strip">
               {candidate.queAns &&
                 candidate.queAns
@@ -431,16 +747,21 @@ const Applicants = ({ candidate,
 
                 <button
                   className="comment-link"
-                  onClick={() => setShowComment(!showComment)}
+                  onClick={() => {
+                    setShowComment(!showComment);
+                    setShowReview(false);
+                  }}
                 >
-                  <i className="la la-comment-o"></i>
                   {showComment ? "Hide Comment" : "Add Comment"}
                   ({commentList.length})
                 </button>
 
                 <button
                   className="comment-link ms-2"
-                  onClick={() => setShowReview(!showReview)}
+                  onClick={() => {
+                    setShowReview(!showReview);
+                    setShowComment(false);
+                  }}
                 >
                   <i className="la la-star"></i>
                   {showReview ? "Hide Review" : "Add Review"}
@@ -493,7 +814,7 @@ const Applicants = ({ candidate,
                   <button type="button"
                     className="btn btn-sm btn-primary"
                     disabled={loading}
-                    onClick={() => handleSubmit(candidate.id)}
+                    onClick={() => handleCommentSubmit(candidate.id)}
                   >
                     {loading ? "Saving..." : editingCommentId ? "Update" : "Save"}
                   </button>
@@ -514,10 +835,7 @@ const Applicants = ({ candidate,
                   ) : null}
 
                 </div>
-
                 <>
-
-
                   {commentList.map(item => (
                     <div key={item.id}>
                       <div className="comment-item">
@@ -529,7 +847,7 @@ const Applicants = ({ candidate,
                             <div className="comment-actions">
                               <small >{item.tdate} </small>
                               <div>
-                                <button  >
+                                <button onClick={() => updateComment(item.id, item.comment)}>
                                   <i className="la la-edit"></i>
                                 </button>
 
@@ -543,8 +861,6 @@ const Applicants = ({ candidate,
                       </div>
                     </div>
                   ))}
-
-
                 </>
               </div>
             )}
@@ -559,30 +875,30 @@ const Applicants = ({ candidate,
 
                   <div className="card-body default-form">
 
-                    <form onSubmit={handleReviewSubmit}>
+                    <form onSubmit={(e) => handleReviewSubmit(e, candidate.id)}>
 
-                      {/* Communication */}
                       <StarRating
                         label="Communication"
                         type="communication"
+                        appId={candidate.id}
                       />
 
-                      {/* Interview Feedback */}
                       <StarRating
                         label="Interview Feedback"
                         type="interviewFeedback"
+                        appId={candidate.id}
                       />
 
-                      {/* Cultural Fit */}
                       <StarRating
                         label="Cultural Fit"
                         type="culturalFit"
+                        appId={candidate.id}
                       />
 
-                      {/* Overall */}
                       <StarRating
                         label="Overall"
                         type="overall"
+                        appId={candidate.id}
                       />
 
                       {/* File Upload */}
@@ -590,17 +906,18 @@ const Applicants = ({ candidate,
                         <label className="fs-6" style={{ fontWeight: "400" }}>
                           File attachment for test result {fileName && (
                             <a href={`/candiReview/${fileName}`} target="_blank" rel="noopener noreferrer">
-                              (View Current File)
+                              (View Attachment)
                             </a>
                           )}
                         </label>
                         <input
                           type="file"
                           className="form-control"
-                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                          onChange={(e) =>
-                            setFile(e.target.files[0])
-                          }
+                          accept=".pdf"
+                          onChange={(e) => {
+                            const selectedFile = e.target.files?.[0] || null;
+                            setFile(selectedFile);
+                          }}
                         />
                       </div>
 
@@ -611,16 +928,13 @@ const Applicants = ({ candidate,
                         </label>
 
                         <textarea
-                          className=" about-input-company"
+                          className="about-input-company"
                           style={{ height: "70px" }}
-                          maxLength={700}
+                          maxLength={500}
                           rows="3"
-                          accept=".pdf"
                           placeholder="Enter your feedback..."
                           value={remark}
-                          onChange={(e) =>
-                            setRemark(e.target.value || null)
-                          }
+                          onChange={(e) => setRemark(e.target.value)}
                         />
                       </div>
 
@@ -637,6 +951,101 @@ const Applicants = ({ candidate,
                   </div>
                 </div>
               </div>)}
+
+            {/* Modal */}
+            {showShareModal && (
+              <div>
+                <div
+                  className="modal fade show d-block"
+                  tabIndex="-1"
+                  role="dialog"
+                >
+                  <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+
+                      {/* Header */}
+                      <div className="modal-header">
+                        <h5 className="modal-title">
+                          Share Profile of {candidate.candiName}
+                        </h5>
+
+                        <button
+                          type="button"
+                          className="btn-close"
+                          onClick={() => setShowShareModal(false)}
+                        ></button>
+                      </div>
+
+                      {/* Body */}
+                      <form onSubmit={(e) => handleShareSubmit(e, candidate.id)}>
+                        <div className="modal-body">
+
+                          {/* Textbox */}
+                          <div className="mb-3">
+                            <label className="form-label">
+                              Email
+                            </label>
+                            <input
+                              type="email"
+                              className="form-control"
+                              value={shareEmail}
+                              onChange={(e) => setShareEmail(e.target.value)}
+                              placeholder="Enter email"
+                              required
+                            />
+                          </div>
+
+                          {/* Textarea */}
+                          <div className="mb-3">
+                            <label className="form-label">
+                              Remark
+                            </label>
+
+                            <textarea
+                              className="form-control"
+                              rows="4"
+                              value={shareRemark}
+                              onChange={(e) => setShareRemark(e.target.value)}
+                              placeholder="Enter remark"
+                              required
+                              maxLength={500}
+                            ></textarea>
+                          </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="modal-footer">
+
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-secondary"
+                            onClick={() => setShowShareModal(false)}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="btn btn-sm btn-primary"
+                          >
+                            {loading ? "Saving..." : "Submit"}
+                          </button>
+
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+
+                {/* Backdrop */}
+                <div
+                  className="modal-backdrop fade show"
+                  onClick={() => setShowShareModal(false)}
+                ></div>
+              </div>
+            )}
+
+
 
           </div>
           {/* End admin options box */}

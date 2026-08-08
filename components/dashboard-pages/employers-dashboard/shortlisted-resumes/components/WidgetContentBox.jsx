@@ -376,11 +376,11 @@ const WidgetContentBox = () => {
         <PaginationControls />
       </div>
 
-      <div className="row">
+      <div className="row align-items-start">
         {currentJobs.length > 0 ? (
-          currentJobs.map((candidate) => (
+          currentJobs.map((candidate, index) => (
             <Applicants
-              key={candidate.id}
+              key={`${candidate.id || "unknown"}-${candidate.candiUqId || "unknown"}-${index}`}
               candidate={candidate}
               onUpdateComments={updateCandidateComments}
               onUpdateStatus={handleStatus}

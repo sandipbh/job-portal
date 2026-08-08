@@ -1,13 +1,49 @@
 
 'use client'
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+
 import HeaderNavContent from "./HeaderNavContent";
 import Image from "next/image";
 
 const DefaulHeader = () => {
   const [navbar, setNavbar] = useState(false);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState("");
+
+  useEffect(() => {
+    getCookiesValue();
+  }, []);
+
+  const getCookiesValue = async () => {
+    try {
+      const response = await fetch("/api/cookies-details", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      const data = await response.json();
+      const role = data?.role ?? "";
+
+      if (role != "") {
+        setUserRole(role);
+        setIsLoggedIn(true);
+      }
+      else {
+        setUserRole("");
+        setIsLoggedIn(false);
+      }
+
+    } catch (error) {
+      console.error(error);
+      setUserRole("");
+      setIsLoggedIn(false);
+    }
+  };
+
 
   const changeBackground = () => {
     if (window.scrollY >= 10) {
@@ -24,9 +60,8 @@ const DefaulHeader = () => {
   return (
     // <!-- Main Header-->
     <header
-      className={`main-header  ${
-        navbar ? "fixed-header animated slideInDown" : ""
-      }`}
+      className={`main-header  ${navbar ? "fixed-header animated slideInDown" : ""
+        }`}
     >
       {/* <!-- Main box --> */}
       <div className="main-box">
@@ -54,14 +89,37 @@ const DefaulHeader = () => {
         <div className="outer-box">
           {/* <!-- Login/Register --> */}
           <div className="btn-box">
-            <a
+
+            {isLoggedIn ? (
+              <Link
+                href={
+                  userRole === "employer"
+                    ? "/employers-dashboard/dashboard"
+                    : "/candidates-dashboard/dashboard"
+                }
+                className="theme-btn btn-style-three"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <a
+                href="#"
+                className="theme-btn btn-style-three call-modal"
+                data-bs-toggle="modal"
+                data-bs-target="#loginPopupModal"
+              >
+                Login / Register
+              </a>
+            )}
+
+            {/* <a
               href="#"
               className="theme-btn btn-style-three call-modal"
               data-bs-toggle="modal"
               data-bs-target="#loginPopupModal"
             >
               Login / Register
-            </a>
+            </a> */}
             <Link
               href="/employers-dashboard/post-jobs"
               className="theme-btn btn-style-one"

@@ -4539,7 +4539,7 @@ in 2 tab of Company Profile
 }
 
 .view-more-btn:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 
@@ -7212,4 +7212,21 @@ in 2 tab of Company Profile
     font-size: 17px;
   }
 
+}
+
+.rating-stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.rating-stars i {
+  font-size: 18px;
+}
+
+.rating-stars .filled {
+  color: rgb(255, 193, 7);
+}
+
+.rating-stars .empty {
+  color: #6a6a6ab5;
 }

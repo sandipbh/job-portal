@@ -61,11 +61,6 @@ const SearchFilterBox = () => {
 
             const data = await response.json();
 
-            // const options = (data.data || []).map(x => ({
-            //     key: x.key,
-            //     value: x.value,        // unique id
-            //     label: x.value       // text to display
-            // }));
             const options = data.data.map((x, index) => ({
                 key: x.key,
                 value: `${x.key}_${x.type}`,   // unique
@@ -430,6 +425,33 @@ const SearchFilterBox = () => {
             );
         } else {
             setSelectedNoticePeriods([...selectedNoticePeriods, period]);
+        }
+    };
+
+    const shareLink = async (e, name, id) => {
+        e.preventDefault();
+        //const shareUrl = window.location.href;
+        const shareUrl = `${window.location.origin}/candidates-single-v1/${id}`;
+        const shareData = {
+            title: document.title,
+            text: `Check out this Profile : ${name}`,
+            url: shareUrl,
+        };
+
+        try {
+            if (navigator.share) {
+                // Mobile + supported desktop browsers
+                await navigator.share(shareData);
+            } else {
+                // Desktop fallback
+                await navigator.clipboard.writeText(shareUrl);
+                toast.success("Link copied to clipboard");
+            }
+        } catch (error) {
+            // User cancelled share dialog
+            if (error.name !== "AbortError") {
+                console.error("Share failed:", error);
+            }
         }
     };
     return (
@@ -822,23 +844,22 @@ const SearchFilterBox = () => {
                                             </div>
 
                                             <div className="candidate-basic">
-                                                <h4>
+                                                <h5 className="fw-semibold" style={{ fontSize: "1.15rem" }}>
                                                     <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
                                                         {candidate.candiName}
                                                     </Link>
-                                                </h4>
+
+                                                </h5>
 
                                                 <div className="top-meta">
                                                     <span>
                                                         <i className="flaticon-briefcase"></i>
                                                         {" "}   {candidate.experience}
                                                     </span>
-
                                                     <span>
                                                         <i className="flaticon-money"></i>
                                                         {" "}  &#8377;  {candidate.curentSalary}
                                                     </span>
-
                                                     <span>
                                                         <i className="flaticon-map-locator"></i>
                                                         {" "}   {candidate.city}, {candidate.state}
@@ -933,32 +954,44 @@ const SearchFilterBox = () => {
                                     </div>
                                     <div className="profile-section">
                                         <div className="candidate-side-actions">
-                                            <button className="action-icon-btn">
+                                            {/* <button className="action-icon-btn">
                                                 <i className="las la-comment"></i>
+                                            </button> */}
+                                            <button
+                                                type="button"
+                                                className="action-icon-btn"
+
+                                            ><i className="las la-bookmark"></i>
+                                                {/* <i className={isSaved ? "las la-bookmark" : "lar la-bookmark"}></i>
+                                                {isSaved ? "Saved" : "Save"} */}
+                                            </button>
+                                            <button className="action-icon-btn"
+                                                onClick={(e) =>
+                                                    shareLink(
+                                                        e,
+                                                        candidate.candiName,
+                                                        candidate.candiUqId
+                                                    )
+                                                }
+                                            >
+                                                <i className="lab la-telegram"></i>
                                             </button>
 
-                                            <button className="action-icon-btn">
-                                                <i className="lar la-bookmark"></i>
-                                            </button>
+                                            {/* <button className="action-icon-btn">
+                                                <i className="las la-share"></i>
+                                            </button> */}
 
-                                            <button className="action-icon-btn">
-                                                <i className="las la-paper-plane"></i>
-                                            </button>
-
-                                            <button className="action-icon-btn">
-                                                <i className="las la-folder-plus"></i>
-                                            </button>
-
-                                            <button className="action-icon-btn">
+                                            {/* <button className="action-icon-btn">
                                                 <i className="las la-bell"></i>
-                                            </button>
+                                            </button> */}
                                         </div>
                                     </div>
 
                                     <p className="profile-summary">
-                                        {candidate.profileDesc}
+                                        {candidate.profileDesc?.length > 100
+                                            ? candidate.profileDesc.slice(0, 97) + "..."
+                                            : candidate.profileDesc}
                                     </p>
-
                                     <div className="candidate-action-buttons">
                                         <Link
                                             href={`/candidates-single-v1/${candidate.candiUqId}`}

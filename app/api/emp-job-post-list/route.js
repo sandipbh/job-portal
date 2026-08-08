@@ -13,7 +13,7 @@ export async function GET(req) {
 
   let user = {};
   try {
-    user = JSON.parse(token);
+    user = token ? JSON.parse(token) : {};
   } catch (err) {
     console.error("Invalid JSON token:", err);
     user = {};
@@ -79,7 +79,7 @@ export async function POST(req) {
 
   let user = {};
   try {
-    user = JSON.parse(token);
+    user = token ? JSON.parse(token) : {};
   } catch (err) {
     console.error("Invalid JSON token:", err);
     user = {};
