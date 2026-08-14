@@ -703,19 +703,19 @@ const JobListingsTable = () => {
                         </div>
                       </div>
                     </td>
-
                     <td>
                       <div className="response-count">
                         <Link
                           href={`/employers-dashboard/all-applicants?jobId=${item.id}`}
-                        >
-                          {item.applyCount} Responses
+                        >{item.applyCount} Responses
                         </Link>
                         <Link
                           href={`/employers-dashboard/all-applicants?jobId=${item.id}&status=Shortlisted`}
-                          className="shortlisted-link"
-                        >
+                          className="shortlisted-link">
                           {item.shortlistCount} Shortlisted
+                        </Link>
+                        <Link href="javascript:void(0)" className="viewed-link" style={{ color: "#696969" }}>
+                          {item.viewCount} Viewed
                         </Link>
                       </div>
                     </td>

@@ -46,7 +46,7 @@ const JobDetailsV2 = ({ id }) => {
             setFullName(fullname);
             setLoginType(role);
             setLoginUqid(uqid);
-
+            saveViewJob(uqid);
 
         } catch (error) {
             console.error(error);
@@ -70,11 +70,11 @@ const JobDetailsV2 = ({ id }) => {
 
     }, []);
 
-    useEffect(() => {
-        saveViewJob();
-    }, [jobId]);
+    // useEffect(() => {
+    //     saveViewJob();
+    // }, [jobId]);
 
-    const saveViewJob = async () => {
+    const saveViewJob = async (uqid) => {
         try {
 
             if (loginType == "employer") {
@@ -82,7 +82,7 @@ const JobDetailsV2 = ({ id }) => {
                 return;
             }
             const payload = {
-                LoginUqid: loginUqid,
+                LoginUqid: uqid,
                 jobpostId: jobId,
             }
 

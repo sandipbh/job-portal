@@ -5582,12 +5582,12 @@ in 2 tab of Company Profile
 .response-count {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0px;
 }
 
 .response-count a {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: #1967d2;
   transition: .25s;
 }
@@ -5720,7 +5720,7 @@ in 2 tab of Company Profile
   border-radius: 7px;
   overflow: hidden;
   width: 190px;
-  height: 36px;
+  height: 30px;
   background: #fff;
 }
 

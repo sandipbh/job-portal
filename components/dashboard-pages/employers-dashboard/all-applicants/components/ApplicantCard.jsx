@@ -14,6 +14,13 @@ const ApplicantCard = ({
     onUpdateComments,
 }) => {
 
+
+    const [showShareModal, setShowShareModal] = useState(false);
+    const [loadingShare, setLoadingShare] = useState(false);
+    const [shareEmail, setShareEmail] = useState("");
+    const [shareRemark, setShareRemark] = useState("");
+
+
     const [showComment, setShowComment] = useState(false);
     const [comment, setComment] = useState("");
     const [error, setError] = useState("");
@@ -23,6 +30,13 @@ const ApplicantCard = ({
     const [editingCommentId, setEditingCommentId] = useState(null);
 
     const [commentList, setCommentList] = useState([]);
+
+    const [isSaved, setIsSaved] = useState(candidate.isSave === "Y");
+    const [loadingBookmark, setLoadingBookmark] = useState(false);
+
+    useEffect(() => {
+        setIsSaved(candidate.isSave === "Y");
+    }, [candidate.isSave]);
 
     const parseComments = (commentsString, applicationId) => {
         if (!commentsString) return [];
@@ -66,12 +80,132 @@ const ApplicantCard = ({
         setCommentList(parseComments(candidate.comments, candidate.id));
     }, [candidate.comments, candidate.id]);
 
+    const handleBookmarkSubmit = async (e, appId) => {
+        if (e && typeof e.preventDefault === "function") {
+            e.preventDefault();
+        }
+
+        const payload = {
+            applicationId: appId,
+            jobpostId: candidate.jobId,
+        };
+
+        try {
+            setLoadingBookmark(true);
+            const res = await fetch("/api/emp-application-profile-bookmark", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+            const user = await res.json();
+
+            if (!res.ok) {
+                // toast.error(user.message || "Request failed");
+                return;
+            }
+
+            setIsSaved((prev) => !prev);
+            //toast.success(user.message);
+        } catch (error) {
+            console.error(error);
+            toast.error("Request failed. Please try again.");
+        } finally {
+            setLoadingBookmark(false);
+        }
+    };
+
     const updateComment = (id, text) => {
         setSrno(id);
         setComment(text);
         setEditingCommentId(id);
     };
 
+    const confirmDelete = (candidate) => {
+        toast(
+            ({ closeToast }) => (
+                <div>
+                    <div className="mb-2">
+                        Do you want to delete this candidate?
+                    </div>
+
+                    <div className="d-flex gap-2">
+                        <button
+                            className="btn btn-danger btn-sm"
+                            onClick={async () => {
+                                closeToast();
+
+                                await handleStatus(
+                                    "Deleted",
+                                    candidate.candiUqId,
+                                    candidate.id
+                                );
+                            }}
+                        >
+                            Yes
+                        </button>
+
+                        <button
+                            className="btn btn-secondary btn-sm"
+                            onClick={closeToast}
+                        >
+                            No
+                        </button>
+                    </div>
+                </div>
+            ),
+            {
+                autoClose: false,
+                closeOnClick: false,
+                closeButton: false,
+            }
+        );
+    };
+
+    const handleShareSubmit = async (e, appId) => {
+        e.preventDefault();
+
+        console.log("Email:", shareEmail);
+        console.log("Remark:", shareRemark);
+
+        const payload = {
+            applicationId: appId,
+            jobpostId: candidate.jobId,
+            shareEmail: shareEmail,
+            shareRemark: shareRemark,
+            shareLink: `${window.location.origin}/candidates-single-v1/${candidate.candiUqId}`,
+        };
+
+        try {
+
+            setLoadingShare(true);
+
+            const res = await fetch("/api/emp-application-profile-share", {
+                method: "POST",
+                body: JSON.stringify(payload),
+            });
+
+            const user = await res.json();
+
+            if (!res.ok) {
+                toast.error(user.message || "Request failed");
+                setLoadingShare(false);
+                return;
+            }
+
+            setShowShareModal(false);
+            setShareEmail("");
+            setShareRemark("");
+
+            toast.success(user.message);
+        } catch (error) {
+            console.error(error);
+            toast.error("Request failed. Please try again.");
+        } finally {
+            setLoadingShare(false);
+        }
+    };
     const deleteComment = async (id) => {
         const updatedList1 = commentList.filter(item => item.id == id);
 
@@ -316,8 +450,6 @@ const ApplicantCard = ({
 
     const handleDeleteStatus = async (srno, appId) => {
 
-
-
     };
     return (
         <div
@@ -343,12 +475,27 @@ const ApplicantCard = ({
                         </figure>
 
                         <h4 className="name mb-0">
-                            <div className="d-flex  ">
-                                <input type="checkbox" className="me-2"></input>
-                                <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
-                                    {candidate.candiName}
-                                </Link>
+                            <div className="d-flex justify-content-between align-items-center gap-2">
+                                <div>
+                                    <input type="checkbox" className="me-2" />
+                                    <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
+                                        {candidate.candiName}
 
+                                    </Link>
+                                </div>
+                                <div>
+                                    <button
+                                        type="button"
+                                        className="action-icon-btn"
+                                        onClick={(e) => handleBookmarkSubmit(e, candidate.id)}
+                                        disabled={loadingBookmark}
+                                    >
+                                        <i
+                                            style={{ fontSize: "16px" }}
+                                            className={isSaved ? "fas fa-bookmark" : "far fa-bookmark"}
+                                        ></i>
+                                    </button>
+                                </div>
                             </div>
                             <ul className="candidate-info">
                                 <li className="  icon flaticon-briefcase" style={{ paddingLeft: "0" }} >{" "}
@@ -469,7 +616,7 @@ const ApplicantCard = ({
                         {candidate.status != "Deleted" ? (
                             <button
                                 className="icon-circle"
-                                onClick={() => handleStatus("Deleted", candidate.candiUqId, candidate.id)}
+                                onClick={() => confirmDelete(candidate)}
                             >
                                 <i className="la la-trash"></i>
                             </button>
@@ -479,10 +626,16 @@ const ApplicantCard = ({
                         <button className="icon-circle">
                             <i className="la la-envelope-o"></i>
                         </button>
-
-                        <button className="icon-circle">
+                        <button className="icon-circle" onClick={() => setShowShareModal(true)}>
                             <i className="la la-share"></i>
                         </button>
+
+                        <button className="icon-circle" style={{ width: "50px", borderRadius: "5%" }} >
+                            <i className="la la-eye" style={{ fontSize: "12pt" }}></i> <b className="pe-2">{candidate.viewCount}</b>
+                        </button>
+                        <div>
+
+                        </div>
                     </div>
 
                 </div>
@@ -627,8 +780,102 @@ const ApplicantCard = ({
                     )}
 
                 </div>
-                {/* End admin options box */}
+
             </div >
+
+            {/* Modal */}
+            {showShareModal && (
+                <div>
+                    <div
+                        className="modal fade show d-block"
+                        tabIndex="-1"
+                        role="dialog"
+                    >
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content">
+
+                                {/* Header */}
+                                <div className="modal-header">
+                                    <h5 className="modal-title">
+                                        Share Profile of {candidate.candiName}
+                                    </h5>
+
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        onClick={() => setShowShareModal(false)}
+                                    ></button>
+                                </div>
+
+                                {/* Body */}
+                                <form onSubmit={(e) => handleShareSubmit(e, candidate.id)}>
+                                    <div className="modal-body">
+
+                                        {/* Textbox */}
+                                        <div className="mb-3">
+                                            <label className="form-label">
+                                                Email
+                                            </label>
+                                            <input
+                                                type="email"
+                                                className="form-control"
+                                                value={shareEmail}
+                                                onChange={(e) => setShareEmail(e.target.value)}
+                                                placeholder="Enter email"
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* Textarea */}
+                                        <div className="mb-3">
+                                            <label className="form-label">
+                                                Remark
+                                            </label>
+
+                                            <textarea
+                                                className="form-control"
+                                                rows="4"
+                                                value={shareRemark}
+                                                onChange={(e) => setShareRemark(e.target.value)}
+                                                placeholder="Enter remark"
+                                                required
+                                                maxLength={500}
+                                            ></textarea>
+                                        </div>
+                                    </div>
+
+                                    {/* Footer */}
+                                    <div className="modal-footer">
+
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-secondary"
+                                            onClick={() => setShowShareModal(false)}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="btn btn-sm btn-primary"
+                                        >
+                                            {loading ? "Saving..." : "Submit"}
+                                        </button>
+
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Backdrop */}
+                    <div
+                        className="modal-backdrop fade show"
+                        onClick={() => setShowShareModal(false)}
+                    ></div>
+                </div>
+            )}
+
         </div >
 
     );

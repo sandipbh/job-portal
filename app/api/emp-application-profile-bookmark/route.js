@@ -23,6 +23,7 @@ export async function POST(req) {
     const {
       jobpostId,
       applicationId,
+      candiUqId,
       shareEmail,
       shareRemark,
       shareLink
@@ -50,6 +51,7 @@ export async function POST(req) {
     const loginBody = {
       applicationId: applicationId,
       jobpostId: jobpostId,
+      candiUqId: candiUqId,
       uqId: user.external.uqId,
       LoginIp: LoginIp,
       Role: user.external.role,

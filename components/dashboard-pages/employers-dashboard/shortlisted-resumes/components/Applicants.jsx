@@ -41,9 +41,10 @@ const Applicants = ({ candidate,
 
 
   const [showShareModal, setShowShareModal] = useState(false);
+  const [loadingShare, setLoadingShare] = useState(false);
   const [shareEmail, setShareEmail] = useState("");
   const [shareRemark, setShareRemark] = useState("");
-  const [loadingShare, setLoadingShare] = useState(false);
+
   const [isSaved, setIsSaved] = useState(candidate.isSave === "Y");
   const [loadingBookmark, setLoadingBookmark] = useState(false);
 
@@ -452,6 +453,46 @@ const Applicants = ({ candidate,
     }
   };
 
+  const confirmDelete = (candidate) => {
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <div className="mb-2">
+            Do you want to delete this candidate?
+          </div>
+
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={async () => {
+                closeToast();
+
+                await handleStatus(
+                  "Deleted",
+                  candidate.candiUqId,
+                  candidate.id
+                );
+              }}
+            >
+              Yes
+            </button>
+
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={closeToast}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        autoClose: false,
+        closeOnClick: false,
+        closeButton: false,
+      }
+    );
+  };
 
   const handleShareSubmit = async (e, appId) => {
     e.preventDefault();
@@ -702,10 +743,7 @@ const Applicants = ({ candidate,
               {candidate.status != "Deleted" ? (
                 <button
                   className="icon-circle"
-                  onClick={() =>
-                    handleStatus("Deleted", candidate.candiUqId, candidate.id)
-
-                  }
+                  onClick={() => confirmDelete(candidate)}
                 >
                   <i className="la la-trash"></i>
                 </button>
@@ -718,6 +756,9 @@ const Applicants = ({ candidate,
 
               <button className="icon-circle" onClick={() => setShowShareModal(true)}>
                 <i className="la la-share"></i>
+              </button>
+              <button className="icon-circle" style={{ width: "50px", borderRadius: "5%" }} >
+                <i className="la la-eye" style={{ fontSize: "12pt" }}></i> <b className="pe-2">{candidate.viewCount}</b>
               </button>
             </div>
 

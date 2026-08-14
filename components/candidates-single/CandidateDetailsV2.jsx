@@ -109,7 +109,6 @@ const CandidateDetailsV2 = ({ id }) => {
 
     const saveViewProfile = async (uqid) => {
         try {
-            debugger;
 
             const payload = {
                 LoginUqid: uqid,

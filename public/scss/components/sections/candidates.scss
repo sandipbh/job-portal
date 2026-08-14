@@ -236,18 +236,18 @@ Candidates Section Two
   content: "";
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   width: 0;
   height: 0;
-  border-top: 35px solid #1d9958;
-  border-left: 35px solid transparent;
+  border-top: 30px solid #1d9958;
+  border-right: 30px solid transparent;
 }
 
 .candidate-block-three .inner-box.show-check::after {
   content: "✓";
   position: absolute;
   top: -3px;
-  right: 4px;
+  left: 4px;
   color: #fff;
   font-size: 14px;
   font-weight: bold;

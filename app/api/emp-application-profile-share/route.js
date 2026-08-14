@@ -25,7 +25,8 @@ export async function POST(req) {
       applicationId,
       shareEmail,
       shareRemark,
-      shareLink
+      shareLink,
+      candiUqId
     } = await req.json();
 
     console.log("shareRemark :", shareRemark)
@@ -53,6 +54,7 @@ export async function POST(req) {
       shareEmail: shareEmail,
       shareRemark: shareRemark,
       shareLink: shareLink,
+      candiUqId: candiUqId,
       uqId: user.external.uqId,
       LoginIp: LoginIp,
       Role: user.external.role,
@@ -71,7 +73,7 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-    //console.log("External API Base URL 00:", externalApiBaseUrl);
+    console.log("External API Base URL 00:", loginBody);
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||

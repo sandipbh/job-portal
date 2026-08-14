@@ -46,6 +46,58 @@ const SearchFilterBox = () => {
 
     const [selectedSkillsList, setSelectedSkillsList] = useState();
 
+    const [isSaved, setIsSaved] = useState("N");
+    const [loadingBookmark, setLoadingBookmark] = useState(false);
+
+    const [showContact, setShowContact] = useState(null);
+
+    const handleBookmarkSubmit = async (e, candiUqId) => {
+        if (e && typeof e.preventDefault === "function") {
+            e.preventDefault();
+        }
+
+        const payload = {
+            applicationId: 0,
+            jobpostId: 0,
+            candiUqId: candiUqId,
+        };
+
+        try {
+            setLoadingBookmark(true);
+            const res = await fetch("/api/emp-application-profile-bookmark", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+            const user = await res.json();
+
+            if (!res.ok) {
+                // toast.error(user.message || "Request failed");
+                return;
+            }
+
+            setCandidates(prevCandidates =>
+                prevCandidates.map(candidate =>
+                    candidate.candiUqId === candiUqId
+                        ? {
+                            ...candidate,
+                            isSave: candidate.isSave === "Y" ? "N" : "Y"
+                        }
+                        : candidate
+                )
+            );
+            //toast.success(user.message);
+        } catch (error) {
+            console.error(error);
+            toast.error("Request failed. Please try again.");
+        } finally {
+            setLoadingBookmark(false);
+        }
+    };
+
+
     const getKeywordOptions = async (inputValue) => {
         try {
             const response = await fetch("/api/list-keywords", {
@@ -179,8 +231,6 @@ const SearchFilterBox = () => {
             if (response.ok) {
                 //console.log("Candidates fetched:", data.data);
 
-
-
                 if (payload?.SKILLS?.length > 0) {
 
                     const selectedSkills = (payload?.SKILLS || "")
@@ -193,7 +243,7 @@ const SearchFilterBox = () => {
                     payload,
                     results: data,
                 };
-                console.log(JSON.stringify(data?.data))
+                //console.log(JSON.stringify(data?.data))
                 setCandidates(data?.data);
                 // const encodedState = encodeURIComponent(JSON.stringify(searchState));
                 // router.push(`/employers-dashboard/candidates-search?searchData=${encodedState}`);
@@ -381,7 +431,14 @@ const SearchFilterBox = () => {
 
     ];
 
-
+    const copyToClipboard = async (text, type) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            toast.success(`${type} copied!`);
+        } catch (error) {
+            toast.error(`Unable to copy ${type}`);
+        }
+    };
 
     const Option = (props) => (
         <components.Option {...props}>
@@ -447,6 +504,32 @@ const SearchFilterBox = () => {
                 await navigator.clipboard.writeText(shareUrl);
                 toast.success("Link copied to clipboard");
             }
+
+
+            try {
+
+                const payload = {
+                    applicationId: 0,
+                    jobpostId: 0,
+                    candiUqId: id,
+                    shareEmail: "multishare",
+                    shareRemark: "share profile link",
+                    shareLink: shareUrl,
+                };
+
+                const res = await fetch("/api/emp-application-profile-share", {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                });
+                const user = await res.json();
+
+                if (!res.ok) {
+                    return;
+                }
+            } catch (error) { }
+
+
+
         } catch (error) {
             // User cancelled share dialog
             if (error.name !== "AbortError") {
@@ -845,10 +928,12 @@ const SearchFilterBox = () => {
 
                                             <div className="candidate-basic">
                                                 <h5 className="fw-semibold" style={{ fontSize: "1.15rem" }}>
-                                                    <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
+                                                    <Link
+                                                        href={`/candidates-single-v1/${candidate.candiUqId}`}
+
+                                                    >
                                                         {candidate.candiName}
                                                     </Link>
-
                                                 </h5>
 
                                                 <div className="top-meta">
@@ -960,10 +1045,13 @@ const SearchFilterBox = () => {
                                             <button
                                                 type="button"
                                                 className="action-icon-btn"
-
-                                            ><i className="las la-bookmark"></i>
-                                                {/* <i className={isSaved ? "las la-bookmark" : "lar la-bookmark"}></i>
-                                                {isSaved ? "Saved" : "Save"} */}
+                                                onClick={(e) => handleBookmarkSubmit(e, candidate.candiUqId)}
+                                                disabled={loadingBookmark}
+                                            >
+                                                <i
+                                                    style={{ fontSize: "16px" }}
+                                                    className={candidate.isSave === "Y" ? "fas fa-bookmark" : "far fa-bookmark"}
+                                                ></i>
                                             </button>
                                             <button className="action-icon-btn"
                                                 onClick={(e) =>
@@ -993,16 +1081,53 @@ const SearchFilterBox = () => {
                                             : candidate.profileDesc}
                                     </p>
                                     <div className="candidate-action-buttons">
-                                        <Link
-                                            href={`/candidates-single-v1/${candidate.candiUqId}`}
-                                            className="theme-btn btn-style-one w-100 butn"
-                                        >
-                                            View Profile
-                                        </Link>
 
-                                        <button className="theme-btn btn-style-one w-100 butn">
-                                            Call Candidate
-                                        </button>
+                                        {showContact !== candidate.candiUqId ? (
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm btn-outline-info w-100 "
+                                                onClick={() => setShowContact(candidate.candiUqId)}
+                                            >
+                                                <span style={{ fontWeight: "500" }}>
+                                                    <i className="las la-phone"></i>   View Contact
+                                                </span>
+                                            </button>
+                                        ) : (
+
+                                            <div className="contact-info" style={{ fontSize: "11pt" }}>
+                                                <div className="mb-0">
+                                                    <span className="fw-bold">Email:</span>{" "}
+                                                    <a href={`mailto:${candidate.email}`}>
+                                                        {candidate.email}
+                                                    </a>
+
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm " style={{ fontSize: "11pt" }}
+                                                        title="Copy email"
+                                                        onClick={() => copyToClipboard(candidate.email || "", "Email")}
+                                                    >
+                                                        <i className="la la-copy"></i>
+                                                    </button>
+                                                </div>
+
+                                                <div>
+                                                    <span className="fw-bold">Mobile:</span>{" "}
+                                                    <a href={`tel:${candidate.mobile}`}>
+                                                        {candidate.mobile}
+                                                    </a>
+
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm " style={{ fontSize: "11pt" }}
+                                                        title="Copy mobile"
+                                                        onClick={() => copyToClipboard(candidate.mobile || "", "Mobile")}
+                                                    >
+                                                        <i className="la la-copy"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
                                 </div>
