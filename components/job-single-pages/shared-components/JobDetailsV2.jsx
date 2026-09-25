@@ -115,7 +115,7 @@ const JobDetailsV2 = ({ id }) => {
             const result = await response.json();
 
             const listData = result?.data;
-            // console.log('Job Details  ', JSON.stringify(listData))
+            console.log('Job Details  ', JSON.stringify(listData))
 
             if (listData) {
 
@@ -206,9 +206,9 @@ const JobDetailsV2 = ({ id }) => {
                                                                 </button>
 
 
-                                                                <button className="bookmark-btn">
+                                                                {/* <button className="bookmark-btn">
                                                                     <i className="flaticon-bookmark"></i>
-                                                                </button>
+                                                                </button> */}
                                                             </div>
                                                         ) : (<div className="btn-box">
                                                             <button
@@ -220,9 +220,9 @@ const JobDetailsV2 = ({ id }) => {
                                                             >
                                                                 Apply For Job
                                                             </button>
-                                                            <button className="bookmark-btn">
+                                                            {/* <button className="bookmark-btn">
                                                                 <i className="flaticon-bookmark"></i>
-                                                            </button>
+                                                            </button> */}
                                                         </div>)}
 
                                                         {/* End apply for job btn */}
@@ -399,7 +399,7 @@ const JobDetailsV2 = ({ id }) => {
                                                                 />
                                                             </div>
                                                             <h6 className="company-name">{jobDetails.company}</h6>
-                                                            <a href="#" className="profile-link">
+                                                            <a href={jobDetails?.compWebsite} target="_blank" className="profile-link">
                                                                 View company profile
                                                             </a>
 

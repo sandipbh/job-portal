@@ -576,17 +576,14 @@ const Register = () => {
             Signin
           </Link>
         </div>
-
-        <div className="divider" style={{ width: "100%" }}>
-          <span>or</span>
-        </div>
-
-        <LoginWithSocial />
+        {role === "candidate" && (
+          <><div className="divider" style={{ width: "100%" }}>
+            <span>or</span>
+          </div>
+            <LoginWithSocial /></>
+        )}
       </div>
-
     </div>
-
-
   );
 };
 <style jsx>{`

@@ -11,7 +11,6 @@ const JobFeatured7 = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
     getJobList();
   }, []);
 

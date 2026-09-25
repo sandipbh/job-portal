@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import "rc-slider/assets/index.css";
 import "quill/dist/quill.snow.css";
 import "react-loading-skeleton/dist/skeleton.css";
+import Providers from "./providers";
 
 export default function RootLayout({ children }) {
   useEffect(() => {
@@ -50,8 +51,9 @@ export default function RootLayout({ children }) {
       <body>
         <Provider store={store}>
           <div className="page-wrapper">
-            {children}
-
+            <Providers>
+              {children}
+            </Providers>
             {/* Toastify */}
             {/* <ToastContainer
               position="bottom-right"

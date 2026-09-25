@@ -24,7 +24,6 @@ ChartJS.register(
 
 export const options = {
   responsive: true,
-
   plugins: {
     legend: {
       display: false,
@@ -32,7 +31,7 @@ export const options = {
     title: {
       display: false,
     },
-
+    width: 100,
     tooltips: {
       position: "nearest",
       mode: "index",

@@ -5,7 +5,7 @@ const ListingShowing = () => {
       <div className="bar">
         <span className="bar-inner" style={{ width: "40%" }}></span>
       </div>
-      <button className="show-more">Show More</button>
+      <button className="show-more">Show More..</button>
     </div>
   );
 };

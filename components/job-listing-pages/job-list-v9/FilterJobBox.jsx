@@ -54,8 +54,8 @@ const FilterJobBox = () => {
   const locationFilter = (item) =>
     location !== ""
       ? item?.location
-          ?.toLocaleLowerCase()
-          .includes(location?.toLocaleLowerCase())
+        ?.toLocaleLowerCase()
+        .includes(location?.toLocaleLowerCase())
       : item;
 
   // location filter
@@ -73,26 +73,26 @@ const FilterJobBox = () => {
   const jobTypeFilter = (item) =>
     jobType?.length !== 0 && item?.jobType !== undefined
       ? jobType?.includes(
-          item?.jobType[0]?.type.toLocaleLowerCase().split(" ").join("-")
-        )
+        item?.jobType[0]?.type.toLocaleLowerCase().split(" ").join("-")
+      )
       : item;
 
   // date-posted filter
   const datePostedFilter = (item) =>
     datePosted !== "all" && datePosted !== ""
       ? item?.created_at
-          ?.toLocaleLowerCase()
-          .split(" ")
-          .join("-")
-          .includes(datePosted)
+        ?.toLocaleLowerCase()
+        .split(" ")
+        .join("-")
+        .includes(datePosted)
       : item;
 
   // experience level filter
   const experienceFilter = (item) =>
     experience?.length !== 0
       ? experience?.includes(
-          item?.experience?.split(" ").join("-").toLocaleLowerCase()
-        )
+        item?.experience?.split(" ").join("-").toLocaleLowerCase()
+      )
       : item;
 
   // salary filter
@@ -203,19 +203,19 @@ const FilterJobBox = () => {
         {/* End showing results */}
         <div className="sort-by">
           {keyword !== "" ||
-          location !== "" ||
-          destination?.min !== 0 ||
-          destination?.max !== 100 ||
-          category !== "" ||
-          jobType?.length !== 0 ||
-          datePosted !== "" ||
-          experience?.length !== 0 ||
-          salary?.min !== 0 ||
-          salary?.max !== 20000 ||
-          tag !== "" ||
-          sort !== "" ||
-          perPage.start !== 0 ||
-          perPage.end !== 0 ? (
+            location !== "" ||
+            destination?.min !== 0 ||
+            destination?.max !== 100 ||
+            category !== "" ||
+            jobType?.length !== 0 ||
+            datePosted !== "" ||
+            experience?.length !== 0 ||
+            salary?.min !== 0 ||
+            salary?.max !== 20000 ||
+            tag !== "" ||
+            sort !== "" ||
+            perPage.start !== 0 ||
+            perPage.end !== 0 ? (
             <button
               onClick={clearAll}
               className="btn btn-danger text-nowrap me-2"
@@ -283,7 +283,7 @@ const FilterJobBox = () => {
       {/* End .row */}
 
       <div className="ls-show-more">
-        <p>Showing 36 of 497 Jobs</p>
+        <p>Showing 36 of 497 Jobs  </p>
         <div className="bar">
           <span className="bar-inner" style={{ width: "40%" }}></span>
         </div>

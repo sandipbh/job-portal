@@ -49,13 +49,13 @@ module.exports = [
     routePath: "/employers-dashboard/search-filter",
     active: "",
   },
-  {
-    id: 8,
-    name: "Candidate Search",
-    icon: "la-users",
-    routePath: "/employers-dashboard/candidates-search",
-    active: "",
-  },
+  // {
+  //   id: 8,
+  //   name: "Candidate Search",
+  //   icon: "la-users",
+  //   routePath: "/employers-dashboard/candidates-search",
+  //   active: "",
+  // },
   {
     id: 9,
     name: "Packages",

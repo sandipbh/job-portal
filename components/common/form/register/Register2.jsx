@@ -16,19 +16,7 @@ const Register2 = () => {
       </div>
       {/* End form-group */}
 
-      <div className="bottom-box">
-        <div className="text">
-          Already have an account?{" "}
-          <Link href="/login" className="call-modal login">
-            Signin
-          </Link>
-        </div>
-        <div className="divider" style={{ width: "100%" }}>
-          <span>or</span>
-        </div>
-        <LoginWithSocial />
-      </div>
-      {/* End bottom-box LoginWithSocial */}
+
     </div>
   );
 };

@@ -348,11 +348,14 @@ const FormContent2 = () => {
         <div className="text">
           Don&apos;t have an account? <Link href="/register">Signup</Link>
         </div>
-        <div className="divider" style={{ width: "100%" }}>
-          <span>or</span>
-        </div>
 
-        <LoginWithSocial />
+
+        {role === "candidate" && (
+          <><div className="divider" style={{ width: "100%" }}>
+            <span>or</span>
+          </div>
+            <LoginWithSocial /></>
+        )}
       </div>
       {/* End bottom-box LoginWithSocial */}
       {showOtp && (

@@ -617,6 +617,21 @@ const FormContent2 = () => {
 
       </form>
 
+      <div className="bottom-box">
+        <div className="text">
+          Already have an account?{" "}
+          <Link href="/login" className="call-modal login">
+            Signin
+          </Link>
+        </div>
+        {role === "candidate" && (<>
+          <div className="divider" style={{ width: "100%" }}>
+            <span>or</span>
+          </div>
+          <LoginWithSocial />
+        </>)}
+      </div>
+
 
     </div>
   );

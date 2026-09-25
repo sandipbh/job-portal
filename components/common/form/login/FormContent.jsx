@@ -433,11 +433,13 @@ const FormContent = () => {
 
 
 
-        <div className="divider" style={{ width: "100%" }}>
-          <span className="text-center">or  </span>
-        </div>
 
-        <LoginWithSocial />
+        {role === "candidate" && (
+          <><div className="divider" style={{ width: "100%" }}>
+            <span>or</span>
+          </div>
+            <LoginWithSocial /></>
+        )}
       </div>
       {/* End bottom-box LoginWithSocial */}
       <div>

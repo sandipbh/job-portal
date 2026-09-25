@@ -102,19 +102,15 @@ const CandidateDetailsV2 = ({ id }) => {
             console.error(error);
         }
     };
-
     useEffect(() => {
-
     }, []);
 
     const saveViewProfile = async (uqid) => {
         try {
-
             const payload = {
                 LoginUqid: uqid,
                 candiId: candiId,
             }
-
             const response = await fetch("/api/save-profile-view", {
                 method: "POST",
                 headers: {
