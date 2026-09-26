@@ -36,6 +36,12 @@ Buttons Styles
   padding: 12px 30px 10px 30px;
 }
 
+.btn-style-one:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .btn-style-one:hover {
   color: #ffffff;
   background-color: var(--primary-hover-bg-color);
@@ -52,7 +58,7 @@ Buttons Styles
   line-height: 20px;
   border-radius: 8px;
   font-weight: 400;
-  padding: 18px 35px 15px 35px;
+  padding: 12px 30px 10px 30px;
 }
 
 .btn-style-two:hover {
@@ -71,7 +77,7 @@ Buttons Styles
   line-height: 20px;
   border-radius: 8px;
   font-weight: 400;
-  padding: 18px 35px 15px 35px;
+  padding: 12px 30px 10px 30px;
 }
 
 .btn-style-three:hover {

@@ -64,6 +64,13 @@ module.exports = [
     active: "",
   },
   {
+    id: 13,
+    name: "Support",
+    icon: "la-life-ring",
+    routePath: "/candidates-dashboard/support",
+    active: "",
+  },
+  {
     id: 10,
     name: "Change Password",
     icon: "la-lock",

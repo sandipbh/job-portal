@@ -18,6 +18,7 @@ const Index = () => {
   const [formData, setFormData]
     = useState({
       fullName: "",
+      createdDate: "",
       email: "", phone: "", dob: "", state: "", city: "", address: "", pincode: "", country: "India", countryCode: "+91",
       gender: "", languages: [], languageString: "", type: "", photo: null, courses: "", stream: "",
       collegeName: "", startYear: "", endYear: "",
@@ -52,6 +53,7 @@ const Index = () => {
           ...prev,
 
           fullName: profile.fullName || "",
+          createdDate: profile.createdDate || "",
           email: profile.email || "",
           phone: profile.mobile || "",
           dob: profile.dob || "",

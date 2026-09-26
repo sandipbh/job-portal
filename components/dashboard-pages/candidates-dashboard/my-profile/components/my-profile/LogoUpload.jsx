@@ -1,6 +1,7 @@
 'use client'
 import { useState } from "react";
 import Cropper from "react-easy-crop";
+import { formatDate, getTimeAgo } from "@/lib/dateUtils";
 import {
     FaEnvelope,
     FaPhone,
@@ -55,37 +56,37 @@ const LogoUpload = ({ formData, setFormData, goBack }) => {
         setImageSrc(imageUrl);
     };
 
-   const handleSave = async () => {
-  if (!croppedAreaPixels || !imageSrc) return;
+    const handleSave = async () => {
+        if (!croppedAreaPixels || !imageSrc) return;
 
-  const croppedImageFile = await getCroppedImage(
-    imageSrc,
-    croppedAreaPixels
-  );
+        const croppedImageFile = await getCroppedImage(
+            imageSrc,
+            croppedAreaPixels
+        );
 
-  if (!croppedImageFile) {
-    setImageError("Failed to crop image. Please try again.");
-    return;
-  }
+        if (!croppedImageFile) {
+            setImageError("Failed to crop image. Please try again.");
+            return;
+        }
 
-  // Create Base64 preview instead of Blob URL
-  const reader = new FileReader();
+        // Create Base64 preview instead of Blob URL
+        const reader = new FileReader();
 
-  reader.onloadend = async () => {
-    setFormData((prev) => ({
-      ...prev,
-      photo: reader.result,
-      photoFile: croppedImageFile,
-    }));
+        reader.onloadend = async () => {
+            setFormData((prev) => ({
+                ...prev,
+                photo: reader.result,
+                photoFile: croppedImageFile,
+            }));
 
-     
-     setImageSrc(null);
-    setZoom(1);
-    setCrop({ x: 0, y: 0 });
-  };
 
-  reader.readAsDataURL(croppedImageFile);
-};
+            setImageSrc(null);
+            setZoom(1);
+            setCrop({ x: 0, y: 0 });
+        };
+
+        reader.readAsDataURL(croppedImageFile);
+    };
     const getCroppedImage = async (
         imageSrc,
         croppedAreaPixels
@@ -156,13 +157,13 @@ const LogoUpload = ({ formData, setFormData, goBack }) => {
                 <div className="profile-img-wrapper">
 
                     <img
-                    src={
-                        formData.photo
-                        ? formData.photo
-                        : "/default-user.png"
-                    }
-                    alt="Profile"
-                    className="profile-image"
+                        src={
+                            formData.photo
+                                ? formData.photo
+                                : "/default-user.png"
+                        }
+                        alt="Profile"
+                        className="profile-image"
                     />
 
                     <label className="upload-btn">
@@ -199,7 +200,7 @@ const LogoUpload = ({ formData, setFormData, goBack }) => {
                     <div className="meta">
                         <span>📍 {formData.city || "-"}</span>
                         <span>👤 {formData.gender || "Male"}</span>
-                        <span>📅 {formData.dob || "-"}</span>
+                        <span>📅 {formData.createdDate ? formatDate(formData.createdDate) : "-"}</span>
                     </div>
 
                 </div>
@@ -249,7 +250,7 @@ const LogoUpload = ({ formData, setFormData, goBack }) => {
                     <div className="divider" />
 
                     <div className="right">
-                        {formData.dob || "-"}
+                        {formData.dob ? formatDate(formData.dob) : "-"}
                     </div>
                 </div>
 
@@ -315,7 +316,7 @@ const LogoUpload = ({ formData, setFormData, goBack }) => {
                                     type="button"
                                     onClick={() => {
                                         if (imageSrc) {
-                                           // URL.revokeObjectURL(imageSrc);
+                                            // URL.revokeObjectURL(imageSrc);
                                         }
 
                                         setImageSrc(null);

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 import { FaMale, FaFemale } from "react-icons/fa";
 import { MdOutlineTransgender } from "react-icons/md";
-
+import { toast } from "react-toastify";
 
 import { statesData } from '@/data/states'
 
@@ -52,6 +52,14 @@ const FormInfoBox = ({ formData,
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
+  const [newPhone, setNewPhone] = useState("");
+  const [phoneOtp, setPhoneOtp] = useState("");
+  const [phoneOtpRequested, setPhoneOtpRequested] = useState(false);
+  const [phoneOtpSeconds, setPhoneOtpSeconds] = useState(0);
+  const [phoneUpdateLoading, setPhoneUpdateLoading] = useState(false);
+  const [phoneUpdateMessage, setPhoneUpdateMessage] = useState("");
+  const [phoneUpdateError, setPhoneUpdateError] = useState("");
 
   const [universityList, setUniversityList] = useState([]);
   const [showUniversityList, setShowUniversityList] = useState(false);
@@ -66,6 +74,109 @@ const FormInfoBox = ({ formData,
   const [showSpecializationList, setShowSpecializationList] = useState(false);
 
   const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    if (!isPhoneModalOpen || phoneOtpSeconds === 0) return;
+
+    const timer = setTimeout(() => {
+      setPhoneOtpSeconds((seconds) => seconds - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [isPhoneModalOpen, phoneOtpSeconds]);
+
+  useEffect(() => {
+    if (!isPhoneModalOpen) return;
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") setIsPhoneModalOpen(false);
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isPhoneModalOpen]);
+
+  const openPhoneModal = () => {
+    setNewPhone("");
+    setPhoneOtp("");
+    setPhoneOtpRequested(false);
+    setPhoneOtpSeconds(0);
+    setPhoneUpdateMessage("");
+    setPhoneUpdateError("");
+    setIsPhoneModalOpen(true);
+  };
+
+  const requestPhoneOtp = async () => {
+    if (newPhone.length !== 10) {
+      setPhoneUpdateError("Enter a valid 10-digit mobile number.");
+      return;
+    }
+    if (newPhone === String(formData.phone || "")) {
+      setPhoneUpdateError("The new mobile number must differ from the current number.");
+      return;
+    }
+
+    setPhoneUpdateLoading(true);
+    setPhoneUpdateError("");
+    try {
+      const response = await fetch("/api/candidate-mobile-update-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ oldMobile: formData.phone, newMobile: newPhone }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setPhoneUpdateError(data.message || "Unable to send OTP.");
+        return;
+      }
+
+      setPhoneOtpRequested(true);
+      setPhoneOtpSeconds(30);
+      setPhoneUpdateMessage(data.message || "OTP sent to your new mobile number.");
+    } catch (error) {
+      setPhoneUpdateError("Unable to send OTP. Please try again.");
+    } finally {
+      setPhoneUpdateLoading(false);
+    }
+  };
+
+  const submitPhoneUpdate = async () => {
+    if (!phoneOtpRequested || phoneOtp.length !== 6) {
+      setPhoneUpdateError("Enter the 6-digit OTP sent to your new mobile number.");
+      return;
+    }
+
+    setPhoneUpdateLoading(true);
+    setPhoneUpdateError("");
+    setPhoneUpdateMessage("");
+    try {
+      const response = await fetch("/api/candidate-mobile-update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          oldMobile: formData.phone,
+          newMobile: newPhone,
+          otp: phoneOtp,
+        }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setPhoneUpdateError(data.message || "Mobile number verification failed.");
+        return;
+      }
+
+      setFormData((prev) => ({ ...prev, phone: newPhone }));
+      toast.success(data.message || "Mobile number updated successfully.");
+      //setPhoneUpdateMessage(data.message || "Mobile number updated successfully.");
+      setTimeout(() => setIsPhoneModalOpen(false), 1500);
+    } catch (error) {
+      setPhoneUpdateError("Unable to update mobile number. Please try again.");
+    } finally {
+      setPhoneUpdateLoading(false);
+    }
+  };
 
   const [showLanguageSearch, setShowLanguageSearch] = useState(false);
   const [languageSearch, setLanguageSearch] = useState("");
@@ -377,8 +488,10 @@ const FormInfoBox = ({ formData,
 
 
         <div className="form-group col-lg-6 col-md-12">
-          <label>Mobile Number</label>
-
+          <div className="d-flex justify-content-between mt-1">
+            <label>Mobile Number</label>
+            <div><button type="button" className="text-primary border-0 bg-transparent p-0" onClick={openPhoneModal}>Update</button></div>
+          </div>
           <div className="phone-input">
             <span className="country-code">+91</span>
 
@@ -1462,6 +1575,97 @@ const FormInfoBox = ({ formData,
 
         </div>
       </div>
+      {isPhoneModalOpen && (
+        <>
+          <div className="modal-backdrop fade show"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false" />
+          <div
+            className="modal fade show d-block"
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="phone-update-title"
+          >
+            <div className="modal-dialog modal-dialog-centered" role="document"
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="phone-update-title">Update mobile number</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    aria-label="Close"
+                    onClick={() => setIsPhoneModalOpen(false)}
+                  />
+                </div>
+                <div>
+                  <div className="modal-body">
+                    <div className="form-group">
+                      <label htmlFor="current-mobile">Current mobile number</label>
+                      <input id="current-mobile" className="form-control" type="tel" value={formData.phone || ""} readOnly />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="new-mobile">New mobile number</label>
+                      <input
+                        id="new-mobile"
+                        className="form-control"
+                        type="tel"
+                        inputMode="numeric"
+                        autoComplete="tel-national"
+                        maxLength={10}
+                        value={newPhone}
+                        onChange={(event) => {
+                          setNewPhone(event.target.value.replace(/\D/g, "").slice(0, 10));
+                          setPhoneOtp("");
+                          setPhoneOtpRequested(false);
+                          setPhoneOtpSeconds(0);
+                          setPhoneUpdateMessage("");
+                          setPhoneUpdateError("");
+                        }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="mobile-otp">OTP</label>
+                      <div className="d-flex gap-2">
+                        <input
+                          id="mobile-otp"
+                          className="form-control"
+                          type="text"
+                          inputMode="numeric"
+                          autoComplete="one-time-code"
+                          maxLength={6}
+                          value={phoneOtp}
+                          onChange={(event) => setPhoneOtp(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                          disabled={!phoneOtpRequested}
+                        />
+                        <button
+                          type="button"
+                          className="theme-btn btn-style-one"
+                          onClick={requestPhoneOtp}
+                          disabled={phoneUpdateLoading || phoneOtpSeconds > 0}
+                        >
+                          {phoneOtpSeconds > 0
+                            ? `Resend in ${phoneOtpSeconds}s`
+                            : phoneOtpRequested ? "Resend OTP" : "Get OTP"}
+                        </button>
+                      </div>
+                    </div>
+                    {phoneUpdateError && <span className="error-text" role="alert">{phoneUpdateError}</span>}
+                    {phoneUpdateMessage && <span className="text-success" role="status">{phoneUpdateMessage}</span>}
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="theme-btn btn-sm btn-style-three" onClick={() => setIsPhoneModalOpen(false)}>Cancel</button>
+                    <button type="button" className="theme-btn btn-style-one" onClick={submitPhoneUpdate} disabled={phoneUpdateLoading || !phoneOtpRequested}>
+                      {phoneUpdateLoading ? "Please wait..." : "Verify and update"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </form >
   );
 };
