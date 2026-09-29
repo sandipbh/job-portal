@@ -7230,3 +7230,65 @@ in 2 tab of Company Profile
 .rating-stars .empty {
   color: #6a6a6ab5;
 }
+
+.scrollbar {
+  min-height: 400px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #aaa;
+  border-radius: 10px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.badge-create {
+  background-color: #6f42c1;
+  color: #fff;
+}
+
+.badge-open {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.badge-review {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.badge-progress {
+  background-color: #fd7e14;
+  color: #fff;
+}
+
+.badge-resolved {
+  background-color: #198754;
+  color: #fff;
+}
+
+.badge-closed {
+  background-color: #6c757d;
+  color: #fff;
+}

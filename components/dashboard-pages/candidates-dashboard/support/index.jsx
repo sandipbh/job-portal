@@ -132,6 +132,31 @@ export default function CandidateSupport({ candidateFullName }) {
         }
     }
 
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case "Create":
+                return "bg-secondary";
+
+            case "Open":
+                return "bg-primary";
+
+            case "Under Review":
+                return "bg-warning text-dark";
+
+            case "In Progress":
+                return "bg-info text-dark";
+
+            case "Resolved":
+                return "bg-success";
+
+            case "Closed":
+                return "bg-dark";
+
+            default:
+                return "bg-secondary";
+        }
+    };
+
     return (
         <section className="user-dashboard">
             <div className="dashboard-outer">
@@ -260,22 +285,19 @@ export default function CandidateSupport({ candidateFullName }) {
                                         <p className="text-muted mb-0">After you contact support, your report and our reply will appear here.</p>
                                     </div>
                                 ) : (
-                                    <div
-                                        className="list-group list-group-flush"
-                                        style={{ minHeight: "400px", maxHeight: "600px", overflowY: "auto" }}
-                                    >
+                                    <div className="list-group list-group-flush scrollbar">
                                         {reports.map((report) => (
                                             <article className="list-group-item px-0" key={report.srno}>
                                                 <div className="d-flex justify-content-between align-items-center gap-2 mb-2">
                                                     <span className="text-primary fw-semibold small">{report.refNo}</span>
-                                                    <span className="badge bg-warning text-dark">{report.status}</span>
+                                                    <span className={`badge ${getStatusBadge(report.status)}`}>
+                                                        {report.status}
+                                                    </span>
                                                 </div>
                                                 <div className="d-flex justify-content-between align-items-center gap-2 mb-0">
                                                     <p className="text-dark small mb-0">{report.issue}  </p>
                                                     <span className="text-muted small mb-0">{formatDate(report.createDate)}</span>
                                                 </div>
-
-
                                                 <h5 className="h6 mb-1">{report.subject}</h5>
                                                 <p className="mb-1 text-break">{report.details}  </p>
                                                 {report?.reply && (

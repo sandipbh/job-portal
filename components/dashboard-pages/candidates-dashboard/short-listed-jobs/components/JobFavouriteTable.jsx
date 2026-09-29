@@ -1,7 +1,5 @@
 'use client';
-
 import { useEffect, useState } from "react";
-
 import Link from "next/link.js";
 import { formatDate, getTimeAgo } from "@/lib/dateUtils";
 import Image from "next/image.js";
@@ -9,7 +7,6 @@ import Image from "next/image.js";
 const JobFavouriteTable = () => {
 
   const [jobList, setJobList] = useState([]);
-
 
   useEffect(() => {
     getShortListedJobs();
@@ -34,8 +31,6 @@ const JobFavouriteTable = () => {
       console.error(error);
     }
   };
-
-
 
   return (
     <div className="tabs-box">

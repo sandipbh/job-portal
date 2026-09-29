@@ -51,9 +51,9 @@ export default function RootLayout({ children }) {
       <body>
         <Provider store={store}>
           <div className="page-wrapper">
-            <Providers>
-              {children}
-            </Providers>
+            {/* <Providers> */}
+            {children}
+            {/* </Providers> */}
             {/* Toastify */}
             {/* <ToastContainer
               position="bottom-right"

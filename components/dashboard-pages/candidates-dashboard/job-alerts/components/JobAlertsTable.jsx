@@ -1,8 +1,40 @@
+'use client';
+import { useEffect, useState } from "react";
 import Link from "next/link.js";
-import jobs from "../../../../../data/job-featured.js";
+import { formatDate, getTimeAgo } from "@/lib/dateUtils";
 import Image from "next/image.js";
+import jobs from "../../../../../data/job-featured.js";
+
 
 const JobAlertsTable = () => {
+
+  const [jobList, setJobList] = useState([]);
+
+  useEffect(() => {
+    getShortListedJobs();
+  }, []);
+
+  const getShortListedJobs = async () => {
+    try {
+      const response = await fetch("/api/candi-applied-jobs-shortlisted", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      const result = await response.json();
+      const listData = result?.data;
+
+      console.log("Applied Jobs Data:", listData);
+      if (listData) {
+        setJobList(listData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
   return (
     <div className="tabs-box">
       <div className="widget-title">
@@ -36,7 +68,7 @@ const JobAlertsTable = () => {
               </thead>
 
               <tbody>
-                {jobs.slice(4, 8).map((item) => (
+                {jobList.map((item) => (
                   <tr key={item.id}>
                     <td>
                       {/* <!-- Job Block --> */}
@@ -52,26 +84,26 @@ const JobAlertsTable = () => {
                               />
                             </span>
                             <h4>
-                              <Link href={`/job-single-v3/${item.id}`}>
+                              <Link href={`/job-single-v2/${item.id}`}>
                                 {item.jobTitle}
                               </Link>
                             </h4>
                             <ul className="job-info">
                               <li>
                                 <span className="icon flaticon-briefcase"></span>
-                                Segment
+                                {item.company}
                               </li>
                               <li>
                                 <span className="icon flaticon-map-locator"></span>
-                                London, UK
+                                {item.location}
                               </li>
                             </ul>
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td>Human Resources, Junior</td>
-                    <td>Nov 12, 2021 </td>
+                    <td>{item.criteria}</td>
+                    <td>{getTimeAgo(item.created_at)}</td>
                     <td>
                       <div className="option-box">
                         <ul className="option-list">
