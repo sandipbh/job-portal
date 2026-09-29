@@ -159,7 +159,7 @@ export async function POST(req) {
     console.error("LOGIN ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to login user" },
+      { message: "Failed to login user." + error },
       { status: 500 }
     );
   }
