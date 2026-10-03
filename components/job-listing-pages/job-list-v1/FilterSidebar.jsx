@@ -51,7 +51,6 @@ const FilterSidebar = () => {
         </div>
         {/* <!-- Filter Block --> */}
 
-
         <div className="filter-block">
           <h4>Annual Salary (in lakhs)</h4>
 
