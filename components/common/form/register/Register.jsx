@@ -576,12 +576,12 @@ const Register = () => {
             Signin
           </Link>
         </div>
-        {role === "candidate" && (
+        {/* {role === "candidate" && (
           <><div className="divider" style={{ width: "100%" }}>
             <span>or</span>
           </div>
             <LoginWithSocial /></>
-        )}
+        )} */}
       </div>
     </div>
   );

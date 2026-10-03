@@ -20,6 +20,7 @@ const LoginPopup = () => {
               <div id="login-modal">
                 {/* <!-- Login Form --> */}
                 <div className="login-form default-form">
+
                   <FormContent />
                 </div>
                 {/* <!--End Login Form --> */}
@@ -61,7 +62,7 @@ const LoginPopup = () => {
       </div>
       {/* <!-- Login Popup Modal --> */}
 
-       <div className="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div className="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false">
         <div className="modal-dialog modal-lg modal-dialog-centered login-modal  ">
           <div className="modal-content">
             <button
