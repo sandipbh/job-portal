@@ -19,7 +19,7 @@ export default function EmployerLayout({ children }) {
 
             {children}
 
-            <CopyrightFooter />
+            {/* <CopyrightFooter /> */}
         </div>
     );
 }

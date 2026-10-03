@@ -1,58 +1,32 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setIndustry } from "../../../features/filter/filterSlice";
-const industryList = [
-    {
-        category: "IT Services",
-        items: [
-            "IT Services & Consulting",
-            "Software Product",
-            "Internet",
-            "Electronic Components",
-            "Emerging Technologies",
-            "Hardware & Networking",
-        ],
-    },
-
-    {
-        category: "Education",
-        items: [
-            "Education / Training",
-            "E-Learning / EdTech",
-        ],
-    },
-
-    {
-        category: "BFSI",
-        items: [
-            "Financial Services",
-            "Banking",
-            "FinTech / Payments",
-            "Investment Banking",
-            "NBFC",
-        ],
-    },
-
-    {
-        category: "Media & Entertainment",
-        items: [
-            "Advertising",
-            "Film / Music",
-            "Animation / VFX",
-            "Events / MICE",
-            "TV / Radio",
-
-        ],
-    },
-];
 
 const Industry = () => {
     const dispatch = useDispatch();
 
     const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState("");
+    const [industryList, setIndustryList] = useState([]);
+
+    useEffect(() => {
+        const loadIndustries = async () => {
+            try {
+                const response = await fetch("/api/public-master-list", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type: "industries", term: "" }),
+                });
+                const data = await response.json();
+                setIndustryList((data?.data || []).map((x) => x.value));
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        loadIndustries();
+    }, []);
 
     const selectedIndustries =
         useSelector(
@@ -61,13 +35,7 @@ const Industry = () => {
 
     const [tempIndustries, setTempIndustries] = useState([]);
 
-    const defaultIndustries = [
-        "IT Services & Consulting",
-        "Software Product",
-        "Financial Services",
-        "Education / Training",
-        "Internet",
-    ];
+    const defaultIndustries = industryList.slice(0, 5);
 
     const sidebarIndustries =
         selectedIndustries.length > 0
@@ -179,51 +147,29 @@ const Industry = () => {
                             />
                         </div>
 
-                        <div className="industry-grid">
+                        <div className="education-grid">
+                            {industryList
+                                .filter((item) =>
+                                    item
+                                        .toLowerCase()
+                                        .includes(search.toLowerCase())
+                                )
+                                .map((item) => (
+                                    <label
+                                        key={item}
+                                        className="education-item"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={tempIndustries.includes(item)}
+                                            onChange={() =>
+                                                handleTempIndustry(item)
+                                            }
+                                        />
 
-                            {industryList.map((section) => (
-                                <div
-                                    key={section.category}
-                                    className="industry-column"
-                                >
-                                    <h5>{section.category}</h5>
-
-                                    {section.items
-                                        .filter((item) =>
-                                            item
-                                                .toLowerCase()
-                                                .includes(
-                                                    search.toLowerCase()
-                                                )
-                                        )
-                                        .map((item) => (
-                                            <label
-                                                key={item}
-                                                className="industry-item"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    checked={tempIndustries.includes(item)}
-
-                                                    onChange={() =>
-                                                        handleTempIndustry(item)
-                                                    }
-                                                />
-
-                                                <span>
-                                                    {item}
-                                                    <small>
-                                                        (
-                                                        {Math.floor(
-                                                            Math.random() * 500
-                                                        ) + 1}
-                                                        )
-                                                    </small>
-                                                </span>
-                                            </label>
-                                        ))}
-                                </div>
-                            ))}
+                                        <span>{item}</span>
+                                    </label>
+                                ))}
                         </div>
 
                         <div className="industry-footer">

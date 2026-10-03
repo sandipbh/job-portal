@@ -1,33 +1,29 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setEducation } from "../../../features/filter/filterSlice";
 
-const educationList = [
-    "Any Postgraduate",
-    "Any Graduate",
-    "10th Pass",
-    "12th Pass",
-    "ITI Certification",
-    "Diploma",
-    "BCA",
-    "B.Sc",
-    "B.Com",
-    "BA - Bachelor of Arts",
-    "B.Tech / B.E.",
-    "BBA / BMS",
-    "LLB - Bachelor of Laws",
-    "MBBS",
-    "MCA",
-    "MBA / PGDM",
-    "M.Tech",
-    "M.Sc",
-    "PhD"
-];
-
 const Education = () => {
     const dispatch = useDispatch();
+    const [educationList, setEducationList] = useState([]);
+
+    useEffect(() => {
+        const loadEducation = async () => {
+            try {
+                const response = await fetch("/api/public-master-list", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type: "courses", term: "" }),
+                });
+                const data = await response.json();
+                setEducationList((data?.data || []).map((x) => x.value));
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        loadEducation();
+    }, []);
 
     const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState("");
@@ -155,9 +151,6 @@ const Education = () => {
 
                                     <span>
                                         {edu}
-                                        <small>
-                                            ({Math.floor(Math.random() * 2000) + 1})
-                                        </small>
                                     </span>
                                 </label>
                             ))}

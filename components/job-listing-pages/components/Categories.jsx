@@ -1,13 +1,32 @@
-'use client'
+﻿'use client'
 
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addCategory } from "../../../features/filter/filterSlice";
 
 const Categories = () => {
     const dispatch = useDispatch();
+    const [departments, setDepartments] = useState([]);
 
     const category =
         useSelector((state) => state.filter.jobList.category) || "";
+
+    useEffect(() => {
+        const loadDepartments = async () => {
+            try {
+                const response = await fetch("/api/public-master-list", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type: "department", term: "" }),
+                });
+                const data = await response.json();
+                setDepartments(data?.data || []);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        loadDepartments();
+    }, []);
 
     const categoryHandler = (e) => {
         dispatch(addCategory(e.target.value));
@@ -21,78 +40,11 @@ const Categories = () => {
                 onChange={categoryHandler}
             >
                 <option value="">All Departments</option>
-
-                <option value="software-development">
-                    Software Development
-                </option>
-
-                <option value="data-science">
-                    Data Science & Analytics
-                </option>
-
-                <option value="it-security">
-                    IT & Information Security
-                </option>
-
-                <option value="product-management">
-                    Product Management
-                </option>
-
-                <option value="ui-ux-design">
-                    UI / UX Design
-                </option>
-
-                <option value="devops-cloud">
-                    DevOps & Cloud
-                </option>
-
-                <option value="qa-testing">
-                    QA & Testing
-                </option>
-
-                <option value="finance-accounting">
-                    Finance & Accounting
-                </option>
-
-                <option value="sales-business-development">
-                    Sales & Business Development
-                </option>
-
-                <option value="marketing">
-                    Marketing & Digital Marketing
-                </option>
-
-                <option value="human-resources">
-                    Human Resources
-                </option>
-
-                <option value="customer-support">
-                    Customer Support
-                </option>
-
-                <option value="operations">
-                    Operations & Supply Chain
-                </option>
-
-                <option value="manufacturing">
-                    Manufacturing & Production
-                </option>
-
-                <option value="healthcare">
-                    Healthcare & Medical
-                </option>
-
-                <option value="education">
-                    Education & Training
-                </option>
-
-                <option value="legal">
-                    Legal & Compliance
-                </option>
-
-                <option value="others">
-                    Others
-                </option>
+                {departments.map((item) => (
+                    <option key={item.key} value={item.key}>
+                        {item.value}
+                    </option>
+                ))}
             </select>
 
             <span className="icon flaticon-briefcase"></span>

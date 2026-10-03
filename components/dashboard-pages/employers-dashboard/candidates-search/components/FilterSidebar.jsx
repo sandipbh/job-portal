@@ -1,4 +1,4 @@
-import Categories from "@/components/candidates-listing-pages/components/CandidatesGender";
+import Categories from "@/components/candidates-listing-pages/components/Categories";
 import DestinationRangeSlider from "@/components/candidates-listing-pages/components/DestinationRangeSlider";
 import CandidatesGender from "@/components/candidates-listing-pages/components/CandidatesGender";
 import LocationBox from "@/components/candidates-listing-pages/components/LocationBox";
@@ -77,8 +77,6 @@ const FilterSidebar = () => {
                     <h4>Education</h4>
                     <Education />
                 </div>
-
-
                 <div className="switchbox-outer">
                     <h4>Industry</h4>
                     <Industry />

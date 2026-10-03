@@ -151,9 +151,9 @@ const SearchFilterBox = () => {
             selectedIndustries.length > 0
         ].filter(Boolean).length;
 
-        if (appliedFilters < 0) {
+        if (appliedFilters < 3) {
 
-            toast.error("Please select at least 2 filters.");
+            toast.error("Please select at least 3 filters.");
             return;
         }
         // console.log('selectedKeywords ', JSON.stringify(selectedKeywords))

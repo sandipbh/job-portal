@@ -96,9 +96,13 @@ const DashboardHeader = () => {
                         </button>
                         {/* wishlisted menu */}
 
-                        <button className="menu-btn">
+                        <Link
+                            href="/employers-dashboard/notifications"
+                            className="menu-btn"
+                            aria-label="Notifications"
+                        >
                             <span className="icon la la-bell"></span>
-                        </button>
+                        </Link>
                         {/* End notification-icon */}
 
                         {/* <!-- Dashboard Option --> */}
@@ -124,7 +128,7 @@ const DashboardHeader = () => {
                                     <li
                                         className={`${isActiveLink(
                                             item.routePath,
-                                            usePathname()
+                                            //usePathname()
                                         )
                                             ? "active"
                                             : ""

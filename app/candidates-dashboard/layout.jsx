@@ -25,7 +25,7 @@ export default function CandidateDashboardLayout({ children }) {
             {children}
 
             {/* Footer */}
-            <CopyrightFooter />
+            {/* <CopyrightFooter /> */}
         </div>
     );
 }

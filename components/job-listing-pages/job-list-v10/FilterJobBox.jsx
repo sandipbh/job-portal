@@ -47,8 +47,8 @@ const FilterJobBox = () => {
   const locationFilter = (item) =>
     location !== ""
       ? item?.location
-          ?.toLocaleLowerCase()
-          .includes(location?.toLocaleLowerCase())
+        ?.toLocaleLowerCase()
+        .includes(location?.toLocaleLowerCase())
       : item;
 
   // location filter
@@ -66,24 +66,24 @@ const FilterJobBox = () => {
   const jobTypeFilter = (item) =>
     item.jobType !== undefined && jobTypeSelect !== ""
       ? item?.jobType[0]?.type.toLocaleLowerCase().split(" ").join("-") ===
-          jobTypeSelect && item
+      jobTypeSelect && item
       : item;
 
   // date-posted filter
   const datePostedFilter = (item) =>
     datePosted !== "all" && datePosted !== ""
       ? item?.created_at
-          ?.toLocaleLowerCase()
-          .split(" ")
-          .join("-")
-          .includes(datePosted)
+        ?.toLocaleLowerCase()
+        .split(" ")
+        .join("-")
+        .includes(datePosted)
       : item;
 
   // experience level filter
   const experienceFilter = (item) =>
     experienceSelect !== ""
       ? item?.experience?.split(" ").join("-").toLocaleLowerCase() ===
-          experienceSelect && item
+      experienceSelect && item
       : item;
 
   // salary filter
@@ -154,7 +154,7 @@ const FilterJobBox = () => {
     dispatch(addJobTypeSelect(""));
     dispatch(addDatePosted(""));
     dispatch(addExperienceSelect(""));
-    dispatch(addSalary({ min: 0, max: 20000 }));
+    dispatch(addSalary({ min: 0, max: 500000 }));
     dispatch(addSort(""));
     dispatch(addPerPage({ start: 0, end: 0 }));
   };
@@ -167,16 +167,16 @@ const FilterJobBox = () => {
 
         <div className="sort-by">
           {keyword !== "" ||
-          location !== "" ||
-          category !== "" ||
-          jobTypeSelect !== "" ||
-          datePosted !== "" ||
-          experienceSelect !== "" ||
-          salary?.min !== 0 ||
-          salary?.max !== 20000 ||
-          sort !== "" ||
-          perPage.start !== 0 ||
-          perPage.end !== 0 ? (
+            location !== "" ||
+            category !== "" ||
+            jobTypeSelect !== "" ||
+            datePosted !== "" ||
+            experienceSelect !== "" ||
+            salary?.min !== 0 ||
+            salary?.max !== 500000 ||
+            sort !== "" ||
+            perPage.start !== 0 ||
+            perPage.end !== 0 ? (
             <button
               onClick={clearAll}
               className="btn btn-danger text-nowrap me-2"

@@ -18,6 +18,7 @@ const initialState = {
     education: [],
     industries: [],
     experienceLevels: [],
+    minExperience: 0,
 
     sort: "",
     perPage: {
@@ -132,6 +133,9 @@ export const candidateFilterSlice = createSlice({
         clearExperienceLevel: (state) => {
             state.experienceLevels = [];
         },
+        setMinExperience: (state, { payload }) => {
+            state.minExperience = payload;
+        },
         clearExperienceF: (state) => {
             state.experiences = [];
         },
@@ -182,6 +186,7 @@ export const {
     addExperienceLevel,
     setExperienceLevel,
     clearExperienceLevel,
+    setMinExperience,
 
 
     addSort,

@@ -49,13 +49,13 @@ module.exports = [
     routePath: "/employers-dashboard/search-filter",
     active: "",
   },
-  // {
-  //   id: 8,
-  //   name: "Candidate Search",
-  //   icon: "la-users",
-  //   routePath: "/employers-dashboard/candidates-search",
-  //   active: "",
-  // },
+  {
+    id: 8,
+    name: "Candidate Search",
+    icon: "la-users",
+    routePath: "/employers-dashboard/candidates-search",
+    active: "",
+  },
   {
     id: 9,
     name: "Packages",
@@ -71,10 +71,24 @@ module.exports = [
     active: "",
   },
   {
+    id: 15,
+    name: "Notifications",
+    icon: "la-bell",
+    routePath: "/employers-dashboard/notifications",
+    active: "",
+  },
+  {
     id: 11,
     name: "Resume Alerts",
     icon: "la-bell",
     routePath: "/employers-dashboard/resume-alerts",
+    active: "",
+  },
+  {
+    id: 16,
+    name: "Support",
+    icon: "la-life-ring",
+    routePath: "/employers-dashboard/support",
     active: "",
   },
   {

@@ -1,4 +1,5 @@
 import SearchForm3 from "../../common/job-search/SearchForm3";
+
 import JobCategorie4 from "../../job-categories/JobCategorie4";
 import HeroSliderGallery from "./HeroSliderGallery";
 
@@ -19,7 +20,9 @@ const index = () => {
             data-aos-delay="700"
             data-aos="fade-up"
           >
+
             <SearchForm3 />
+
           </div>
           {/* <!-- Job Search Form --> */}
 

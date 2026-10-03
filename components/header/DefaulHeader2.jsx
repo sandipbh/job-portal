@@ -8,6 +8,32 @@ import Image from "next/image";
 
 const DefaulHeader2 = () => {
   const [navbar, setNavbar] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState("");
+
+  useEffect(() => {
+    const getCookiesValue = async () => {
+      try {
+        const response = await fetch("/api/cookies-details", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        const role = String(data?.role ?? "").trim().toLowerCase();
+
+        setUserRole(role);
+        setIsLoggedIn(role !== "");
+      } catch (error) {
+        console.error(error);
+        setUserRole("");
+        setIsLoggedIn(false);
+      }
+    };
+
+    getCookiesValue();
+  }, []);
 
   const changeBackground = () => {
     if (window.scrollY >= 10) {
@@ -52,25 +78,40 @@ const DefaulHeader2 = () => {
 
         <div className="outer-box">
           {/* <!-- Add Listing --> */}
-          <Link href="/candidates-dashboard/cv-manager" className="upload-cv">
+          {/* <Link href="/candidates-dashboard/cv-manager" className="upload-cv">
             Upload your CV
-          </Link>
+          </Link> */}
           {/* <!-- Login/Register --> */}
           <div className="btn-box">
-            <a
-              href="#"
-              className="theme-btn btn-style-three call-modal"
-              data-bs-toggle="modal"
-              data-bs-target="#loginPopupModal"
-            >
-              Login / Register
-            </a>
-            <Link
-              href="/employers-dashboard/post-jobs"
-              className="theme-btn btn-style-one"
-            >
-              Job Post
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href={
+                  userRole === "employer"
+                    ? "/employers-dashboard/dashboard"
+                    : "/candidates-dashboard/dashboard"
+                }
+                className="theme-btn btn-style-three"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <a
+                href="#"
+                className="theme-btn btn-style-three call-modal"
+                data-bs-toggle="modal"
+                data-bs-target="#loginPopupModal"
+              >
+                Login / Register
+              </a>
+            )}
+            {isLoggedIn && userRole === "employer" && (
+              <Link
+                href="/employers-dashboard/post-jobs"
+                className="theme-btn btn-style-one"
+              >
+                Job Post
+              </Link>
+            )}
           </div>
         </div>
       </div>

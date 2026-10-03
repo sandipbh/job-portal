@@ -64,6 +64,13 @@ module.exports = [
     active: "",
   },
   {
+    id: 14,
+    name: "Notifications",
+    icon: "la-bell",
+    routePath: "/candidates-dashboard/notifications",
+    active: "",
+  },
+  {
     id: 13,
     name: "Support",
     icon: "la-life-ring",

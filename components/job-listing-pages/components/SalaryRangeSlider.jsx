@@ -35,15 +35,15 @@ const SalaryRangeSlider = () => {
       <Slider
         min={0}
         range
-        max={2000}
+        max={500000}
         value={[salary.min, salary.max]}
         onChange={(value) => handleOnChange(value)}
       />
       <div className="input-outer">
         <div className="amount-outer">
           <span className="d-inline-flex align-items-center">
-            <span className="min">${salary.min}</span>
-            <span className="max ms-2">${salary.max}</span>
+            <span className="min"> {salary.min}</span>
+            <span className="max ms-2"> {salary.max}</span>
           </span>
         </div>
       </div>

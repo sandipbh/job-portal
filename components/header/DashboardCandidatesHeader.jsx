@@ -99,9 +99,13 @@ const DashboardCandidatesHeader = () => {
                         </button>
                         {/* wishlisted menu */}
 
-                        <button className="menu-btn">
+                        <Link
+                            href="/candidates-dashboard/notifications"
+                            className="menu-btn"
+                            aria-label="Notifications"
+                        >
                             <span className="icon la la-bell"></span>
-                        </button>
+                        </Link>
                         {/* End notification-icon */}
 
                         {/* <!-- Dashboard Option --> */}

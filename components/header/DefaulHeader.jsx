@@ -26,9 +26,9 @@ const DefaulHeader = () => {
         }
       });
       const data = await response.json();
-      const role = data?.role ?? "";
+      const role = String(data?.role ?? "").trim().toLowerCase();
 
-      if (role != "") {
+      if (role !== "") {
         setUserRole(role);
         setIsLoggedIn(true);
       }
@@ -120,12 +120,14 @@ const DefaulHeader = () => {
             >
               Login / Register
             </a> */}
-            <Link
-              href="/employers-dashboard/post-jobs"
-              className="theme-btn btn-style-one"
-            >
-              Job Post
-            </Link>
+            {isLoggedIn && userRole === "employer" && (
+              <Link
+                href="/employers-dashboard/post-jobs"
+                className="theme-btn btn-style-one"
+              >
+                Job Post
+              </Link>
+            )}
           </div>
         </div>
       </div>

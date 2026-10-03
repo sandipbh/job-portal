@@ -1,39 +1,32 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     addSkill,
     setSkills,
 } from "../../../features/filter/filterSlice";
 
-const skillsList = [
-    "React",
-    "Next.js",
-    "JavaScript",
-    "Node.js",
-    "MongoDB",
-    "Express",
-    "Redux",
-    "HTML",
-    "CSS",
-    "Tailwind",
-    "TypeScript",
-    "Angular",
-    "Vue.js",
-    "Python",
-    "Java",
-    "PHP",
-    "Laravel",
-    "MySQL",
-    "PostgreSQL",
-    "AWS",
-    "Docker",
-    "Kubernetes"
-];
-
 const Skills = () => {
     const dispatch = useDispatch();
+    const [skillsList, setSkillsList] = useState([]);
+
+    useEffect(() => {
+        const loadSkills = async () => {
+            try {
+                const response = await fetch("/api/public-master-list", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type: "skills", term: "" }),
+                });
+                const data = await response.json();
+                setSkillsList((data?.data || []).map((x) => x.value));
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        loadSkills();
+    }, []);
 
     const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState("");
@@ -158,9 +151,6 @@ const Skills = () => {
 
                                     <span>
                                         {skill}
-                                        <small>
-                                            ({Math.floor(Math.random() * 500) + 10})
-                                        </small>
                                     </span>
                                 </label>
                             ))}

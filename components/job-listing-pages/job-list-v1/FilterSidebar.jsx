@@ -64,10 +64,14 @@ const FilterSidebar = () => {
           <JobType />
         </div>
 
-        <div className="switchbox-outer">
+        <div className="checkbox-outer">
+          <h4>Experience Level</h4>
+          <ExperienceLevel />
+        </div>
+        {/* <div className="switchbox-outer">
           <h4>Company type</h4>
           <CompanyType />
-        </div>
+        </div> */}
         {/* <!-- Switchbox Outer --> */}
 
         <div className="checkbox-outer">
@@ -93,30 +97,27 @@ const FilterSidebar = () => {
           <Industry />
         </div>
 
-        <div className="checkbox-outer">
-          <h4>Experience Level</h4>
-          <ExperienceLevel />
-        </div>
+
         {/* <!-- Checkboxes Ouer --> */}
 
 
-        <div className="filter-block">
+        {/* <div className="filter-block">
           <h4>Search by Keywords</h4>
           <div className="form-group">
             <SearchBox />
           </div>
-        </div>
+        </div> */}
         {/* <!-- Filter Block --> */}
 
-        <div className="filter-block">
+        {/* <div className="filter-block">
           <h4>Tags</h4>
           <Tag />
-        </div>
+        </div> */}
         {/* <!-- Filter Block --> */}
       </div>
       {/* Filter Outer */}
 
-      <CallToActions />
+      {/* <CallToActions /> */}
       {/* <!-- End Call To Action --> */}
     </div>
   );

@@ -4,8 +4,7 @@ import MenuToggler from "../../MenuToggler";
 
 import FilterTopBox from "@/components/dashboard-pages/employers-dashboard/candidates-search/components/FilterTopBox";
 import FilterSidebar from "@/components/dashboard-pages/employers-dashboard/candidates-search/components/FilterSidebar";
-import candidatesData from "@/data/candidatedata";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -31,7 +30,7 @@ import {
 } from "@/features/candidate/candidateSlice";
 const index = ({ initialSearchData }) => {
     const [showFilter, setShowFilter] = useState(false);
-    const [searchResultData, setSearchResultData] = useState(initialSearchData);
+    const [resultCount, setResultCount] = useState(0);
     const {
         keyword,
         location,
@@ -60,94 +59,6 @@ const index = ({ initialSearchData }) => {
         dispatch(addPerPage(pageData));
     };
     const dispatch = useDispatch();
-    const skillsFilter = (item) =>
-        skills?.length
-            ? skills.some((skill) =>
-                item.skills.some((s) =>
-                    s.toLowerCase().includes(skill.toLowerCase())
-                )
-            )
-            : true;
-    // keyword filter
-    const keywordFilter = (item) =>
-        keyword !== ""
-            ? item?.name?.toLowerCase().includes(keyword?.toLowerCase()) && item
-            : item;
-
-    // location filter
-    const locationFilter = (item) =>
-        location !== ""
-            ? item?.location?.toLowerCase().includes(location?.toLowerCase())
-            : item;
-
-    // destination filter
-    const destinationFilter = (item) =>
-        item?.destination?.min >= destination?.min &&
-        item?.destination?.max <= destination?.max;
-
-    // category filter
-    const categoryFilter = (item) =>
-        category !== ""
-            ? item?.category?.toLocaleLowerCase() === category?.toLocaleLowerCase()
-            : item;
-
-    // gender filter
-    const genderFilter = (item) =>
-        candidateGender !== ""
-            ? item?.gender.toLocaleLowerCase() ===
-            candidateGender.toLocaleLowerCase() && item
-            : item;
-
-    // date-posted filter
-    const datePostedFilter = (item) =>
-        datePost !== "all" && datePost !== ""
-            ? item?.created_at
-                ?.toLocaleLowerCase()
-                .split(" ")
-                .join("-")
-                .includes(datePost)
-            : item;
-
-    // experience filter
-    const experienceFilter = (item) =>
-        experiences?.length !== 0
-            ? experiences?.includes(
-                item?.experience?.split(" ").join("-").toLocaleLowerCase()
-            )
-            : item;
-
-    // qualification filter
-    const qualificationFilter = (item) =>
-        qualifications?.length !== 0
-            ? qualifications?.includes(
-                item?.qualification?.split(" ").join("-").toLocaleLowerCase()
-            )
-            : item;
-
-    // sort filter
-    const sortFilter = (a, b) =>
-        sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
-
-
-
-    const educationFilter = (item) =>
-        education?.length
-            ? education.some((edu) =>
-                item.education.some((e) =>
-                    e.toLowerCase().includes(edu.toLowerCase())
-                )
-            )
-            : true;
-
-    const industryFilter = (item) =>
-        industries?.length
-            ? industries.includes(item.industry)
-            : true;
-
-    const experienceLevelFilter = (item) =>
-        experienceLevels?.length
-            ? experienceLevels.includes(item.experienceLevel)
-            : true;
 
     const clearHandler = () => {
         dispatch(addKeyword(""));
@@ -173,10 +84,6 @@ const index = ({ initialSearchData }) => {
         dispatch(addPerPage({ start: 0, end: 0 }));
     };
 
-    useEffect(() => {
-        setSearchResultData(initialSearchData);
-    }, [initialSearchData]);
-
     const [selectedCandidates, setSelectedCandidates] = useState([]);
     return (
 
@@ -184,24 +91,7 @@ const index = ({ initialSearchData }) => {
 
             <BreadCrumb title="Search Filters!" />
 
-            {searchResultData && (
-                <div className="alert alert-info mb-3">
-                    <strong>Search data received</strong>
-                    <div className="mt-2">
-                        <small>
-                            Payload: {searchResultData?.payload ? JSON.stringify(searchResultData.payload) : "No payload"}
-                        </small>
-                    </div>
-                    <div className="mt-2">
-                        <small>
-                            Results: {searchResultData?.results ? JSON.stringify(searchResultData.results) : "No results"}
-                        </small>
-                    </div>
-                </div>
-            )}
-
             <div className="row align-items-start">
-
                 <div className="px-2">
 
                     <div className="candidate-toolbar">
@@ -234,13 +124,12 @@ const index = ({ initialSearchData }) => {
                                 <input
                                     type="checkbox"
                                     checked={
-                                        candidatesData.length > 0 &&
-                                        selectedCandidates.length === candidatesData.length
+                                        resultCount > 0 &&
+                                        selectedCandidates.length === resultCount
                                     }
+                                    disabled={resultCount === 0}
                                     onChange={(e) => {
-                                        if (e.target.checked) {
-                                            setSelectedCandidates(candidatesData.map(item => item.id));
-                                        } else {
+                                        if (!e.target.checked) {
                                             setSelectedCandidates([]);
                                         }
                                     }}
@@ -278,7 +167,7 @@ const index = ({ initialSearchData }) => {
                                 </select>
 
                                 <span className="text-nowrap">
-                                    {candidatesData.length} Candidates
+                                    {resultCount} Candidates
                                 </span>
 
                                 {(keyword !== "" ||
@@ -366,7 +255,8 @@ const index = ({ initialSearchData }) => {
                 >
                     <div className="ls-outer">
                         <FilterTopBox selectedCandidates={selectedCandidates}
-                            setSelectedCandidates={setSelectedCandidates} />
+                            setSelectedCandidates={setSelectedCandidates}
+                            onResultsChange={setResultCount} />
                     </div>
                 </div>
                 {/* <!-- End Content Column --> */}

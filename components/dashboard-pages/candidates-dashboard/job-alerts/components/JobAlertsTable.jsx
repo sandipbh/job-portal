@@ -2,32 +2,40 @@
 import { useEffect, useState } from "react";
 import Link from "next/link.js";
 import { formatDate, getTimeAgo } from "@/lib/dateUtils";
+import JobCardSkeleton from "@/components/skeleton/Job-list";
 import Image from "next/image.js";
 import jobs from "../../../../../data/job-featured.js";
 
 
 const JobAlertsTable = () => {
 
+
   const [jobList, setJobList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
-    getShortListedJobs();
+    getJobList();
   }, []);
 
-  const getShortListedJobs = async () => {
+  const getJobList = async () => {
     try {
-      const response = await fetch("/api/candi-applied-jobs-shortlisted", {
+      const response = await fetch("/api/candi-alert-job-list", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         }
       });
-      const result = await response.json();
-      const listData = result?.data;
 
-      console.log("Applied Jobs Data:", listData);
+      const result = await response.json();
+
+      const listData = result?.data;
+      //console.log('listData  ', listData)
+
       if (listData) {
+
         setJobList(listData);
+        setLoading(false);
       }
     } catch (error) {
       console.error(error);
@@ -35,10 +43,12 @@ const JobAlertsTable = () => {
   };
 
 
+
+
   return (
     <div className="tabs-box">
       <div className="widget-title">
-        <h4>My Applied Jobs</h4>
+        <h4>My Job Alerts</h4>
 
         <div className="chosen-outer">
           {/* <!--Tabs Box--> */}
@@ -57,73 +67,76 @@ const JobAlertsTable = () => {
       <div className="widget-content">
         <div className="table-outer">
           <div className="table-outer">
-            <table className="default-table manage-job-table">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Criteria</th>
-                  <th>Created</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {jobList.map((item) => (
-                  <tr key={item.id}>
-                    <td>
-                      {/* <!-- Job Block --> */}
-                      <div className="job-block">
-                        <div className="inner-box">
+            <>
+              {
+                loading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <JobCardSkeleton key={i} />
+                  ))
+                ) : jobList?.length > 0 ? (
+                  <>
+                    {jobList.map((item) => (
+                      <div className="job-block-five" key={item.id}>
+                        <div className="inner-box " style={{ padding: "10px 12px" }}>
                           <div className="content">
+
                             <span className="company-logo">
+
                               <Image
-                                width={50}
-                                height={49}
+                                width={100}
+                                height={75}
                                 src={item.logo}
-                                alt="logo"
+                                alt="item brand"
                               />
                             </span>
                             <h4>
-                              <Link href={`/job-single-v2/${item.id}`}>
-                                {item.jobTitle}
-                              </Link>
+                              <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
+
                             </h4>
                             <ul className="job-info">
                               <li>
                                 <span className="icon flaticon-briefcase"></span>
                                 {item.company}
                               </li>
+                              {/* compnay info */}
                               <li>
                                 <span className="icon flaticon-map-locator"></span>
                                 {item.location}
                               </li>
+                              {/* location info */}
+                              <li>
+                                <span className="icon flaticon-clock-3"></span> {getTimeAgo(item.time)}
+                              </li>
+                              {/* time info */}
+                              <li>
+                                <span className="icon flaticon-money"></span> {item.salary}
+                              </li>
+                              {/* salary info */}
                             </ul>
+                            {/* End .job-info */}
                           </div>
+                          <ul className="job-other-info">
+                            {item.jobType.slice(0, 1).map((val, i) => (
+                              <li key={i} className={`${val.styleClass}`}>
+                                {val.type}
+                              </li>
+                            ))}
+                          </ul>
+                          <Link
+                            href={`/job-single-v2/${item.id}`}
+                            className="theme-btn btn-style-three"
+                          >
+                            View Job
+                          </Link>
                         </div>
                       </div>
-                    </td>
-                    <td>{item.criteria}</td>
-                    <td>{getTimeAgo(item.created_at)}</td>
-                    <td>
-                      <div className="option-box">
-                        <ul className="option-list">
-                          <li>
-                            <button data-text="View Aplication">
-                              <span className="la la-eye"></span>
-                            </button>
-                          </li>
-                          <li>
-                            <button data-text="Delete Aplication">
-                              <span className="la la-trash"></span>
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    ))}
+                  </>
+                ) : (
+                  <p>No job alerts found.</p>
+                )
+              }
+            </>
           </div>
         </div>
       </div>

@@ -66,45 +66,47 @@ const JobFavouriteTable = () => {
               </thead>
 
               <tbody>
-                {jobList.map((item) => (
-                  <tr key={item.id}>
-                    <td>
-                      {/* <!-- Job Block --> */}
-                      <div className="job-block">
-                        <div className="inner-box">
-                          <div className="content">
-                            <span className="company-logo">
-                              <Image
-                                width={75}
-                                height={75}
-                                src={item.logo}
-                                alt="logo"
-                              />
-                            </span>
-                            <h4>
-                              <Link href={`/job-single-v2/${item.id}`}>
-                                {item.jobTitle}
-                              </Link>
-                            </h4>
-                            <ul className="job-info">
-                              <li>
-                                <span className="icon flaticon-briefcase"></span>
-                                {item.company}
-                              </li>
-                              <li>
-                                <span className="icon flaticon-map-locator"></span>
-                                {item.location}
-                              </li>
-                            </ul>
+                {
+                  jobList?.length > 0 ? (
+                    jobList.map((item) => (
+                      <tr key={item.id}>
+                        <td>
+                          {/* <!-- Job Block --> */}
+                          <div className="job-block">
+                            <div className="inner-box">
+                              <div className="content">
+                                <span className="company-logo">
+                                  <Image
+                                    width={75}
+                                    height={75}
+                                    src={item.logo}
+                                    alt="logo"
+                                  />
+                                </span>
+                                <h4>
+                                  <Link href={`/job-single-v2/${item.id}`}>
+                                    {item.jobTitle}
+                                  </Link>
+                                </h4>
+                                <ul className="job-info">
+                                  <li>
+                                    <span className="icon flaticon-briefcase"></span>
+                                    {item.company}
+                                  </li>
+                                  <li>
+                                    <span className="icon flaticon-map-locator"></span>
+                                    {item.location}
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>{getTimeAgo(item.apply_at)}</td>
-                    <td className="status"> {item.status}</td>
-                    <td  > {getTimeAgo(item.created_at)}</td>
-                    <td  > {item.jobType[0].type}</td>
-                    {/* <td>
+                        </td>
+                        <td>{getTimeAgo(item.apply_at)}</td>
+                        <td className="status"> {item.status}</td>
+                        <td  > {getTimeAgo(item.created_at)}</td>
+                        <td  > {item.jobType[0].type}</td>
+                        {/* <td>
                       <div className="option-box">
                         <ul className="option-list">
                           <li>
@@ -120,8 +122,14 @@ const JobFavouriteTable = () => {
                         </ul>
                       </div>
                     </td> */}
-                  </tr>
-                ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5">No jobs found.</td>
+                    </tr>
+                  )
+                }
               </tbody>
             </table>
           </div>

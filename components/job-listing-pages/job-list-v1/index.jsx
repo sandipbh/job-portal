@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import FooterDefault from "../../../components/footer/common-footer";
 import Breadcrumb from "../../common/Breadcrumb";
 import LoginPopup from "../../common/form/login/LoginPopup";
@@ -42,11 +43,14 @@ const index = () => {
                         <div className="filters-column hidden-1023 col-lg-4 col-md-12 col-sm-12">
                             <FilterSidebar />
                         </div>
+
                         {/* <!-- End Filters Column for destop and laptop --> */}
 
                         <div className="content-column col-lg-8 col-md-12 col-sm-12">
                             <div className="ls-outer">
-                                <FilterJobsBox />
+                                <Suspense fallback={<p>Loading jobs...</p>}>
+                                    <FilterJobsBox />
+                                </Suspense>
                                 {/* <!-- ls Switcher --> */}
                             </div>
                         </div>

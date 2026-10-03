@@ -41,7 +41,7 @@ const index = () => {
 
                     <div className="content-column col-xl-9 col-lg-8 col-md-12 col-sm-12">
                         <div className="ls-outer">
-                            {/* <FilterJobsBox /> */}
+                            <FilterJobsBox />
                             {/* <!-- ls Switcher --> */}
                         </div>
                     </div>

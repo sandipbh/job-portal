@@ -5,169 +5,101 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import ListingShowing from "@/components/candidates-listing-pages/components/ListingShowing";
-import candidatesData from "@/data/candidatedata";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addCandidateGender,
-  addCategory,
-  addDatePost,
-  addDestination,
-  addKeyword,
-  addLocation,
-  addPerPage,
-  addSort,
-  clearExperienceF,
-  clearQualificationF,
-  clearSkills,
-  clearEducation,
-  clearIndustry,
-  clearExperienceLevel,
-} from "@/features/filter/candidateFilterSlice";
-import {
-  clearDatePost,
-  clearExperience,
-  clearQualification,
-} from "@/features/candidate/candidateSlice";
+import { useSelector } from "react-redux";
 import Image from "next/image";
 const FilterTopBox = ({
   selectedCandidates,
   setSelectedCandidates,
+  onResultsChange,
 }) => {
   const {
     keyword,
     location,
-    destination,
     category,
-    candidateGender,
-    datePost,
-    experiences,
-    qualifications,
     skills,
-    education,
     industries,
-    experienceLevels,
+    minExperience,
     sort,
     perPage,
   } = useSelector((state) => state.candidateFilter);
-  const dispatch = useDispatch();
+
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [loadingBookmark, setLoadingBookmark] = useState(false);
+
+  const handleBookmarkToggle = async (candiUqId) => {
+    try {
+      setLoadingBookmark(true);
+      const res = await fetch("/api/emp-application-profile-bookmark", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          applicationId: 0,
+          jobpostId: 0,
+          candiUqId,
+        }),
+      });
+
+      if (!res.ok) return;
+
+      setCandidates((prev) =>
+        prev.map((candidate) =>
+          candidate.candiUqId === candiUqId
+            ? { ...candidate, isSave: candidate.isSave === "Y" ? "N" : "Y" }
+            : candidate
+        )
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingBookmark(false);
+    }
+  };
+
+  // client-side fallback filters, applied on top of the API results using the
+  // real field names returned by /api/candidates-search
+  const keywordFilter = (item) =>
+    keyword
+      ? item?.candiName?.toLowerCase().includes(keyword.toLowerCase())
+      : true;
+
+  const locationFilter = (item) =>
+    location
+      ? `${item?.city || ""} ${item?.state || ""} ${item?.workingLocation || ""}`
+        .toLowerCase()
+        .includes(location.toLowerCase())
+      : true;
+
   const skillsFilter = (item) =>
     skills?.length
       ? skills.some((skill) =>
-        item.skills.some((s) =>
-          s.toLowerCase().includes(skill.toLowerCase())
-        )
-      )
-      : true;
-  // keyword filter
-  const keywordFilter = (item) =>
-    keyword !== ""
-      ? item?.name?.toLowerCase().includes(keyword?.toLowerCase()) && item
-      : item;
-
-  // location filter
-  const locationFilter = (item) =>
-    location !== ""
-      ? item?.location?.toLowerCase().includes(location?.toLowerCase())
-      : item;
-
-  // destination filter
-  const destinationFilter = (item) =>
-    item?.destination?.min >= destination?.min &&
-    item?.destination?.max <= destination?.max;
-
-  // category filter
-  const categoryFilter = (item) =>
-    category !== ""
-      ? item?.category?.toLocaleLowerCase() === category?.toLocaleLowerCase()
-      : item;
-
-  // gender filter
-  const genderFilter = (item) =>
-    candidateGender !== ""
-      ? item?.gender.toLocaleLowerCase() ===
-      candidateGender.toLocaleLowerCase() && item
-      : item;
-
-  // date-posted filter
-  const datePostedFilter = (item) =>
-    datePost !== "all" && datePost !== ""
-      ? item?.created_at
-        ?.toLocaleLowerCase()
-        .split(" ")
-        .join("-")
-        .includes(datePost)
-      : item;
-
-  // experience filter
-  const experienceFilter = (item) =>
-    experiences?.length !== 0
-      ? experiences?.includes(
-        item?.experience?.split(" ").join("-").toLocaleLowerCase()
-      )
-      : item;
-
-  // qualification filter
-  const qualificationFilter = (item) =>
-    qualifications?.length !== 0
-      ? qualifications?.includes(
-        item?.qualification?.split(" ").join("-").toLocaleLowerCase()
-      )
-      : item;
-
-  // sort filter
-  const sortFilter = (a, b) =>
-    sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
-
-
-  const educationFilter = (item) =>
-    education?.length
-      ? education.some((edu) =>
-        item.education.some((e) =>
-          e.toLowerCase().includes(edu.toLowerCase())
-        )
+        (item?.skills || "").toLowerCase().includes(skill.toLowerCase())
       )
       : true;
 
-  const industryFilter = (item) =>
-    industries?.length
-      ? industries.includes(item.industry)
-      : true;
-
-  const experienceLevelFilter = (item) =>
-    experienceLevels?.length
-      ? experienceLevels.includes(item.experienceLevel)
-      : true;
-
-
-  const [candidates, setCandidates] = useState([]);
-
-  const getSkills = async () => {
-    try {
-      const response = await fetch("/api/list-skills", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          term: '',
-        }),
-      });
-      const data = await response.json();
-      //setSkillOptions(data && data.data ? data.data : []);
-
-    } catch (error) {
-      console.error(error);
-    }
+  // sort filter - API has no created_at field, fall back to sorting by name
+  const sortFilter = (a, b) => {
+    if (sort === "des") return (b?.candiName || "").localeCompare(a?.candiName || "");
+    if (sort === "asc") return (a?.candiName || "").localeCompare(b?.candiName || "");
+    return 0;
   };
-  useEffect(() => {
-    getSkills();
-  }, [0]);
-
 
   const getData = async () => {
+    setLoading(true);
+    setError("");
     try {
+      const payload = {
+        KEYWORDS: keyword || null,
+        LOCATION: location || null,
+        SKILLS: skills?.length ? skills.join(",") : null,
+        DEPARTMENT_IDS: category || null,
+        INDUSTRY_IDS: industries?.length ? industries.join(",") : null,
+        MIN_EXPERIENCE: minExperience || 0,
+        PAGE_NO: 1,
+        PAGE_SIZE: perPage?.end || 20,
+      };
 
-      const payload = {}
       const response = await fetch("/api/candidates-search", {
         method: "POST",
         headers: {
@@ -178,61 +110,45 @@ const FilterTopBox = ({
 
       const data = await response.json();
 
-      if (response.ok) {
-        //console.log("Candidates fetched:", data.data);
-
-        // if (payload?.SKILLS?.length > 0) {
-
-        //     const selectedSkills = (payload?.SKILLS || "")
-        //         .split(",")
-        //         .map(s => s.trim().toLowerCase());
-
-        //     setSelectedSkillsList(selectedSkills);
-        // }
-        const searchState = {
-          payload,
-          results: data,
-        };
-        console.log(JSON.stringify(data?.data))
-        setCandidates(data?.data);
-        // const encodedState = encodeURIComponent(JSON.stringify(searchState));
-        // router.push(`/employers-dashboard/candidates-search?searchData=${encodedState}`);
-
-        // setSelectedCandidates(prev =>
-        //   prev.filter(id =>
-        //     candidates.some(candidate => candidate.id === id)
-        //   )
-        // );
-
-        // TODO: Send data to parent component or use Context/Redux
-        // Example: onSearchResults(data.results, data.totalCount);
-      } else {
-        console.error("Search failed:", data);
+      if (response.status === 401) {
+        setError("Your login has expired. Please login again to search candidates.");
+        setCandidates([]);
+        return;
       }
+
+      if (!response.ok) {
+        setError(data?.message || "Failed to fetch candidates.");
+        setCandidates([]);
+        return;
+      }
+
+      setCandidates(data?.data || []);
     } catch (error) {
       console.error("API Error:", error);
+      setError("Failed to fetch candidates. Please try again.");
+      setCandidates([]);
     } finally {
-      //setLoading(false);
+      setLoading(false);
     }
   }
 
+  // refetch whenever a search-relevant filter changes (debounced)
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      getData();
+    }, 400);
+
+    return () => clearTimeout(delayDebounce);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyword, location, category, skills, industries, minExperience, perPage]);
+
   let content = candidates
-    ?.slice(perPage.start, perPage.end === 0 ? 10 : perPage.end)
-    .filter(keywordFilter)
+    ?.filter(keywordFilter)
     .filter(locationFilter)
-    .filter(destinationFilter)
-    .filter(categoryFilter)
-    .filter(genderFilter)
-    .filter(datePostedFilter)
-    .filter(experienceFilter)
-    .filter(qualificationFilter)
     .filter(skillsFilter)
-    .filter(educationFilter)
-    .filter(industryFilter)
-    .filter(experienceLevelFilter)
     ?.sort(sortFilter)
     ?.map((candidate) => (
-      <div className="na-card" key={candidate.id}>
+      <div className="na-card" key={candidate.candiUqId}>
         {/* Left Section */}
         <div className="na-left">
 
@@ -243,14 +159,14 @@ const FilterTopBox = ({
                 <input
                   type="checkbox"
                   className="check-input"
-                  id={`candidate-${candidate.id}`}
-                  checked={selectedCandidates.includes(candidate.id)}
+                  id={`candidate-${candidate.candiUqId}`}
+                  checked={selectedCandidates.includes(candidate.candiUqId)}
                   onChange={(e) => {
                     if (e.target.checked) {
-                      setSelectedCandidates(prev => [...prev, candidate.id]);
+                      setSelectedCandidates(prev => [...prev, candidate.candiUqId]);
                     } else {
                       setSelectedCandidates(prev =>
-                        prev.filter(id => id !== candidate.id)
+                        prev.filter(id => id !== candidate.candiUqId)
                       );
                     }
                   }}
@@ -259,8 +175,8 @@ const FilterTopBox = ({
 
               <div className="candidate-basic">
                 <h4>
-                  <Link href={`/candidates-single-v1/${candidate.id}`}>
-                    {candidate.name}
+                  <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
+                    {candidate.candiName}
                   </Link>
                 </h4>
 
@@ -272,12 +188,12 @@ const FilterTopBox = ({
 
                   <span>
                     <i className="flaticon-money"></i>
-                    {candidate.salary}
+                    {candidate.curentSalary}
                   </span>
 
                   <span>
                     <i className="flaticon-map-locator"></i>
-                    {candidate.location}
+                    {[candidate.city, candidate.state].filter(Boolean).join(", ")}
                   </span>
                 </div>
               </div>
@@ -287,16 +203,7 @@ const FilterTopBox = ({
           <div className="candidate-row">
             <div className="label1">Current</div>
             <div className="value">
-              {candidate.currentDesignation} at{" "}
               <strong>{candidate.currentCompany}</strong>
-            </div>
-          </div>
-
-          <div className="candidate-row">
-            <div className="label1">Previous</div>
-            <div className="value">
-              {candidate.previousDesignation} at{" "}
-              <strong>{candidate.previousCompany}</strong>
             </div>
           </div>
 
@@ -304,16 +211,21 @@ const FilterTopBox = ({
             <div className="label1">Education</div>
 
             <div className="value">
-              {candidate.education.map((edu, index) => (
-                <div key={index}>{edu}</div>
-              ))}
+              {candidate.education}
             </div>
           </div>
 
           <div className="candidate-row">
             <div className="label1">Pref. Location</div>
             <div className="value">
-              {candidate.preferredLocation}
+              {candidate.workingLocation}
+            </div>
+          </div>
+
+          <div className="candidate-row">
+            <div className="label1">Notice Period</div>
+            <div className="value">
+              {candidate.noticePeriod}
             </div>
           </div>
 
@@ -321,11 +233,14 @@ const FilterTopBox = ({
             <div className="label1">Key Skills</div>
 
             <div className="value">
-              {candidate.skills.map((skill, index) => (
-                <span className="skill-pill" key={index}>
-                  {skill}
-                </span>
-              ))}
+              {(candidate.skills || "")
+                .split(",")
+                .filter(Boolean)
+                .map((skill, index) => (
+                  <span className="skill-pill" key={index}>
+                    {skill.trim()}
+                  </span>
+                ))}
             </div>
           </div>
 
@@ -337,7 +252,7 @@ const FilterTopBox = ({
 
           <div className="profile-image">
             <Image
-              src={candidate.avatar}
+              src={candidate.avatar || "/images/resource/candidate-1.png"}
               width={90}
               height={90}
               alt=""
@@ -349,8 +264,13 @@ const FilterTopBox = ({
                 <i className="las la-comment"></i>
               </button>
 
-              <button className="action-icon-btn">
-                <i className="lar la-bookmark"></i>
+              <button
+                type="button"
+                className="action-icon-btn"
+                onClick={() => handleBookmarkToggle(candidate.candiUqId)}
+                disabled={loadingBookmark}
+              >
+                <i className={candidate.isSave === "Y" ? "fas fa-bookmark" : "lar la-bookmark"}></i>
               </button>
 
               <button className="action-icon-btn">
@@ -368,12 +288,12 @@ const FilterTopBox = ({
           </div>
 
           <p className="profile-summary">
-            {candidate.profileSummary}
+            {candidate.profileDesc}
           </p>
 
           <div className="candidate-action-buttons">
             <Link
-              href={`/candidates-single-v1/${candidate.id}`}
+              href={`/candidates-single-v1/${candidate.candiUqId}`}
               className="theme-btn btn-style-one w-100 butn"
             >
               View Profile
@@ -401,78 +321,31 @@ const FilterTopBox = ({
   //   dispatch(addPerPage(pageData));
   // };
 
-  // clear handler
-  const clearHandler = () => {
-    dispatch(addKeyword(""));
-    dispatch(addLocation(""));
-    dispatch(addDestination({ min: 0, max: 100 }));
-    dispatch(addCategory(""));
-    dispatch(addCandidateGender(""));
-    dispatch(addDatePost(""));
-
-    dispatch(clearExperienceF());
-    dispatch(clearQualificationF());
-
-    dispatch(clearSkills());
-    dispatch(clearEducation());
-    dispatch(clearIndustry());
-    dispatch(clearExperienceLevel());
-
-    dispatch(clearDatePost());
-    dispatch(clearExperience());
-    dispatch(clearQualification());
-    setSelectedCandidates([]);
-    dispatch(addSort(""));
-    dispatch(addPerPage({ start: 0, end: 0 }));
-  };
-
+  // notify the parent about the result count (for "Select All" / toolbar text)
   useEffect(() => {
-    getData();
-  }, []);
+    onResultsChange?.(candidates?.length || 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [candidates]);
+
   return (
     <>
-
-
-      {/* <div className="candidate-toolbar">
-
-        <div className="toolbar-left">
-          <label className="select-all">
-            <input
-              type="checkbox"
-              checked={
-                candidatesData.length > 0 &&
-                selectedCandidates.length === candidatesData.length
-              }
-              onChange={(e) => {
-                if (e.target.checked) {
-                  setSelectedCandidates(candidatesData.map(item => item.id));
-                } else {
-                  setSelectedCandidates([]);
-                }
-              }}
-            />
-            <span>Select All</span>
-          </label>
-          <button className="toolbar-btn">
-            <i className="las la-folder-plus"></i>
-            Add To
-            <i className="las la-angle-down ms-2"></i>
-          </button>
-
-          <button className="toolbar-btn">
-            <i className="las la-bell"></i>
-            Set Reminder
-            <i className="las la-angle-down ms-2"></i>
-          </button>
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
         </div>
+      )}
 
-        <div className="toolbar-right">
-          <span>{candidatesData.length} Candidates</span>
-        </div>
-      </div> */}
-      {/* End top filter bar box */}
-
-      {content}
+      {loading ? (
+        <div className="text-center py-5">Loading candidates...</div>
+      ) : content && content.length > 0 ? (
+        content
+      ) : (
+        !error && (
+          <div className="text-center py-5">
+            No candidates found matching your filters.
+          </div>
+        )
+      )}
 
       <ListingShowing />
       {/* <!-- Listing Show More --> */}

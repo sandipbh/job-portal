@@ -1,16 +1,16 @@
 'use client'
 
 import { useDispatch, useSelector } from "react-redux";
-import { addExperience } from "../../../features/filter/candidateFilterSlice";;
+import { setMinExperience } from "../../../features/filter/candidateFilterSlice";
 
 const ExperienceLevel = () => {
     const dispatch = useDispatch();
 
     const experience =
-        useSelector((state) => state.filter.jobList.experience) || 0;
+        useSelector((state) => state.candidateFilter.minExperience) || 0;
 
     const handleChange = (e) => {
-        dispatch(addExperience(Number(e.target.value)));
+        dispatch(setMinExperience(Number(e.target.value)));
     };
 
     return (

@@ -330,3 +330,165 @@
     color: #cf3838 !important;
     margin-top: 10px;
 }
+
+// multi-keyword tag input (SearchForm3)
+.keyword-tags-input {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-height: 60px;
+    padding: 10px 0 10px 40px;
+
+    .keyword-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        font-size: 13px;
+        line-height: 1;
+        color: #fff;
+        background-color: var(--primary-color);
+        border-radius: 4px;
+        white-space: nowrap;
+
+        i {
+            cursor: pointer;
+            font-size: 11px;
+            opacity: 0.85;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    input {
+        flex: 1 1 120px;
+        width: auto !important;
+        height: 30px !important;
+        min-width: 120px;
+        padding: 0 !important;
+        border: 0;
+    }
+}
+
+// mobile/tablet tweaks for the search form (keyword tags, suggestion list, error)
+@media only screen and (max-width: 1023px) {
+    .job-search-form .form-group {
+        .keyword-tags-input {
+            min-height: 70px;
+            padding: 15px 15px 15px 70px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0px 6px 15px rgba(64, 79, 104, 0.05);
+        }
+
+        .ui-autocomplete {
+            left: 0;
+            right: 0;
+            max-height: 200px;
+
+            li {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+        }
+    }
+
+    .ui-danger {
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+}
+
+@media only screen and (max-width: 575px) {
+    .keyword-tags-input .keyword-tag {
+        font-size: 12px;
+        padding: 3px 6px;
+    }
+}
+
+// search form validation alert, shown above the full search form
+.search-form-wrap {
+    position: relative;
+}
+
+.search-form-alert {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 92%;
+    margin: 0;
+    padding: 10px 40px 10px 16px;
+    font-size: 14px;
+    text-align: center;
+    white-space: normal;
+    border-radius: 8px;
+    box-shadow: 0px 7px 18px rgba(64, 79, 104, 0.15);
+    z-index: 20;
+
+    .btn-close {
+        position: absolute;
+        top: 50%;
+        right: 12px;
+        transform: translateY(-50%);
+        padding: 0;
+        font-size: 11px;
+    }
+}
+
+@media only screen and (max-width: 575px) {
+    .search-form-alert {
+        max-width: 100%;
+        font-size: 13px;
+    }
+}
+
+// location search suggestion dropdown (SearchForm3)
+.job-search-form,
+.form-group {
+    .ui-autocomplete {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        margin: 4px 0 0;
+        padding: 4px 0;
+        list-style: none;
+        background: #fff;
+        border: 1px solid #e3e3e3;
+        border-radius: 6px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        max-height: 230px;
+        overflow-y: auto;
+        text-align: left;
+
+        li {
+            padding: 6px 12px;
+            font-size: 15px;
+            color: #202124;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &:hover {
+                background-color: #f0f5f8;
+                color: var(--primary-color);
+            }
+
+            &+li {
+                border-top: 1px solid #f5f5f5;
+            }
+        }
+    }
+
+    .keyword-autocomplete {
+        z-index: 60;
+    }
+}

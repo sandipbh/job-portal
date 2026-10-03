@@ -1,10 +1,10 @@
-
-
 'use client'
 
 import Link from "next/link";
-import jobs from "../../../data/job-featured";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
+import JobCardSkeleton from "../../skeleton/Job-list";
 import {
   addCategory,
   addDatePosted,
@@ -42,33 +42,53 @@ const FilterJobsBox = () => {
   const { sort, perPage } = jobSort;
 
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
 
-  // keyword filter on title
-  const keywordFilter = (item) =>
-    keyword !== ""
-      ? item.jobTitle.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())
-      : item;
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // location filter
-  const locationFilter = (item) =>
-    location !== ""
-      ? item?.location
-        ?.toLocaleLowerCase()
-        .includes(location?.toLocaleLowerCase())
-      : item;
+  // seed redux filters from the URL on first load (e.g. shared/bookmarked search links)
+  useEffect(() => {
+    const urlKeyword = searchParams.get("keyword");
+    const urlLocation = searchParams.get("location");
+    const urlCategory = searchParams.get("category");
 
-  // location filter
-  const destinationFilter = (item) =>
-    item?.destination?.min >= destination?.min &&
-    item?.destination?.max <= destination?.max;
+    if (urlKeyword) dispatch(addKeyword(urlKeyword));
+    if (urlLocation) dispatch(addLocation(urlLocation));
+    if (urlCategory) dispatch(addCategory(urlCategory));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // category filter
-  const categoryFilter = (item) =>
-    category !== ""
-      ? item?.category?.toLocaleLowerCase() === category?.toLocaleLowerCase()
-      : item;
+  useEffect(() => {
+    const getJobs = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (keyword) params.set("keyword", keyword);
+        if (location) params.set("location", location);
+        if (category) params.set("category", category);
 
-  // job-type filter
+        const response = await fetch(
+          `/api/job-search${params.toString() ? `?${params.toString()}` : ""}`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        const result = await response.json();
+        setJobs(result?.data || []);
+      } catch (error) {
+        console.error(error);
+        setJobs([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getJobs();
+  }, [keyword, location, category]);
+
   const jobTypeFilter = (item) =>
     jobType?.length !== 0 && item?.jobType !== undefined
       ? jobType?.includes(
@@ -107,10 +127,6 @@ const FilterJobsBox = () => {
     sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
 
   let content = jobs
-    ?.filter(keywordFilter)
-    ?.filter(locationFilter)
-    ?.filter(destinationFilter)
-    ?.filter(categoryFilter)
     ?.filter(jobTypeFilter)
     ?.filter(datePostedFilter)
     ?.filter(experienceFilter)
@@ -186,13 +202,17 @@ const FilterJobsBox = () => {
     dispatch(addLocation(""));
     dispatch(addDestination({ min: 0, max: 100 }));
     dispatch(addCategory(""));
+    dispatch(addKeyword(""));
+    dispatch(addLocation(""));
+    dispatch(addDestination({ min: 0, max: 100 }));
+    dispatch(addCategory(""));
     dispatch(clearJobType());
     dispatch(clearJobTypeToggle());
     dispatch(addDatePosted(""));
     dispatch(clearDatePostToggle());
     dispatch(clearExperience());
     dispatch(clearExperienceToggle());
-    dispatch(addSalary({ min: 0, max: 20000 }));
+    dispatch(addSalary({ min: 0, max: 500000 }));
     dispatch(addTag(""));
     dispatch(addSort(""));
     dispatch(addPerPage({ start: 0, end: 0 }));
@@ -230,7 +250,7 @@ const FilterJobsBox = () => {
             datePosted !== "" ||
             experience?.length !== 0 ||
             salary?.min !== 0 ||
-            salary?.max !== 20000 ||
+            salary?.max !== 500000 ||
             tag !== "" ||
             sort !== "" ||
             perPage.start !== 0 ||
@@ -297,7 +317,11 @@ const FilterJobsBox = () => {
         </div>
       </div>
       {/* End top filter bar box */}
-      <div className="row">{content}</div>
+      <div className="row">
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => <JobCardSkeleton key={i} />)
+          : content}
+      </div>
       {/* <!-- List Show More --> */}
       <div className="ls-show-more">
         <p>Show 36 of 497 Jobs</p>
