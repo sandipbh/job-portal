@@ -19,7 +19,7 @@ const index = () => {
             className="job-search-form"
             data-aos-delay="700"
             data-aos="fade-up"
-          >
+            style={{ zIndex: "999" }} >
 
             <SearchForm3 />
 
