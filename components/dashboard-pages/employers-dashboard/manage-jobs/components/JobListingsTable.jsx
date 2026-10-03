@@ -1,4 +1,5 @@
 "use client";
+import { encodeJobId } from "@/lib/jobIdCrypto";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -685,7 +686,7 @@ const JobListingsTable = () => {
                               />
                             </span>
                             <h4>
-                              <Link href={`/job-single-v2/${item.id}`}>
+                              <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>
                                 {item.jobTitle}
                               </Link>
                             </h4>
@@ -729,7 +730,7 @@ const JobListingsTable = () => {
                         <ul className="option-list">
                           <li>
                             <Link
-                              href={`/job-single-v2/${item.id}`}
+                              href={`/job-single-v2/${encodeJobId(item.id)}`}
                             >
                               <button data-text="View Aplication">
                                 <span className="la la-eye"></span>

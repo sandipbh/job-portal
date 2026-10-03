@@ -3,6 +3,7 @@
 'use client'
 
 import Link from "next/link";
+import { encodeJobId } from "@/lib/jobIdCrypto";
 import Pagination from "../components/Pagination";
 import jobs from "../../../data/job-featured";
 import { useDispatch, useSelector } from "react-redux";
@@ -135,7 +136,7 @@ const FilterJobBox = () => {
           </span>
           <span className="company-name">{item.company}</span>
           <h4>
-            <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
+            <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>{item.jobTitle}</Link>
           </h4>
           <div className="location">
             <span className="icon flaticon-map-locator"></span>

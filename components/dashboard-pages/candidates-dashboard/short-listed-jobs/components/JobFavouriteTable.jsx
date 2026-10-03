@@ -1,4 +1,5 @@
 'use client';
+import { encodeJobId } from "@/lib/jobIdCrypto";
 import { useEffect, useState } from "react";
 import Link from "next/link.js";
 import { formatDate, getTimeAgo } from "@/lib/dateUtils";
@@ -84,7 +85,7 @@ const JobFavouriteTable = () => {
                                   />
                                 </span>
                                 <h4>
-                                  <Link href={`/job-single-v2/${item.id}`}>
+                                  <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>
                                     {item.jobTitle}
                                   </Link>
                                 </h4>

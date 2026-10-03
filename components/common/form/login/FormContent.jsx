@@ -299,7 +299,7 @@ const FormContent = () => {
 
     <div className="form-inner">
 
-      <h3>Login to- {process.env.NEXT_PUBLIC_APP_NAME}  </h3>
+      <h3>Login to  {process.env.NEXT_PUBLIC_APP_NAME}  </h3>
 
       {/* <!--Login Form--> */}
       <form onSubmit={handleSubmit}>

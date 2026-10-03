@@ -18,6 +18,7 @@ export const metadata = {
 const JobSingleDynamicV2 = async ({ params }) => {
   const { id } = await params;
 
+
   return (
     <>
       {/* <!-- Header Span --> */}

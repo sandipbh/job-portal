@@ -1,4 +1,5 @@
 'use client';
+import { encodeJobId } from "@/lib/jobIdCrypto";
 import { useEffect, useState } from "react";
 import Link from "next/link.js";
 import { formatDate, getTimeAgo } from "@/lib/dateUtils";
@@ -90,7 +91,7 @@ const JobAlertsTable = () => {
                               />
                             </span>
                             <h4>
-                              <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
+                              <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>{item.jobTitle}</Link>
 
                             </h4>
                             <ul className="job-info">
@@ -123,7 +124,7 @@ const JobAlertsTable = () => {
                             ))}
                           </ul>
                           <Link
-                            href={`/job-single-v2/${item.id}`}
+                            href={`/job-single-v2/${encodeJobId(item.id)}`}
                             className="theme-btn btn-style-three"
                           >
                             View Job

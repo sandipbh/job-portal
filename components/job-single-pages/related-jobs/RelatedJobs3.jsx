@@ -1,4 +1,5 @@
 'use client'
+import { encodeJobId } from "@/lib/jobIdCrypto";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -73,7 +74,7 @@ const RelatedJobs3 = ({ id }) => {
                   </span>
                   <span className="company-name">{item.company}</span>
                   <h4>
-                    <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
+                    <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>{item.jobTitle}</Link>
                   </h4>
                   <div className="location">
                     <span className="icon flaticon-map-locator"></span>

@@ -1,6 +1,7 @@
 
 
 import Select from "react-select";
+import { encodeJobId } from "@/lib/jobIdCrypto";
 import CreatableSelect from "react-select/creatable";
 import { useState, useEffect, useRef } from "react";
 
@@ -3334,7 +3335,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         onClose={() => setShowJobPostedModal(false)}
         jobTitle={formData.jobTitle}
         companyName={formData.companyName}
-        jobLink={`/job-single-v2/${jobpostid}`}
+        jobLink={`/job-single-v2/${encodeJobId(jobpostid)}`}
       />
 
     </>

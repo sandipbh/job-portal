@@ -1,4 +1,5 @@
 'use client';
+import { encodeJobId } from "@/lib/jobIdCrypto";
 
 import { useEffect, useState } from "react";
 
@@ -115,7 +116,7 @@ const JobListingsTable = () => {
                         <div className="d-flex justify-content-between align-items-start">
                           <div>
                             <h6 className="mb-1 fw-semibold">
-                              <Link href={`/job-single-v2/${item.id}`}>
+                              <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>
                                 {item.jobTitle}
                               </Link>
                             </h6>

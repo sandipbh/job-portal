@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { encodeJobId } from "@/lib/jobIdCrypto";
 import jobFeatured from "../../data/job-featured";
 import Image from "next/image";
 
@@ -18,7 +19,7 @@ const JobFeatured5 = () => {
                 />
               </span>
               <h4>
-                <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
+                <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>{item.jobTitle}</Link>
               </h4>
               <ul className="job-info">
                 <li>
@@ -50,7 +51,7 @@ const JobFeatured5 = () => {
               ))}
             </ul>
             <Link
-              href={`/job-single-v2/${item.id}`}
+              href={`/job-single-v2/${encodeJobId(item.id)}`}
               className="theme-btn btn-style-three"
             >
               Apply Job

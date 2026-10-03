@@ -1,5 +1,6 @@
 'use client'
 import Link from "next/link";
+import { encodeJobId } from "@/lib/jobIdCrypto";
 import recentJobApplied from "../../../../../data/job-featured";
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -49,7 +50,7 @@ const JobApplied = () => {
                 />
               </span>
               <h4>
-                <Link href={`/job-single-v2/${item.id}`}>
+                <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>
                   {item.jobTitle}
                 </Link>
               </h4>

@@ -1,5 +1,6 @@
 'use client'
 import Link from "next/link";
+import { encodeJobId } from "@/lib/jobIdCrypto";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import JobCardSkeleton from "@/components/skeleton/Job-list";
@@ -62,7 +63,7 @@ const JobFeatured7 = () => {
                       />
                     </span>
                     <h4>
-                      <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
+                      <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>{item.jobTitle}</Link>
 
                     </h4>
                     <ul className="job-info">
@@ -95,7 +96,7 @@ const JobFeatured7 = () => {
                     ))}
                   </ul>
                   <Link
-                    href={`/job-single-v2/${item.id}`}
+                    href={`/job-single-v2/${encodeJobId(item.id)}`}
                     className="theme-btn btn-style-four"
                   >
                     Apply Job

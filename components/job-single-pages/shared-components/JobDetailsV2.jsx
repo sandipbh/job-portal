@@ -9,10 +9,11 @@ import JobCardSkeleton from "@/components/skeleton/Job-list";
 import { toast } from "react-toastify";
 import { Modal } from "bootstrap";
 import { formatDate, getTimeAgo } from "@/lib/dateUtils";
+import { decodeJobId } from "@/lib/jobIdCrypto";
 
 const JobDetailsV2 = ({ id }) => {
 
-    let jobId = id ?? 0;
+    let jobId = decodeJobId(id) ?? 0;
     const [jobDetails, setJobDetails] = useState({});
     const [loading, setLoading] = useState(true);
 
@@ -189,7 +190,11 @@ const JobDetailsV2 = ({ id }) => {
                                                                         {val.type}
                                                                     </li>
                                                                 ))}
+                                                                <li key="view-count" style={{ background: "rgb(153 153 153 / 15%)", color: "#524831", fontSize: "10pt" }} >
+                                                                    <i className="la la-eye"  ></i>  {jobDetails?.viewCount}
+                                                                </li>
                                                             </ul>
+
                                                             {/* End .job-other-info */}
                                                         </div>
                                                         {/* End .content */}

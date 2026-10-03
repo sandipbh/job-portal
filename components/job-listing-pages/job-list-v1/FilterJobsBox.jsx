@@ -3,6 +3,7 @@
 'use client'
 
 import Link from "next/link";
+import { encodeJobId } from "@/lib/jobIdCrypto";
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
@@ -356,7 +357,7 @@ const FilterJobsBox = () => {
               <Image width={50} height={70} src={item.logo} alt="item brand" />
             </span>
             <h4>
-              <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
+              <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>{item.jobTitle}</Link>
             </h4>
 
             <ul className="job-info">
