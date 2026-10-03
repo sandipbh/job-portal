@@ -83,7 +83,7 @@ const index = () => {
                       lineHeight: "1.7",
                     }}
                   >
-                    Your {globalData.DisplayName}  account  has been successfully created.
+                    Your {process.env.NEXT_PUBLIC_APP_NAME}  account  has been successfully created.
                     <br />
                     Welcome aboard! Start exploring all features now.
                   </p>
