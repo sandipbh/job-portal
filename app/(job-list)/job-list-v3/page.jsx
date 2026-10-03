@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import JobList from "@/components/job-listing-pages/job-list-v3";
 
 export const metadata = {
@@ -8,7 +9,9 @@ export const metadata = {
 const index = () => {
   return (
     <>
-      <JobList />
+      <Suspense fallback={null}>
+        <JobList />
+      </Suspense>
     </>
   );
 };
