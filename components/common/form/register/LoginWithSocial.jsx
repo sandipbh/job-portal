@@ -1,9 +1,14 @@
 "use client";
 import { signIn } from "next-auth/react";
 
+const clearMode = () => {
+  document.cookie = "social_auth_mode=; path=/; max-age=0";
+};
+
 const LoginWithSocial = () => {
 
   const loginWithLinkedIn = async () => {
+    clearMode();
     await signIn("linkedin", {
       callbackUrl: "/candidates-dashboard/dashboard",
     });
@@ -11,7 +16,7 @@ const LoginWithSocial = () => {
 
 
   const loginWithGoogle = async () => {
-
+    clearMode();
     await signIn("google", {
       callbackUrl: "/candidates-dashboard/dashboard",
     });

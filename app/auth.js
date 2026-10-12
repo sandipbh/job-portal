@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import LinkedIn from "next-auth/providers/linkedin";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
 
@@ -63,6 +63,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 
             const headersList = await headers();
+            const cookieStore = await cookies();
+
+            // Set by the login buttons; the register buttons leave it unset.
+            const isLoginMode =
+                cookieStore.get("social_auth_mode")?.value === "login";
 
 
             // =================================================
@@ -299,6 +304,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 
                 // =================================================
+                // LOGIN ONLY: NOT REGISTERED
+                // =================================================
+
+                if (isLoginMode && checkResult.IsActive === false) {
+
+                    return "/login?socialError=inactive_account";
+                }
+
+                if (isLoginMode && checkResult.success !== true) {
+
+                    return "/login?socialError=not_registered";
+                }
+
+
+                // =================================================
                 // EXISTING USER
                 // =================================================
 
@@ -348,8 +368,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                     const externalApiUrl =
                         `${apiUrl}/authLogin/login`;
-
-
                     const externalResponse =
                         await fetch(
                             externalApiUrl,
@@ -395,6 +413,54 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 
                     // ---------------------------------------------
+                    // CANDIDATE ONLY
+                    // ---------------------------------------------
+
+                    const role = externalData?.role ?? "candidate";
+
+                    if (String(role).toLowerCase() !== "candidate") {
+
+                        return "/login?socialError=candidate_only";
+                    }
+
+                    if (!externalData?.isVefity) {
+
+                        return "/login?socialError=not_verified";
+                    }
+
+
+                    // ---------------------------------------------
+                    // COOKIES (same shape as api/login/route.js)
+                    // ---------------------------------------------
+
+                    const isSecure =
+                        headersList.get("x-forwarded-proto") === "https";
+
+                    cookieStore.set("regToken", "", {
+                        path: "/",
+                        expires: new Date(0),
+                    });
+
+                    cookieStore.set(
+                        "regToken",
+                        JSON.stringify({
+                            AccessToken: externalData.dataAccessToken,
+                            RefreshToken: externalData.dataRefreshToken,
+                            UqId: externalData.dataUqId,
+                            user: externalData.data,
+                            external: { ...externalData, role: "candidate" },
+                        }),
+                        {
+                            httpOnly: true,
+                            secure: isSecure,
+                            sameSite: "lax",
+                            path: "/",
+                            maxAge: 24 * 60 * 60,
+                        }
+                    );
+
+
+                    // ---------------------------------------------
                     // STORE EXTERNAL DATA IN ACCOUNT
                     // ---------------------------------------------
 
@@ -414,93 +480,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return true;
                 }
 
-
-                // =================================================
-                // NEW USER
-                // =================================================
-
-                console.log(
-                    "New user - registering"
-                );
-
-
-                const registerResponse =
-                    await fetch(
-                        `${apiUrl}/authLogin/newRegister`,
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json",
-                            },
-
-                            body:
-                                JSON.stringify({
-
-                                    googleId:
-                                        provider === "google"
-                                            ? userId
-                                            : "",
-
-                                    linkedinId:
-                                        provider === "linkedin"
-                                            ? userId
-                                            : "",
-
-                                    name: name,
-
-                                    email: email,
-
-                                    image: image,
-
-                                    regBy:
-                                        provider === "google"
-                                            ? "Google"
-                                            : "LinkedIn",
-
-                                    mobile:
-                                        contactNumber || "",
-
-                                    LoginIp:
-                                        LoginIp,
-                                }),
-                        }
-                    );
-
-
-                if (!registerResponse.ok) {
-
-                    console.error(
-                        "Registration failed:",
-                        registerResponse.status
-                    );
-
-                    return false;
-                }
-
-
-                const registerResult =
-                    await registerResponse.json();
-
-
-                console.log(
-                    "REGISTRATION RESULT:",
-                    registerResult
-                );
-
-
-                // Store registration response
-                account.externalData =
-                    registerResult;
-
-
-                account.loginProvider =
-                    provider;
-
-
-                return true;
-
+                return false;
 
             } catch (error) {
 

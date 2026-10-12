@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { headers } from "next/headers";
 
 export async function POST(req) {
   try {
     const { mobileOtp, emailOtp, uqid } = await req.json();
-
+    const headersList = await headers();
     if (!mobileOtp || mobileOtp.length !== 6) {
       return NextResponse.json(
         { message: "Enter a valid 6-digit mobile OTP." },

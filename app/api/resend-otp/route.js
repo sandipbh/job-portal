@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { headers } from "next/headers";
 
 export async function POST(req) {
   try {
     const { email, mobile, uqid } = await req.json();
-
+    const headersList = await headers();
     if (!email || !mobile || !uqid) {
       return NextResponse.json(
         { message: "Email and mobile  are required to resend OTP." },
