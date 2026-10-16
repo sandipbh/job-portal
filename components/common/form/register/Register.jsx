@@ -568,10 +568,10 @@ const Register = () => {
         <div className="text">
           Already have an account?{" "}
           <Link
-            href="#"
+            href="/login"
             className="call-modal login"
-            data-bs-toggle="modal"
-            data-bs-target="#loginPopupModal"
+          // data-bs-toggle="modal"
+          // data-bs-target="#loginPopupModal"
           >
             Signin
           </Link>
