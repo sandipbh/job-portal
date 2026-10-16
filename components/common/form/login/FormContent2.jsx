@@ -292,7 +292,6 @@ const FormContent2 = () => {
               className="eye-btn"
               onClick={() => setShowPassword(!showPassword)}
             >
-
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
@@ -309,7 +308,7 @@ const FormContent2 = () => {
               </label>
             </div>
             <a href="/getPassword" className="pwd">
-              Forgot password?..
+              Forgot password?
             </a>
           </div>
         </div>

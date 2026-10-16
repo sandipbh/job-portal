@@ -79,6 +79,7 @@ const FormContent2 = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [accepted, setAccepted] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -127,65 +128,44 @@ const FormContent2 = () => {
   const openOtpModal = () => {
     if (typeof window === "undefined") return;
 
-    const registerModalEl = document.getElementById("registerModal");
-    const otpModalEl = document.getElementById("otpModal");
-    const otpTrigger = document.querySelector(
-      '[data-bs-toggle="modal"][data-bs-target="#otpModal"]'
-    );
+    // Mount the modal markup first, then show it
+    setShowOtp(true);
 
-    const showOtpModal = () => {
-      if (window.bootstrap && otpModalEl) {
-        const otpModal =
-          window.bootstrap.Modal.getInstance(otpModalEl) ||
-          new window.bootstrap.Modal(otpModalEl);
-        otpModal.show();
+    setTimeout(() => {
+      const registerModalEl = document.getElementById("registerModal");
+      const registerClose = registerModalEl?.querySelector('[data-bs-dismiss="modal"]');
+      if (registerClose) registerClose.click();
+
+      const otpModalEl = document.getElementById("otpModal");
+      if (!otpModalEl) return;
+
+      if (window.bootstrap?.Modal) {
+        (window.bootstrap.Modal.getInstance(otpModalEl) ||
+          new window.bootstrap.Modal(otpModalEl)).show();
         return;
       }
 
-      if (otpTrigger) {
-        otpTrigger.click();
-        return;
-      }
-
-      if (otpModalEl) {
-        otpModalEl.classList.add("show");
-        otpModalEl.style.display = "block";
-        otpModalEl.setAttribute("aria-modal", "true");
-        otpModalEl.removeAttribute("aria-hidden");
-      }
-    };
-
-    if (window.bootstrap && registerModalEl) {
-      const registerModal =
-        window.bootstrap.Modal.getInstance(registerModalEl) ||
-        new window.bootstrap.Modal(registerModalEl);
-
-      const onHidden = () => {
-        registerModalEl.removeEventListener("hidden.bs.modal", onHidden);
-        showOtpModal();
-      };
-
-      registerModalEl.addEventListener("hidden.bs.modal", onHidden);
-      registerModal.hide();
-      return;
-    }
-
-    const registerClose = registerModalEl?.querySelector(
-      '[data-bs-dismiss="modal"]'
-    );
-    if (registerClose) {
-      registerClose.click();
-      setTimeout(showOtpModal, 300);
-      return;
-    }
-
-    if (registerModalEl) {
-      registerModalEl.classList.remove("show");
-      registerModalEl.style.display = "none";
-      registerModalEl.setAttribute("aria-hidden", "true");
-    }
-    showOtpModal();
+      otpModalEl.classList.add("show");
+      otpModalEl.style.display = "block";
+      otpModalEl.setAttribute("aria-modal", "true");
+      otpModalEl.removeAttribute("aria-hidden");
+    }, 100);
   };
+
+  useEffect(() => {
+    if (!showOtp) return;
+    const modalEl = document.getElementById("otpModal");
+    if (!modalEl) return;
+
+    const onHidden = () => setShowOtp(false);
+    const closeBtn = modalEl.querySelector(".closed-modal");
+    modalEl.addEventListener("hidden.bs.modal", onHidden);
+    closeBtn?.addEventListener("click", onHidden);
+    return () => {
+      modalEl.removeEventListener("hidden.bs.modal", onHidden);
+      closeBtn?.removeEventListener("click", onHidden);
+    };
+  }, [showOtp]);
 
   // ✅ HANDLE CHANGE
   const handleChange = (e) => {
@@ -442,6 +422,7 @@ const FormContent2 = () => {
 
       if (typeof window !== "undefined") {
         const otpUserUqId =
+          user?.uqId ??
           user?.user?.Uqid ??
           user?.user?.uqId ??
           user?.user?.uqid ??
@@ -453,6 +434,17 @@ const FormContent2 = () => {
           otpUserMobile: formData.mobile,
           otpUserUqId,
           userData: user?.user,
+        });
+
+        const otpKeys = ["otpUserEmail", "otpUserMobile", "otpUserUqId"];
+
+        otpKeys.forEach((key) => {
+          if (window.localStorage.getItem(key) !== null) {
+            window.localStorage.removeItem(key);
+          }
+          if (document.cookie.split("; ").some((c) => c.startsWith(`${key}=`))) {
+            document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+          }
         });
 
         window.localStorage.setItem("otpUserEmail", formData.email);
@@ -502,7 +494,7 @@ const FormContent2 = () => {
 
         {/* NAME */}
         <div className="form-group">
-          <label>Full Name</label>
+          <label>Full Name </label>
           <input
             type="text"
             name="name"
@@ -632,7 +624,22 @@ const FormContent2 = () => {
         </>)} */}
       </div>
 
-
+      {showOtp && (
+        <div className="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" style={{ background: "#212529a3" }}>
+          <div className="modal-dialog modal-lg modal-dialog-centered login-modal">
+            <div className="modal-content">
+              <button type="button" className="closed-modal" data-bs-dismiss="modal"></button>
+              <div className="modal-body">
+                <div id="login-modal">
+                  <div className="login-form default-form">
+                    <OtpReg />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

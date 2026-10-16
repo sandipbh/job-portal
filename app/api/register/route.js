@@ -108,6 +108,7 @@ export async function POST(req) {
         message: externalData.message || "Registration successful",
         user: externalData.data,
         external: externalData,
+        uqId: externalData.data?.Uqid ?? externalData.data?.uqId ?? externalData.data?.uqid ?? externalData.data?.id ?? null,
       },
       { status: 201 }
     );
@@ -115,8 +116,8 @@ export async function POST(req) {
     // Set cookies with 5-hour expiration
     const cookieOptions = {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      secure: headersList.get("x-forwarded-proto") === "https" || process.env.NODE_ENV === "production",
+      sameSite: "lax",
       path: "/",
       maxAge: 5 * 60 * 60, // 5 hours in seconds
       //expires: new Date(Date.now() + 5 * 60 * 60 * 1000),
@@ -136,6 +137,7 @@ export async function POST(req) {
       external: externalData,
     };
 
+    // Replace any stale regToken cookie with the new one
     response.cookies.set("regToken", JSON.stringify(regTokenData), cookieOptions);
 
     return response;

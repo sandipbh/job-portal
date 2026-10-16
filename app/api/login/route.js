@@ -92,7 +92,7 @@ export async function POST(req) {
     }
 
 
-    //console.log("User logged in successfully:", externalData.success);
+    console.log("User logged in successfully:", externalData.success);
 
     // Create response
 
@@ -109,12 +109,58 @@ export async function POST(req) {
       { status: 201 }
     );
 
-    if (!externalData.isVefity) {
-
-      return response;
-    }
-    // New cookie options
     const isSecure = headersList.get("x-forwarded-proto") === "https";
+
+    if (!externalData.isVefity) {
+      // Unverified user: replace any stale registration cookie with this user's data
+      const ud = externalData.data || {};
+      // Deep search so we don't depend on one exact key name from the backend
+      const findKey = (obj, re, depth = 0) => {
+        if (!obj || typeof obj !== "object" || depth > 4) return null;
+        for (const [k, v] of Object.entries(obj)) {
+          if (re.test(k) && (typeof v === "string" || typeof v === "number") && String(v).trim() !== "") {
+            return String(v);
+          }
+        }
+        for (const v of Object.values(obj)) {
+          const found = findKey(v, re, depth + 1);
+          if (found) return found;
+        }
+        return null;
+      };
+      console.log("Unverified login payload keys:", Object.keys(externalData), Object.keys(ud));
+      const otpUser = {
+        Uqid: findKey(externalData, /^uq_?id$/i) ?? ud.id ?? findKey(externalData, /^id$/i) ?? externalData.dataUqId ?? null,
+        Email: findKey(externalData, /^e-?mail$/i) ?? email,
+        Mobile: findKey(externalData, /(mobile|phone|contact)/i),
+      };
+
+      const unverifiedResponse = NextResponse.json(
+        {
+          message: externalData.message || "Account not verified",
+          roleType: role,
+          status: externalData.success,
+          isVefity: false,
+          isActive: externalData.isActive,
+          otpUser: {
+            otpUserEmail: otpUser.Email,
+            otpUserMobile: otpUser.Mobile,
+            otpUserUqId: otpUser.Uqid,
+          },
+        },
+        { status: 201 }
+      );
+
+      unverifiedResponse.cookies.set("regToken", JSON.stringify(otpUser), {
+        httpOnly: true,
+        secure: isSecure,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 5 * 60 * 60,
+      });
+
+      return unverifiedResponse;
+    }
 
     /******************remove old cookies********* */
     const cookieOptions2 = {

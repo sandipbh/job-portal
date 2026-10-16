@@ -33,9 +33,8 @@ const ShopHeader = () => {
   return (
     // <!-- Main Header-->
     <header
-      className={`main-header  ${
-        navbar ? "fixed-header animated slideInDown" : ""
-      }`}
+      className={`main-header  ${navbar ? "fixed-header animated slideInDown" : ""
+        }`}
     >
       {/* <!-- Main box --> */}
       <div className="main-box">
@@ -70,10 +69,10 @@ const ShopHeader = () => {
           </Link>
           <div className="btn-box">
             <a
-              href="#"
+              href="/login"
               className="theme-btn btn-style-one"
-              data-bs-toggle="modal"
-              data-bs-target="#loginPopupModal"
+            // data-bs-toggle="modal"
+            // data-bs-target="#loginPopupModal"
             >
               Login / Register
             </a>

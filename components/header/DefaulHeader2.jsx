@@ -96,10 +96,10 @@ const DefaulHeader2 = () => {
               </Link>
             ) : (
               <a
-                href="#"
+                href="/login"
                 className="theme-btn btn-style-three call-modal"
-                data-bs-toggle="modal"
-                data-bs-target="#loginPopupModal"
+              // data-bs-toggle="modal"
+              // data-bs-target="#loginPopupModal"
               >
                 Login / Register
               </a>

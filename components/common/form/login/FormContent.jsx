@@ -123,69 +123,25 @@ const FormContent = () => {
   const openOtpModal = () => {
     if (typeof window === "undefined") return;
 
-    const registerModalEl = document.getElementById("registerModal");
-    const otpModalEl = document.getElementById("otpModal");
-    const otpTrigger = document.querySelector(
-      '[data-bs-toggle="modal"][data-bs-target="#otpModal"]'
-    );
+    // Use bootstrap's data-attribute API so we never touch a null Modal instance
+    const loginModalEl = document.getElementById("loginPopupModal");
+    const loginClose = loginModalEl?.querySelector('[data-bs-dismiss="modal"]');
+    if (loginClose) loginClose.click();
 
-    const showOtpModal = () => {
-      if (window.bootstrap && otpModalEl) {
-        const otpModal =
-          window.bootstrap.Modal.getInstance(otpModalEl) ||
-          new window.bootstrap.Modal(otpModalEl);
-        otpModal.show();
-        return;
-      }
-
-      if (otpTrigger) {
-        otpTrigger.click();
-        return;
-      }
-
-      if (otpModalEl) {
-        otpModalEl.classList.add("show");
-        otpModalEl.style.display = "block";
-        otpModalEl.setAttribute("aria-modal", "true");
-        otpModalEl.removeAttribute("aria-hidden");
-      }
-    };
-
-    if (window.bootstrap && registerModalEl) {
-      const registerModal =
-        window.bootstrap.Modal.getInstance(registerModalEl) ||
-        new window.bootstrap.Modal(registerModalEl);
-
-      const onHidden = () => {
-        registerModalEl.removeEventListener("hidden.bs.modal", onHidden);
-        showOtpModal();
-      };
-
-      registerModalEl.addEventListener("hidden.bs.modal", onHidden);
-      registerModal.hide();
-      return;
-    }
-
-    const registerClose = registerModalEl?.querySelector(
-      '[data-bs-dismiss="modal"]'
-    );
-    if (registerClose) {
-      registerClose.click();
-      setTimeout(showOtpModal, 300);
-      return;
-    }
-
-    if (registerModalEl) {
-      registerModalEl.classList.remove("show");
-      registerModalEl.style.display = "none";
-      registerModalEl.setAttribute("aria-hidden", "true");
-    }
-    showOtpModal();
+    setTimeout(() => {
+      const trigger = document.createElement("button");
+      trigger.type = "button";
+      trigger.style.display = "none";
+      trigger.setAttribute("data-bs-toggle", "modal");
+      trigger.setAttribute("data-bs-target", "#otpModal");
+      document.body.appendChild(trigger);
+      trigger.click();
+      document.body.removeChild(trigger);
+    }, 400);
   };
   // ✅ HANDLE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
-
 
     let newErrors = {};
 
@@ -249,6 +205,17 @@ const FormContent = () => {
 
         //check is verified or not
         if (user.isVefity == false) {
+          localStorage.removeItem("otpUserEmail");
+          localStorage.removeItem("otpUserMobile");
+          localStorage.removeItem("otpUserUqId");
+
+          const otpUser = user.otpUser || {};
+          localStorage.setItem("otpUserEmail", otpUser.otpUserEmail || email);
+          localStorage.setItem("otpUserMobile", otpUser.otpUserMobile || "");
+          localStorage.setItem("otpUserUqId", otpUser.otpUserUqId || "");
+          window.dispatchEvent(new Event("otpUserDataUpdated"));
+
+          setLoading(false);
           openOtpModal();
           return;
         }
@@ -344,7 +311,7 @@ const FormContent = () => {
         {/* name */}
 
         <div className="form-group">
-          <label>Password</label>
+          <label>Password  </label>
           <div className="password-wrapper">
             <input
               type={showPassword ? "text" : "password"}

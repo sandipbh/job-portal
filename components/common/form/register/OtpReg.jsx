@@ -25,6 +25,8 @@ const OtpReg = () => {
     try {
       const response = await fetch("/api/otp-user-data", {
         method: "GET",
+        cache: "no-store",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -45,6 +47,7 @@ const OtpReg = () => {
     const mobile = window.localStorage.getItem("otpUserMobile") || "";
     const localUqId = window.localStorage.getItem("otpUserUqId") || "";
 
+    console.log("Local OTP user data:", { email, mobile, localUqId });
     setUserEmail(email);
     setUserMobile(mobile);
     setUserUqId(localUqId);
@@ -52,14 +55,17 @@ const OtpReg = () => {
     const cookieData = await fetchOtpUserData();
     if (cookieData) {
       if (cookieData.otpUserEmail) {
+        window.localStorage.removeItem("otpUserEmail");
         setUserEmail(cookieData.otpUserEmail);
         window.localStorage.setItem("otpUserEmail", cookieData.otpUserEmail);
       }
       if (cookieData.otpUserMobile) {
+        window.localStorage.removeItem("otpUserMobile");
         setUserMobile(cookieData.otpUserMobile);
         window.localStorage.setItem("otpUserMobile", cookieData.otpUserMobile);
       }
       if (cookieData.otpUserUqId) {
+        window.localStorage.removeItem("otpUserUqId");
         setUserUqId(cookieData.otpUserUqId);
         window.localStorage.setItem("otpUserUqId", cookieData.otpUserUqId);
       }
@@ -102,11 +108,15 @@ const OtpReg = () => {
       if (typeof window === "undefined") return;
 
       if (window.bootstrap) {
-        const modalInstance =
-          window.bootstrap.Modal.getInstance(modalEl) ||
-          new window.bootstrap.Modal(modalEl);
-        modalInstance.hide();
-        return;
+        try {
+          const modalInstance = window.bootstrap.Modal.getInstance(modalEl);
+          if (modalInstance) {
+            modalInstance.hide();
+            return;
+          }
+        } catch (err) {
+          console.warn("Modal hide failed, using fallback", err);
+        }
       }
 
       modalEl.classList.remove("show");
@@ -241,6 +251,9 @@ const OtpReg = () => {
       }
       if (response.ok) {
         toast.success(data.message || "OTP verified successfully.");
+        ["otpUserEmail", "otpUserMobile", "otpUserUqId"].forEach((k) =>
+          window.localStorage.removeItem(k)
+        );
         router.push("/regsuccess");
       }
     } catch (error) {
@@ -273,7 +286,7 @@ const OtpReg = () => {
             ))}
           </div>
 
-          <h2>Verify Email</h2>
+          <h2>Verify Email   </h2>
           <p className="sub-text" style={{ marginBottom: "5px" }}>Your code was sent to your email <b>{userEmail}</b></p>
 
           <div className="otp-boxes">
