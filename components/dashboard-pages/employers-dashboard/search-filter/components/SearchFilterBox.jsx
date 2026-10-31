@@ -996,7 +996,7 @@ const SearchFilterBox = () => {
                                     </div>
 
 
-                                    <div className="candidate-row skills-row">
+                                    {/* <div className="candidate-row skills-row">
                                         <div className="label1">Key Skills</div>
                                         <div className="value">
                                             {(candidate.skills || "")
@@ -1017,6 +1017,30 @@ const SearchFilterBox = () => {
                                                             className={isSelected ? "skill-pill" : ""}
                                                         >
                                                             {trimmedSkill} {" "}
+                                                        </span>
+                                                    );
+                                                })}
+                                        </div>
+                                    </div> */}
+
+                                    <div className="candidate-row skills-row">
+                                        <div className="label1">Key Skills</div>
+                                        <div className="value">
+                                            {(Array.isArray(candidate.skills) ? candidate.skills : String(candidate.skills || "").split(","))
+                                                .filter(Boolean)
+                                                .map((skill, index) => {
+                                                    const trimmedSkill = String(skill).trim();
+                                                    const selectedSkills = Array.isArray(selectedSkillsList)
+                                                        ? selectedSkillsList
+                                                        : String(selectedSkillsList || "").split(",");
+
+                                                    const isSelected = selectedSkills
+                                                        .map(s => String(s).trim().toLowerCase())
+                                                        .includes(trimmedSkill.toLowerCase());
+
+                                                    return (
+                                                        <span key={index} className={isSelected ? "skill-pill" : ""}>
+                                                            {trimmedSkill}{" "}
                                                         </span>
                                                     );
                                                 })}

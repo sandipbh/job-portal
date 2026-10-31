@@ -1,47 +1,46 @@
-import MobileMenu from "../../../header/MobileMenu";
-import LoginPopup from "../../../common/form/login/LoginPopup";
-import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
+
+'use client';
+
+import { useState } from "react";
 import BreadCrumb from "../../BreadCrumb";
 import MyProfile from "./components/my-profile";
-import SocialNetworkBox from "./components/SocialNetworkBox";
-import ContactInfoBox from "./components/ContactInfoBox";
-import CopyrightFooter from "../../CopyrightFooter";
-import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
-import MenuToggler from "../../MenuToggler";
+import GetVerifiedPopup from "./components/my-profile/GetVerifiedPopup";
 
-const index = () => {
-  return (
+const Index = () => {
+    const [showVerification, setShowVerification] = useState(false);
 
-    <section className="user-dashboard">
-      <div className="dashboard-outer">
-        <BreadCrumb title="My Profile!" />
-        {/* breadCrumb */}
-
-        {/* <MenuToggler /> */}
-        {/* Collapsible sidebar button */}
-
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="ls-widget">
-              <div className="tabs-box">
-                <div className="widget-title">
-                  <h4>Complete your profile</h4>
+    return (
+        <section className="user-dashboard">
+            <div className="dashboard-outer">
+                <BreadCrumb title="My Profile!" />
+                <div className="row">
+                    <div className="col-lg-12">
+                        <div className="ls-widget">
+                            <div className="tabs-box">
+                                <div className="widget-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h4>Complete your profile</h4>
+                                    <button
+                                        type="button"
+                                        className="add-language-btn"
+                                        onClick={() => setShowVerification(true)}
+                                    >
+                                        <i className="la la-user-check"></i>
+                                        Get Verified
+                                    </button>
+                                </div>
+                                <MyProfile />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <MyProfile />
-              </div>
             </div>
-            {/* <!-- Ls widget --> */}
 
-
-
-          </div>
-        </div>
-        {/* End .row */}
-      </div>
-      {/* End dashboard-outer */}
-    </section>
-
-  );
+            <GetVerifiedPopup
+                isOpen={showVerification}
+                onClose={() => setShowVerification(false)}
+            />
+        </section>
+    );
 };
 
-export default index;
+export default Index;

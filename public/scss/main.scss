@@ -5331,7 +5331,21 @@ in 2 tab of Company Profile
 
 @media (max-width: 480px) {
   .applicant-filter-bar {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .candidate-filter-bar {
+      flex-direction: row;
+      align-items: stretch;
+      gap: 10px;
+  }
+
+  .txt-clear{
+    display: none;
+  }
+
+  .candidate-filter-actions {
+      width: auto;
   }
 
   .filter-dropdown button {
@@ -5440,15 +5454,14 @@ in 2 tab of Company Profile
 .timeline-item {
   position: relative;
   padding-left: 25px;
-  margin-bottom: 10px;
 }
 
 .timeline-number {
   position: absolute;
-  left: -14px;
-  top: 10px;
-  width: 25px;
-  height: 25px;
+  left: -11px;
+  top: 1px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: #828583;
   color: #fff;
@@ -5459,6 +5472,7 @@ in 2 tab of Company Profile
   border: 3px solid #fff;
   box-shadow: 0 0 0 2px #b7bbb9;
   z-index: 2;
+  font-size: 11px;
 }
 
 .timeline-content {
@@ -7292,3 +7306,33 @@ in 2 tab of Company Profile
   background-color: #6c757d;
   color: #fff;
 }
+
+/* Interview Button */
+.interview-btn {
+  color: #1967d2;
+  border: 1px solid #1967d2;
+}
+
+.interview-btn:hover {
+  background: #1967d2;
+  color: #fff;
+}
+
+.interview-btn:disabled {
+  background: #fffafa;
+  opacity: 0.95;
+  cursor: not-allowed;
+}
+
+.tbl-interview th{
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.tbl-interview td{
+    font-size: 13px;
+    font-weight: 400;
+    padding: 5px;
+}
+
+

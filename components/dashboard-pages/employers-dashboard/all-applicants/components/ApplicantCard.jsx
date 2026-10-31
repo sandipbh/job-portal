@@ -448,6 +448,17 @@ const ApplicantCard = ({
 
     };
 
+    const openResume = (resumePath) => {
+        if (!resumePath?.trim()) {
+            toast.error("Resume is not available.");
+            return;
+        }
+        const url = resumePath.startsWith("http")
+            ? resumePath
+            : `/${resumePath.replace(/^\/+/, "")}`;
+        window.open(url, "_blank", "noopener,noreferrer");
+    };
+
     const handleDeleteStatus = async (srno, appId) => {
 
     };
@@ -476,12 +487,16 @@ const ApplicantCard = ({
 
                         <h4 className="name mb-0">
                             <div className="d-flex justify-content-between align-items-center gap-2">
-                                <div>
-                                    <input type="checkbox" className="me-2" />
+                                <div className="d-flex align-items-center flex-wrap gap-2">
+                                    <input type="checkbox" className="me-1" />
                                     <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
                                         {candidate.candiName}
-
                                     </Link>
+                                    {candidate.verifyStatus?.toLowerCase() === "verified" && (
+                                        <span className="text-success p-0 mt-0">
+                                            <i className="fa fa-check-circle fw-normal me-1 fa-sm"></i>
+                                        </span>
+                                    )}
                                 </div>
                                 <div>
                                     <button
@@ -623,6 +638,16 @@ const ApplicantCard = ({
                         ) : (<button className="action-btn reject-btn" disabled={true}>
                             <i className="la la-times"></i> Deleted
                         </button>)}
+                        {candidate.resumePath?.trim() && (
+                            <button
+                                type="button"
+                                className="icon-circle"
+                                onClick={() => openResume(candidate.resumePath)}
+                                title="View Resume"
+                            >
+                                <i className="la la-file-pdf-o"></i>
+                            </button>
+                        )}
                         <button className="icon-circle">
                             <i className="la la-envelope-o"></i>
                         </button>

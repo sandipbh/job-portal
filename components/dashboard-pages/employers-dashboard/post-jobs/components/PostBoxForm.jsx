@@ -1113,7 +1113,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       newErrors.minSalary = "Enter minimum salary";
     } else if (Number(formData.minSalary) < 100000) {
       newErrors.minSalary =
-        "Minimum monthly salary must be greater than ₹ 100000";
+        "Minimum salary must be greater than ₹ 100000";
     }
 
     if (!formData.maxSalary) {
@@ -2961,48 +2961,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 </div>
               </div>
 
-              {/* Application Method */}
-              {/* <div className="form-group col-lg-6">
-                <label>Application Method</label>
-                <select
-                  className="form-select"
-                  name="applicationMethod"
-                  value={formData.applicationMethod || ""}
-                  onChange={handleContactChange}
-                >
-                  <option value="">Select</option>
-                  <option value="Apply on Portal">Apply on Portal</option>
-                  <option value="Apply via Email">Apply via Email</option>
-                  <option value="External Link">External Link</option>
-                </select>
-
-                {errors.applicationMethod && (
-                  <p className="text-danger small">
-                    {errors.applicationMethod}
-                  </p>
-                )}
-              </div> */}
-
-              {/* External Link */}
-              {/* <div className="form-group col-lg-6">
-                <label>
-                  External Application Link <span>(Optional)</span>
-                </label>
-                <input
-                  type="text"
-                  name="externalLink"
-                  value={formData.externalLink || ""}
-                  onChange={handleContactChange}
-                  className={`form-control ${errors.externalLink ? "error-border" : ""
-                    }`}
-                  placeholder="https://yourcompany.com/apply"
-                />
-
-                
-            </div> */}
-
-
-              <div className="row">
+              <div className="form-group">
                 <p className="mt-2" style={{ borderTop: "1px solid #cecece" }}></p>
                 <h5 className="mt-1" >Advance Option</h5>
                 <div className="form-group col-lg-12">
@@ -3303,6 +3262,7 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                   </>
                 )}
               </div>
+
               {/* Buttons */}
               <div className="form-group col-lg-12 mt-3">
                 <div className="d-flex justify-content-between">
