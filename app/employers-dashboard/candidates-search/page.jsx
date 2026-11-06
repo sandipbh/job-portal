@@ -1,31 +1,35 @@
 import { Suspense } from "react";
 import CandidatesSearches from "@/components/dashboard-pages/employers-dashboard/candidates-search";
 import JobCardSkeleton from "@/components/skeleton/Job-list";
-
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "All Applicants || RatinGrow - Hiring Verified",
   description: "RatinGrow - Hiring Verified",
 };
 
-const index = ({ searchParams }) => {
-  let initialSearchData = null;
+const Index = async ({ searchParams }) => {
+    let initialSearchData = null;
 
-  try {
-    if (searchParams?.searchData) {
-      initialSearchData = JSON.parse(decodeURIComponent(searchParams.searchData));
+    try {
+        const params = await searchParams;
+
+        if (params?.searchData) {
+            initialSearchData = JSON.parse(params.searchData);
+        }
+    } catch (error) {
+        console.error("Failed to parse search data:", error);
     }
-  } catch (error) {
-    console.error("Failed to parse search data:", error);
-  }
 
-  return (
-    <>
-      <Suspense fallback={<JobCardSkeleton />}>
-        <CandidatesSearches initialSearchData={initialSearchData} />
-      </Suspense>
-    </>
-  );
+    return (
+        <>
+            <Suspense fallback={<JobCardSkeleton />}>
+                <CandidatesSearches
+                    initialSearchData={initialSearchData}
+                />
+            </Suspense>
+        </>
+    );
 };
 
-export default index;
+export default Index;
