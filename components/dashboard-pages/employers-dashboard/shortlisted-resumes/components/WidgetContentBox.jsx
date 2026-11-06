@@ -16,16 +16,6 @@ const WidgetContentBox = () => {
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [selectedRating, setSelectedRating] = useState([]);
   const [verifiedCandidate, setVerifiedCandidate] = useState(false);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-
->>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
->>>>>>> 044eb01 (remark 0611-7)
   const searchParams = useSearchParams();
   const jobId = Number(searchParams.get("jobId"));
   const [candidatesData, setCandidatesData] = useState([]);

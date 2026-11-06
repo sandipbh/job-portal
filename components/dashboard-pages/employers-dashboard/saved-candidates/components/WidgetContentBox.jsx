@@ -15,18 +15,7 @@ const WidgetContentBox = () => {
     const [selectedGender, setSelectedGender] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState([]);
     const [selectedRating, setSelectedRating] = useState([]);
-<<<<<<< HEAD
-<<<<<<< HEAD
     const [verifiedCandidate, setVerifiedCandidate] = useState(false);
-=======
-<<<<<<< HEAD
-    const [verifiedCandidate, setVerifiedCandidate] = useState(false);
-=======
->>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
-    const [verifiedCandidate, setVerifiedCandidate] = useState(false);
->>>>>>> 044eb01 (remark 0611-7)
 
     const searchParams = useSearchParams();
     const jobId = Number(searchParams.get("jobId"));
@@ -89,13 +78,6 @@ const WidgetContentBox = () => {
 
     const ratingOptions = useMemo(() => ["5", "4", "3", "2", "1"], []);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
->>>>>>> 044eb01 (remark 0611-7)
     const isCandidateVerified = (candidate) => {
         const value =
             candidate?.verifyStatus ??
@@ -105,7 +87,6 @@ const WidgetContentBox = () => {
             candidate?.isVerified ??
             candidate?.isVerifiedCandidate ??
             candidate?.verify_status;
-<<<<<<< HEAD
 
         if (typeof value === "boolean") return value;
 
@@ -137,51 +118,6 @@ const WidgetContentBox = () => {
             return matchesSearch && matchesJob && matchesLocation && matchesExperience && matchesQualification && matchesGender && matchesCategory && matchesRating && matchesVerified;
         });
     }, [candidatesData, selectedJobs, selectedLocation, selectedExperience, selectedQualification, selectedGender, selectedCategory, selectedRating, searchTerm, verifiedCandidate]);
-<<<<<<< HEAD
-=======
-=======
-    /* ---------------------------------------------------------------
-     * Filtering
-     * --------------------------------------------------------------- */
-=======
->>>>>>> 044eb01 (remark 0611-7)
-
-        if (typeof value === "boolean") return value;
-
-        return ["verified", "yes", "y", "true", "1"].includes(
-            String(value ?? "").trim().toLowerCase()
-        );
-<<<<<<< HEAD
-    });
->>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
-    };
-
-    const filteredCandidates = useMemo(() => {
-        return candidatesData.filter((candidate) => {
-            const jobValue = getJobValue(candidate);
-            const locValue = getLocationValue(candidate);
-
-            const matchesJob = selectedJobs.length === 0 || selectedJobs.includes(jobValue);
-            const matchesLocation = selectedLocation.length === 0 || selectedLocation.includes(locValue);
-            const matchesExperience = selectedExperience.length === 0 || selectedExperience.includes(candidate.experience);
-            const matchesQualification = selectedQualification.length === 0 || selectedQualification.includes(candidate.qualification);
-            const matchesGender = selectedGender.length === 0 || selectedGender.includes(candidate.gender);
-            const matchesCategory = selectedCategory.length === 0 || selectedCategory.includes(candidate.category);
-
-            const candidateRating = Math.round(Number(candidate.avgRating) || 0);
-            const matchesRating = selectedRating.length === 0 || selectedRating.includes(String(candidateRating));
-
-            const candidateName = String(candidate?.name ?? candidate?.candiName ?? "").toLowerCase();
-            const matchesSearch = searchTerm.trim() === "" || candidateName.includes(searchTerm.trim().toLowerCase());
-
-            const matchesVerified = !verifiedCandidate || isCandidateVerified(candidate);
-
-            return matchesSearch && matchesJob && matchesLocation && matchesExperience && matchesQualification && matchesGender && matchesCategory && matchesRating && matchesVerified;
-        });
-    }, [candidatesData, selectedJobs, selectedLocation, selectedExperience, selectedQualification, selectedGender, selectedCategory, selectedRating, searchTerm, verifiedCandidate]);
->>>>>>> 044eb01 (remark 0611-7)
 
     /* ---------------------------------------------------------------
      * Status / comment state updates
@@ -245,18 +181,7 @@ const WidgetContentBox = () => {
         selectedGender,
         selectedCategory,
         selectedRating,
-<<<<<<< HEAD
-<<<<<<< HEAD
         verifiedCandidate
-=======
-<<<<<<< HEAD
-        verifiedCandidate
-=======
->>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
-        verifiedCandidate
->>>>>>> 044eb01 (remark 0611-7)
     ]);
 
     const PaginationControls = () => {
@@ -366,21 +291,8 @@ const WidgetContentBox = () => {
                 locationOptions={locationOptions}
                 ratingOptions={ratingOptions}
                 categoryOptions={[]}
-<<<<<<< HEAD
-<<<<<<< HEAD
                 verifiedCandidate={verifiedCandidate}
                 setVerifiedCandidate={setVerifiedCandidate}
-=======
-<<<<<<< HEAD
-                verifiedCandidate={verifiedCandidate}
-                setVerifiedCandidate={setVerifiedCandidate}
-=======
->>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
-                verifiedCandidate={verifiedCandidate}
-                setVerifiedCandidate={setVerifiedCandidate}
->>>>>>> 044eb01 (remark 0611-7)
             />
 
             <div className="selected-filters">
@@ -498,22 +410,8 @@ const WidgetContentBox = () => {
                     selectedQualification.length +
                     selectedGender.length +
                     selectedCategory.length +
-<<<<<<< HEAD
-<<<<<<< HEAD
                     selectedRating.length +
                     (verifiedCandidate ? 1 : 0)}{" "}
-=======
-<<<<<<< HEAD
-                    selectedRating.length +
-                    (verifiedCandidate ? 1 : 0)}{" "}
-=======
-                    selectedRating.length}{" "}
->>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
-                    selectedRating.length +
-                    (verifiedCandidate ? 1 : 0)}{" "}
->>>>>>> 044eb01 (remark 0611-7)
                 filters applied
             </div>
 

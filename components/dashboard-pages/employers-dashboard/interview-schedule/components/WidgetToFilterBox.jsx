@@ -10,21 +10,8 @@ const WidgetToFilterBox = ({
   selectedCategory = [], setSelectedCategory,
   selectedRating = [], setSelectedRating,
   searchTerm = "", setSearchTerm,
-<<<<<<< HEAD
-<<<<<<< HEAD
   verifiedCandidate = false,
   setVerifiedCandidate,
-=======
-<<<<<<< HEAD
-  verifiedCandidate = false,
-  setVerifiedCandidate,
-=======
->>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
-  verifiedCandidate = false,
-  setVerifiedCandidate,
->>>>>>> 044eb01 (remark 0611-7)
   location = "", setLocation,
   jobOptions = [],
   locationOptions = [],
@@ -112,18 +99,7 @@ const WidgetToFilterBox = ({
     setSelectedCategory?.([]);
     setSelectedRating?.([]);
     setOpenFilter(null);
-<<<<<<< HEAD
-<<<<<<< HEAD
     setVerifiedCandidate?.(false);
-=======
-<<<<<<< HEAD
-    setVerifiedCandidate?.(false);
-=======
->>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
-    setVerifiedCandidate?.(false);
->>>>>>> 044eb01 (remark 0611-7)
   };
 
   const totalFilters =
@@ -133,22 +109,8 @@ const WidgetToFilterBox = ({
     selectedQualification.length +
     selectedGender.length +
     selectedCategory.length +
-<<<<<<< HEAD
-<<<<<<< HEAD
     selectedRating.length +
     (verifiedCandidate ? 1 : 0);
-=======
-<<<<<<< HEAD
-    selectedRating.length +
-    (verifiedCandidate ? 1 : 0);
-=======
-    selectedRating.length;
->>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
-    selectedRating.length +
-    (verifiedCandidate ? 1 : 0);
->>>>>>> 044eb01 (remark 0611-7)
 
   return (
     <div className="job-bar-filter">
@@ -187,13 +149,6 @@ const WidgetToFilterBox = ({
         {renderFilter("Qualification", qualificationOptions, selectedQualification, setSelectedQualification, "qualification")}
         {renderFilter("Gender", genderOptions, selectedGender, setSelectedGender, "gender")}
         {renderFilter("Rating", ratingOptions, selectedRating, setSelectedRating, "rating")}
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
->>>>>>> 044eb01 (remark 0611-7)
         <label className="filter-option verified-filter">
           <input
             type="checkbox"
@@ -203,14 +158,6 @@ const WidgetToFilterBox = ({
           />
           <span>Verified Candidate</span>
         </label>
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
-=======
->>>>>>> 044eb01 (remark 0611-7)
       </div>
 
       {totalFilters > 0 && (
