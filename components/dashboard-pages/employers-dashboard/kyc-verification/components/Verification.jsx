@@ -179,7 +179,11 @@ const Verification = ({ activeTab, setActiveTab }) => {
     };
 
     const validateStep2 = () => {
+<<<<<<< HEAD
 
+=======
+       
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
         let newErrors = {};
         //////return true ; 
         if (!kycData.docType) {
@@ -892,9 +896,15 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                     type="button"
                                     className="theme-btn btn-style-one"
                                     onClick={() => {
+<<<<<<< HEAD
 
                                         if (validateStep1()) {
 
+=======
+                                      
+                                        if (validateStep1()) {
+                                            
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
                                             setActiveTab(1);
                                         }
                                     }}

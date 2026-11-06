@@ -15,7 +15,10 @@ const WidgetContentBox = () => {
   const [selectedGender, setSelectedGender] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [selectedRating, setSelectedRating] = useState([]);
+<<<<<<< HEAD
   const [verifiedCandidate, setVerifiedCandidate] = useState(false);
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
 
   const searchParams = useSearchParams();
   const jobId = Number(searchParams.get("jobId"));
@@ -82,6 +85,7 @@ const WidgetContentBox = () => {
    * Filtering
    * --------------------------------------------------------------- */
 
+<<<<<<< HEAD
   const isCandidateVerified = (candidate) => {
     const value = candidate?.verifyStatus ??
       candidate?.verificationStatus ??
@@ -94,6 +98,8 @@ const WidgetContentBox = () => {
       .includes(String(value ?? "").trim().toLowerCase());
   };
 
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
   const filteredCandidates = candidatesData.filter((candidate) => {
     const jobValue = getJobValue(candidate);
     const locValue = getLocationValue(candidate);
@@ -106,6 +112,7 @@ const WidgetContentBox = () => {
 
     const matchesExperience =
       selectedExperience.length === 0 ||
+<<<<<<< HEAD
       selectedExperience.includes(String(candidate.experience ?? ""));
 
     const matchesQualification =
@@ -118,10 +125,28 @@ const WidgetContentBox = () => {
 
     const candidateRating = Math.round(Number(candidate.avgRating) || 0);
 
+=======
+      selectedExperience.includes(candidate.experience);
+
+    const matchesQualification =
+      selectedQualification.length === 0 ||
+      selectedQualification.includes(candidate.qualification);
+
+    const matchesGender =
+      selectedGender.length === 0 ||
+      selectedGender.includes(candidate.gender);
+
+    const matchesCategory =
+      selectedCategory.length === 0 ||
+      selectedCategory.includes(candidate.category);
+
+    const candidateRating = Math.round(Number(candidate.avgRating) || 0);
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
     const matchesRating =
       selectedRating.length === 0 ||
       selectedRating.includes(String(candidateRating));
 
+<<<<<<< HEAD
     const matchesVerified =
       !verifiedCandidate || isCandidateVerified(candidate);
 
@@ -141,6 +166,13 @@ const WidgetContentBox = () => {
         candidate?.education,
         candidate?.qualification
       ].some((value) => String(value ?? "").toLowerCase().includes(search));
+=======
+    const matchesSearch =
+      searchTerm === "" ||
+      (candidate?.name || candidate?.candiName || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
 
     return (
       matchesSearch &&
@@ -149,8 +181,13 @@ const WidgetContentBox = () => {
       matchesExperience &&
       matchesQualification &&
       matchesGender &&
+<<<<<<< HEAD
       matchesRating &&
       matchesVerified
+=======
+      matchesCategory &&
+      matchesRating
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
     );
   });
 
@@ -214,8 +251,13 @@ const WidgetContentBox = () => {
     selectedExperience,
     selectedQualification,
     selectedGender,
+<<<<<<< HEAD
     selectedRating,
     verifiedCandidate
+=======
+    selectedCategory,
+    selectedRating,
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
   ]);
 
   const PaginationControls = () => {
@@ -325,8 +367,11 @@ const WidgetContentBox = () => {
         locationOptions={locationOptions}
         ratingOptions={ratingOptions}
         categoryOptions={[]}
+<<<<<<< HEAD
         verifiedCandidate={verifiedCandidate}
         setVerifiedCandidate={setVerifiedCandidate}
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
       />
 
       <div className="selected-filters">

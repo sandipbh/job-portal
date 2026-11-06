@@ -904,7 +904,11 @@ const Applicants = ({ candidate,
               type="button"
               className="action-btn interview-btn"
               onClick={handleOpenInterviewModal}>
+<<<<<<< HEAD
               Schedule Interview
+=======
+              <i className="la la-calendar"></i> Schedule Interview
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
             </button>
 
             <div className="right-side ms-0 ms-md-auto mt-2 mt-md-0">

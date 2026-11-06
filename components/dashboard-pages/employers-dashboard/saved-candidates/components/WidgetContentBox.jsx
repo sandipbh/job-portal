@@ -15,7 +15,10 @@ const WidgetContentBox = () => {
     const [selectedGender, setSelectedGender] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState([]);
     const [selectedRating, setSelectedRating] = useState([]);
+<<<<<<< HEAD
     const [verifiedCandidate, setVerifiedCandidate] = useState(false);
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
 
     const searchParams = useSearchParams();
     const jobId = Number(searchParams.get("jobId"));
@@ -78,6 +81,7 @@ const WidgetContentBox = () => {
 
     const ratingOptions = useMemo(() => ["5", "4", "3", "2", "1"], []);
 
+<<<<<<< HEAD
     const isCandidateVerified = (candidate) => {
         const value =
             candidate?.verifyStatus ??
@@ -118,6 +122,60 @@ const WidgetContentBox = () => {
             return matchesSearch && matchesJob && matchesLocation && matchesExperience && matchesQualification && matchesGender && matchesCategory && matchesRating && matchesVerified;
         });
     }, [candidatesData, selectedJobs, selectedLocation, selectedExperience, selectedQualification, selectedGender, selectedCategory, selectedRating, searchTerm, verifiedCandidate]);
+=======
+    /* ---------------------------------------------------------------
+     * Filtering
+     * --------------------------------------------------------------- */
+
+    const filteredCandidates = candidatesData.filter((candidate) => {
+        const jobValue = getJobValue(candidate);
+        const locValue = getLocationValue(candidate);
+
+        const matchesJob =
+            selectedJobs.length === 0 || selectedJobs.includes(jobValue);
+
+        const matchesLocation =
+            selectedLocation.length === 0 || selectedLocation.includes(locValue);
+
+        const matchesExperience =
+            selectedExperience.length === 0 ||
+            selectedExperience.includes(candidate.experience);
+
+        const matchesQualification =
+            selectedQualification.length === 0 ||
+            selectedQualification.includes(candidate.qualification);
+
+        const matchesGender =
+            selectedGender.length === 0 ||
+            selectedGender.includes(candidate.gender);
+
+        const matchesCategory =
+            selectedCategory.length === 0 ||
+            selectedCategory.includes(candidate.category);
+
+        const candidateRating = Math.round(Number(candidate.avgRating) || 0);
+        const matchesRating =
+            selectedRating.length === 0 ||
+            selectedRating.includes(String(candidateRating));
+
+        const matchesSearch =
+            searchTerm === "" ||
+            (candidate?.name || candidate?.candiName || "")
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+
+        return (
+            matchesSearch &&
+            matchesJob &&
+            matchesLocation &&
+            matchesExperience &&
+            matchesQualification &&
+            matchesGender &&
+            matchesCategory &&
+            matchesRating
+        );
+    });
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
 
     /* ---------------------------------------------------------------
      * Status / comment state updates
@@ -181,7 +239,10 @@ const WidgetContentBox = () => {
         selectedGender,
         selectedCategory,
         selectedRating,
+<<<<<<< HEAD
         verifiedCandidate
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
     ]);
 
     const PaginationControls = () => {
@@ -291,8 +352,11 @@ const WidgetContentBox = () => {
                 locationOptions={locationOptions}
                 ratingOptions={ratingOptions}
                 categoryOptions={[]}
+<<<<<<< HEAD
                 verifiedCandidate={verifiedCandidate}
                 setVerifiedCandidate={setVerifiedCandidate}
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
             />
 
             <div className="selected-filters">
@@ -410,8 +474,12 @@ const WidgetContentBox = () => {
                     selectedQualification.length +
                     selectedGender.length +
                     selectedCategory.length +
+<<<<<<< HEAD
                     selectedRating.length +
                     (verifiedCandidate ? 1 : 0)}{" "}
+=======
+                    selectedRating.length}{" "}
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
                 filters applied
             </div>
 
