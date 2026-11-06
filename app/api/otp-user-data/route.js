@@ -10,8 +10,8 @@ export async function GET() {
     //const regTokenCookie = cookies().get("regToken")?.value;
     const cookieStore = await cookies();
     const regTokenCookie = cookieStore.get("regToken")?.value;
-    console.log("regTokenCookie:", regTokenCookie);
-    console.log("cookieStore:", cookieStore);
+    // console.log("regTokenCookie:", regTokenCookie);
+    // console.log("cookieStore:", cookieStore);
 
     if (!regTokenCookie) {
       return NextResponse.json(

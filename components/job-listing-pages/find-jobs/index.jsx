@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,69 +10,123 @@ import LoginPopup from "../../common/form/login/LoginPopup";
 import DefaulHeader2 from "../../header/DefaulHeader2";
 import MobileMenu from "../../header/MobileMenu";
 
-const SEARCH_APIS = {
-  category: "/api/public-industry-search",
-  keyword: "/api/public-keyword-search",
-  location: "/api/public-location-search",
-};
-
 const FindJobsPage = ({ entry }) => {
   const router = useRouter();
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!entry?.kind || !entry?.term) return;
+
     let active = true;
+    const controller = new AbortController();
 
     const run = async () => {
       try {
-        const lookup = await fetch(SEARCH_APIS[entry.kind], {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ term: entry.term }),
-        });
-        const lookupResult = await lookup.json();
-        const list = Array.isArray(lookupResult?.data) ? lookupResult.data : [];
-        const wanted = entry.term.toLowerCase();
-        const match =
-          list.find((x) => String(x?.value ?? "").toLowerCase() === wanted) ||
-          list.find((x) => String(x?.value ?? "").toLowerCase().includes(wanted));
+        setLoading(true);
+        setNotFound(false);
+        setError("");
 
-        if (!match || match.key == null) {
-          if (active) setNotFound(true);
-          return;
+        let body = {
+          keywords: [],
+          location: "",
+          category: "",
+          jobTitleKeyword: "",
+          keywordKeyword: ""
+        };
+
+        // CATEGORY FILTER
+        if (entry.kind === "category") {
+          body.jobTitleKeyword = entry.term;
         }
 
-        const body = { keywords: [], location: "", category: "" };
-        if (entry.kind === "category") body.category = match.key;
-        else if (entry.kind === "location") body.location = match.key;
-        else body.keywords = [match];
+        // DATABASE KEYWORD FILTER
+        else if (entry.kind === "keyword") {
+          body.keywordKeyword = entry.term;
+        }
 
+        // LOCATION FILTER
+        else if (entry.kind === "location") {
+          const lookup = await fetch("/api/public-location-search", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ term: entry.term }),
+            cache: "no-store",
+            signal: controller.signal
+          });
+
+          const lookupResult = await lookup.json();
+
+          if (!lookup.ok) {
+            throw new Error(lookupResult?.message || "Location lookup failed.");
+          }
+
+          const list = Array.isArray(lookupResult?.data)
+            ? lookupResult.data
+            : [];
+
+          const normalize = value => String(value ?? "").trim().toLowerCase();
+          const wanted = normalize(entry.term);
+
+          const match =
+            list.find(x => normalize(x.value) === wanted) ||
+            list.find(x => normalize(x.value).includes(wanted));
+
+          if (!match || match.key == null) {
+            if (active) {
+              setNotFound(true);
+              setLoading(false);
+            }
+            return;
+          }
+
+          body.location = String(match.key);
+        }
+
+        console.log("FINAL SEARCH FILTER:", body);
+
+        // CREATE ENCRYPTED SEARCH TOKEN
         const response = await fetch("/api/job-search", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify(body),
+          cache: "no-store",
+          signal: controller.signal
         });
+
         const result = await response.json();
+
         if (!response.ok || !result?.token) {
           throw new Error(result?.message || "Could not prepare your search.");
         }
 
         if (active) {
           router.replace(
-            `/job-list-v1?${new URLSearchParams({ search: result.token })}`
+            `/job-list-v1?${new URLSearchParams({
+              search: result.token
+            })}`
           );
         }
       } catch (e) {
-        if (active) setError(e.message || "Could not load jobs.");
+        if (active && e.name !== "AbortError") {
+          setError(e.message || "Could not load jobs.");
+          setLoading(false);
+        }
       }
     };
 
     run();
+
     return () => {
       active = false;
+      controller.abort();
     };
-  }, [entry, router]);
+  }, [entry?.kind, entry?.term, router]);
 
   return (
     <>
@@ -87,12 +142,12 @@ const FindJobsPage = ({ entry }) => {
             <div className="alert alert-danger">{error}</div>
           ) : notFound ? (
             <p>
-              No jobs found for “{entry.name}” right now.{" "}
+              No jobs found for "{entry.name}" right now.{" "}
               <Link href="/job-list-v1">Browse all jobs</Link>
             </p>
-          ) : (
+          ) : loading ? (
             <p>Loading {entry.name}...</p>
-          )}
+          ) : null}
         </div>
       </section>
 

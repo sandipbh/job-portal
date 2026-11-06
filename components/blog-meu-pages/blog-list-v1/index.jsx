@@ -27,7 +27,7 @@ const index = () => {
 
       <div className="sidebar-page-container">
         <div className="auto-container">
-          <div className="row">
+          <div className="row align-items-start">
             <div className="content-side col-lg-8 col-md-12 col-sm-12">
               <div className="blog-grid">
                 <div className="row">

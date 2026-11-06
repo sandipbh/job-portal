@@ -1,29 +1,15 @@
 "use client";
 
-import {
-
-  Sidebar,
-  Menu,
-  MenuItem,
-  SubMenu,
-} from "react-pro-sidebar";
-
-//import mobileMenuData from "../../../data/mobileMenuData";
+import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import { mobileMenuData } from "@/data/mobileMenuData";
 import SidebarFooter from "./SidebarFooter";
 import SidebarHeader from "./SidebarHeader";
-import {
-  isActiveLink,
-  isActiveParentChaild,
-} from "../../../utils/linkActiveChecker";
+import { isActiveLink } from "../../../utils/linkActiveChecker";
 import { usePathname, useRouter } from "next/navigation";
 
-
-
 const Index = () => {
-
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <div
@@ -33,15 +19,13 @@ const Index = () => {
       data-bs-scroll="true"
     >
       <SidebarHeader />
-      {/* End pro-header */}
-
       <Sidebar>
         <Menu>
-          {mobileMenuData.map((menu) => {
+          {mobileMenuData.map((menu, menuIndex) => {
             if (menu.single) {
               return (
                 <MenuItem
-                  key={menu.id}
+                  key={menu.id ?? menu.routePath ?? `menu - ${menuIndex} `}
                   onClick={() => router.push(menu.routePath)}
                   className={
                     isActiveLink(menu.routePath, pathname)
@@ -56,24 +40,26 @@ const Index = () => {
 
             return (
               <SubMenu
-                key={menu.id}
+                key={menu.id ?? `menu - ${menuIndex} `}
                 label={menu.label}
                 className={
-                  menu.items.some((group) =>
-                    group.items?.some((item) => item.routePath === pathname)
+                  menu.items?.some((group) =>
+                    group.items?.some(
+                      (item) => item.routePath === pathname
+                    )
                   )
                     ? "menu-active"
                     : ""
                 }
               >
-                {menu.items.map((group) => (
+                {menu.items?.map((group, groupIndex) => (
                   <SubMenu
-                    key={group.id}
+                    key={group.id ?? `${menu.id ?? menuIndex} -group - ${groupIndex} `}
                     label={group.title}
                   >
-                    {group.items.map((item) => (
+                    {group.items?.map((item, itemIndex) => (
                       <MenuItem
-                        key={item.routePath}
+                        key={item.routePath ?? `${group.id ?? groupIndex} -item - ${itemIndex} `}
                         onClick={() => router.push(item.routePath)}
                         className={
                           isActiveLink(item.routePath, pathname)
@@ -91,8 +77,6 @@ const Index = () => {
           })}
         </Menu>
       </Sidebar>
-
-
       <SidebarFooter />
     </div>
   );

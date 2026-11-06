@@ -62,7 +62,7 @@ const Index = () => {
 
     <section className="user-dashboard">
       <div className="dashboard-outer">
-        <BreadCrumb title={`Howdy, ${fullName}!!`} />
+        {/* <BreadCrumb title={`Howdy, ${fullName}!!`} /> */}
         {/* breadCrumb */}
 
 

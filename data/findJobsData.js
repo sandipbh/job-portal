@@ -1,13 +1,8 @@
-// kind decides which public search API resolves the term:
-// category -> industry search, keyword -> keyword search, location -> location search
 const item = (kind, name, term) => ({
   name,
   term,
   kind,
-  slug: name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, ""),
+  slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
 });
 
 export const findJobGroups = [
@@ -20,8 +15,8 @@ export const findJobGroups = [
       item("category", "Marketing jobs", "Marketing"),
       item("category", "Data Science jobs", "Data Science"),
       item("category", "HR jobs", "HR"),
-      item("category", "Engineering jobs", "Engineering"),
-    ],
+      item("category", "Engineering jobs", "Engineer")
+    ]
   },
   {
     id: 2,
@@ -32,8 +27,8 @@ export const findJobGroups = [
       item("keyword", "Remote jobs", "Remote"),
       item("keyword", "Work from home jobs", "Work from home"),
       item("keyword", "Walk-in jobs", "Walk-in"),
-      item("keyword", "Part-time jobs", "Part-time"),
-    ],
+      item("keyword", "Part-time jobs", "Part-time")
+    ]
   },
   {
     id: 3,
@@ -44,13 +39,12 @@ export const findJobGroups = [
       item("location", "Jobs in Bangalore", "Bangalore"),
       item("location", "Jobs in Hyderabad", "Hyderabad"),
       item("location", "Jobs in Chennai", "Chennai"),
-      item("location", "Jobs in Pune", "Pune"),
-    ],
-  },
+      item("location", "Jobs in Pune", "Pune")
+    ]
+  }
 ];
 
 export const findJobPath = (slug) => `/find-jobs/${slug}`;
 
 export const getFindJobBySlug = (slug) =>
-  findJobGroups.flatMap((group) => group.items).find((entry) => entry.slug === slug) ||
-  null;
+  findJobGroups.flatMap(group => group.items).find(item => item.slug === slug) || null;

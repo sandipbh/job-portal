@@ -47,7 +47,6 @@ const OtpReg = () => {
     const mobile = window.localStorage.getItem("otpUserMobile") || "";
     const localUqId = window.localStorage.getItem("otpUserUqId") || "";
 
-    console.log("Local OTP user data:", { email, mobile, localUqId });
     setUserEmail(email);
     setUserMobile(mobile);
     setUserUqId(localUqId);

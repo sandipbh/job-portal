@@ -1,12 +1,9 @@
 "use client";
 import Applicants from "./Applicants";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import WidgetToFilterBox from "./WidgetToFilterBox";
 import Link from "next/link";
-
-
 import { useSearchParams } from "next/navigation";
-
 
 const WidgetContentBox = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,27 +14,26 @@ const WidgetContentBox = () => {
   const [selectedQualification, setSelectedQualification] = useState([]);
   const [selectedGender, setSelectedGender] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
-
+  const [selectedRating, setSelectedRating] = useState([]);
+  const [verifiedCandidate, setVerifiedCandidate] = useState(false);
   const searchParams = useSearchParams();
   const jobId = Number(searchParams.get("jobId"));
-
   const [candidatesData, setCandidatesData] = useState([]);
-
 
   useEffect(() => {
     getJobList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobId]);
 
   const getJobList = async () => {
     try {
-      const response = await fetch(`/api/emp-job-application-shortlisted-list?JobPostId=${jobId}`, {
-        method: "GET",
-      });
+      const response = await fetch(
+        `/api/emp-job-application-shortlisted-list?JobPostId=${jobId}`,
+        { method: "GET" }
+      );
 
       const result = await response.json();
-
       const listData = result?.data;
-      //console.log('listData  ', listData)
 
       if (listData) {
         setCandidatesData(listData);
@@ -47,57 +43,79 @@ const WidgetContentBox = () => {
     }
   };
 
-  const filteredCandidates = candidatesData.filter((candidate) => {
-    const matchesJob =
-      selectedJobs.length === 0 ||
-      selectedJobs.includes(candidate.designation);
+  /* ---------------------------------------------------------------
+   * Derive unique + sorted filter options from the loaded candidates
+   * --------------------------------------------------------------- */
 
-    const matchesLocation =
-      selectedLocation.length === 0 ||
-      selectedLocation.includes(candidate.location);
+  const getJobValue = (c) =>
+    (c?.designation ?? c?.jobTitle ?? "").toString().trim();
+  const getLocationValue = (c) =>
+    (c?.location ?? c?.currentAddress ?? "").toString().trim();
 
-    const matchesExperience =
-      selectedExperience.length === 0 ||
-      selectedExperience.includes(candidate.experience);
-
-    const matchesQualification =
-      selectedQualification.length === 0 ||
-      selectedQualification.includes(candidate.qualification);
-
-    const matchesGender =
-      selectedGender.length === 0 ||
-      selectedGender.includes(candidate.gender);
-
-    const matchesCategory =
-      selectedCategory.length === 0 ||
-      selectedCategory.includes(candidate.category);
-
-    const matchesSearch =
-      searchTerm === "" ||
-      (candidate?.name || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-
-    return (
-      matchesSearch &&
-      matchesJob &&
-      matchesLocation &&
-      matchesExperience &&
-      matchesQualification &&
-      matchesGender &&
-      matchesCategory
+  const jobOptions = useMemo(() => {
+    const set = new Set();
+    candidatesData.forEach((c) => {
+      const v = getJobValue(c);
+      if (v) set.add(v);
+    });
+    return [...set].sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "base" })
     );
-  });
+  }, [candidatesData]);
+
+  const locationOptions = useMemo(() => {
+    const set = new Set();
+    candidatesData.forEach((c) => {
+      const v = getLocationValue(c);
+      if (v) set.add(v);
+    });
+    return [...set].sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "base" })
+    );
+  }, [candidatesData]);
+
+  const ratingOptions = useMemo(() => ["5", "4", "3", "2", "1"], []);
+
+
+
+  /* ---------------------------------------------------------------
+   * Filtering
+   * --------------------------------------------------------------- */
+
+  const filteredCandidates = useMemo(() => {
+    return candidatesData.filter((candidate) => {
+      const jobValue = getJobValue(candidate);
+      const locValue = getLocationValue(candidate);
+
+      const matchesJob = selectedJobs.length === 0 || selectedJobs.includes(jobValue);
+      const matchesLocation = selectedLocation.length === 0 || selectedLocation.includes(locValue);
+      const matchesExperience = selectedExperience.length === 0 || selectedExperience.includes(candidate.experience);
+      const matchesQualification = selectedQualification.length === 0 || selectedQualification.includes(candidate.qualification);
+      const matchesGender = selectedGender.length === 0 || selectedGender.includes(candidate.gender);
+      const matchesCategory = selectedCategory.length === 0 || selectedCategory.includes(candidate.category);
+
+      const candidateRating = Math.round(Number(candidate.avgRating) || 0);
+      const matchesRating = selectedRating.length === 0 || selectedRating.includes(String(candidateRating));
+
+      const matchesSearch = searchTerm === "" || (candidate?.name || candidate?.candiName || "").toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesVerified = !verifiedCandidate || candidate.verifyStatus?.toLowerCase() === "verified";
+
+      return matchesSearch && matchesJob && matchesLocation && matchesExperience && matchesQualification && matchesGender && matchesCategory && matchesRating && matchesVerified;
+    });
+  }, [candidatesData, selectedJobs, selectedLocation, selectedExperience, selectedQualification, selectedGender, selectedCategory, selectedRating, searchTerm, verifiedCandidate]);
+  /* ---------------------------------------------------------------
+   * Status / comment state updates
+   * --------------------------------------------------------------- */
 
   const updateCandidateStatus = (id, status) => {
     setCandidatesData((prev) =>
       prev.map((candidate) =>
-        candidate.id === id
-          ? { ...candidate, status }
-          : candidate
+        candidate.id === id ? { ...candidate, status } : candidate
       )
     );
   };
+
   const handleCallStatus = (id, ttype) => {
     updateCandidateCallStatus(id, ttype);
   };
@@ -105,12 +123,11 @@ const WidgetContentBox = () => {
   const updateCandidateCallStatus = (id, callStatus) => {
     setCandidatesData((prev) =>
       prev.map((candidate) =>
-        candidate.id === id
-          ? { ...candidate, callStatus }
-          : candidate
+        candidate.id === id ? { ...candidate, callStatus } : candidate
       )
     );
   };
+
   const handleStatus = (id, ttype) => {
     updateCandidateStatus(id, ttype);
   };
@@ -118,28 +135,25 @@ const WidgetContentBox = () => {
   const updateCandidateComments = (id, comments) => {
     setCandidatesData((prev) =>
       prev.map((candidate) =>
-        candidate.id === id
-          ? { ...candidate, comments }
-          : candidate
+        candidate.id === id ? { ...candidate, comments } : candidate
       )
     );
   };
 
-  const [currentPage, setCurrentPage] = useState(1);
+  /* ---------------------------------------------------------------
+   * Pagination
+   * --------------------------------------------------------------- */
 
+  const [currentPage, setCurrentPage] = useState(1);
   const [jobsPerPage, setJobsPerPage] = useState(20);
+
   const totalPages = Math.max(
     1,
     Math.ceil(filteredCandidates.length / jobsPerPage)
   );
   const startIndex = (currentPage - 1) * jobsPerPage;
-
   const endIndex = startIndex + jobsPerPage;
-
-  const currentJobs = filteredCandidates.slice(
-    startIndex,
-    endIndex
-  );
+  const currentJobs = filteredCandidates.slice(startIndex, endIndex);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -151,9 +165,9 @@ const WidgetContentBox = () => {
     selectedQualification,
     selectedGender,
     selectedCategory,
-  ])
-
-
+    selectedRating,
+    verifiedCandidate
+  ]);
 
   const PaginationControls = () => {
     const getPages = () => {
@@ -179,10 +193,9 @@ const WidgetContentBox = () => {
 
       return pages;
     };
+
     return (
       <div className="custom-pagination job-style">
-
-        {/* Page Size */}
         <div className="page-size">
           <span>Show</span>
           <select
@@ -201,7 +214,6 @@ const WidgetContentBox = () => {
           </select>
         </div>
 
-        {/* Controls */}
         <div className="page-controls">
           <button
             disabled={currentPage === 1}
@@ -235,7 +247,6 @@ const WidgetContentBox = () => {
             <i className="la la-angle-double-right"></i>
           </button>
         </div>
-
       </div>
     );
   };
@@ -255,24 +266,28 @@ const WidgetContentBox = () => {
         setSelectedGender={setSelectedGender}
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
-
+        selectedRating={selectedRating}
+        setSelectedRating={setSelectedRating}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         location={location}
         setLocation={setLocation}
+        jobOptions={jobOptions}
+        locationOptions={locationOptions}
+        ratingOptions={ratingOptions}
+        categoryOptions={[]}
+        verifiedCandidate={verifiedCandidate}
+        setVerifiedCandidate={setVerifiedCandidate}
       />
 
       <div className="selected-filters">
-
         {selectedJobs.map((item) => (
-          <span key={item} className="filter-tag">
+          <span key={`job-${item}`} className="filter-tag">
             {item}
             <button
               className="tag-close"
               onClick={() =>
-                setSelectedJobs(
-                  selectedJobs.filter((s) => s !== item)
-                )
+                setSelectedJobs(selectedJobs.filter((s) => s !== item))
               }
             >
               ×
@@ -281,7 +296,7 @@ const WidgetContentBox = () => {
         ))}
 
         {selectedLocation.map((item) => (
-          <span key={item} className="filter-tag">
+          <span key={`loc-${item}`} className="filter-tag">
             {item}
             <button
               className="tag-close"
@@ -297,7 +312,7 @@ const WidgetContentBox = () => {
         ))}
 
         {selectedExperience.map((item) => (
-          <span key={item} className="filter-tag">
+          <span key={`exp-${item}`} className="filter-tag">
             {item}
             <button
               className="tag-close"
@@ -313,7 +328,7 @@ const WidgetContentBox = () => {
         ))}
 
         {selectedQualification.map((item) => (
-          <span key={item} className="filter-tag">
+          <span key={`qual-${item}`} className="filter-tag">
             {item}
             <button
               className="tag-close"
@@ -329,14 +344,12 @@ const WidgetContentBox = () => {
         ))}
 
         {selectedGender.map((item) => (
-          <span key={item} className="filter-tag">
+          <span key={`gen-${item}`} className="filter-tag">
             {item}
             <button
               className="tag-close"
               onClick={() =>
-                setSelectedGender(
-                  selectedGender.filter((s) => s !== item)
-                )
+                setSelectedGender(selectedGender.filter((s) => s !== item))
               }
             >
               ×
@@ -345,7 +358,7 @@ const WidgetContentBox = () => {
         ))}
 
         {selectedCategory.map((item) => (
-          <span key={item} className="filter-tag">
+          <span key={`cat-${item}`} className="filter-tag">
             {item}
             <button
               className="tag-close"
@@ -360,6 +373,19 @@ const WidgetContentBox = () => {
           </span>
         ))}
 
+        {selectedRating.map((item) => (
+          <span key={`rating-${item}`} className="filter-tag">
+            {item} ★
+            <button
+              className="tag-close"
+              onClick={() =>
+                setSelectedRating(selectedRating.filter((s) => s !== item))
+              }
+            >
+              ×
+            </button>
+          </span>
+        ))}
       </div>
 
       <div className="filter-summary">
@@ -368,7 +394,9 @@ const WidgetContentBox = () => {
           selectedExperience.length +
           selectedQualification.length +
           selectedGender.length +
-          selectedCategory.length}{" "}
+          selectedCategory.length +
+          selectedRating.length +
+          (verifiedCandidate ? 1 : 0)}{" "}
         filters applied
       </div>
 
@@ -385,13 +413,13 @@ const WidgetContentBox = () => {
               onUpdateComments={updateCandidateComments}
               onUpdateStatus={handleStatus}
               onUpdateCallStatus={handleCallStatus}
-            />))
+            />
+          ))
         ) : (
           <div className="col-12 text-center py-5">
             <h5>No applicants found</h5>
           </div>
         )}
-
       </div>
       <PaginationControls />
     </div>

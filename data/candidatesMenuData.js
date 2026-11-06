@@ -43,6 +43,13 @@ module.exports = [
     active: "",
   },
   {
+    id: 15,
+    name: "Offered Jobs",
+    icon: "la-bookmark-o",
+    routePath: "/candidates-dashboard/offered-job",
+    active: "",
+  },
+  {
     id: 7,
     name: "CV manager",
     icon: "la la-file-invoice",
