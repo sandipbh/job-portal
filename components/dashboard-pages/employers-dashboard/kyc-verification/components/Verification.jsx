@@ -180,6 +180,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
 
     const validateStep2 = () => {
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 <<<<<<< HEAD
@@ -188,6 +189,9 @@ const Verification = ({ activeTab, setActiveTab }) => {
        
 >>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
 >>>>>>> 4b1755a7338b8badb927563200c4e31181923449
+=======
+
+>>>>>>> 044eb01 (remark 0611-7)
         let newErrors = {};
         //////return true ; 
         if (!kycData.docType) {
@@ -901,6 +905,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                     className="theme-btn btn-style-one"
                                     onClick={() => {
 <<<<<<< HEAD
+<<<<<<< HEAD
 
                                         if (validateStep1()) {
 
@@ -915,6 +920,11 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                             
 >>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
 >>>>>>> 4b1755a7338b8badb927563200c4e31181923449
+=======
+
+                                        if (validateStep1()) {
+
+>>>>>>> 044eb01 (remark 0611-7)
                                             setActiveTab(1);
                                         }
                                     }}

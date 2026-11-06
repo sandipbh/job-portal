@@ -765,9 +765,12 @@ const Applicants = ({
   };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 >>>>>>> 4b1755a7338b8badb927563200c4e31181923449
+=======
+>>>>>>> 044eb01 (remark 0611-7)
   const handleInterviewDecision = async (decision, candiUqId, applicationId) => {
     if (decision !== "Selected Candidate" && decision !== "Rejected Candidate") {
       toast.error("Invalid interview decision.");
@@ -821,10 +824,13 @@ const Applicants = ({
   };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
 >>>>>>> 4b1755a7338b8badb927563200c4e31181923449
+=======
+>>>>>>> 044eb01 (remark 0611-7)
   /* ----------------------------- Render ------------------------------- */
   return (
     <>
@@ -958,9 +964,12 @@ const Applicants = ({
 
           <div className="ccandidate-actions d-flex flex-wrap justify-content-between align-items-center gap-2">
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 >>>>>>> 4b1755a7338b8badb927563200c4e31181923449
+=======
+>>>>>>> 044eb01 (remark 0611-7)
             <div className="left-action-btn d-flex gap-2">
               <button
                 type="button"
@@ -986,6 +995,7 @@ const Applicants = ({
             </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
             <button
@@ -997,6 +1007,8 @@ const Applicants = ({
             </button>
 >>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
 >>>>>>> 4b1755a7338b8badb927563200c4e31181923449
+=======
+>>>>>>> 044eb01 (remark 0611-7)
 
             <div className="right-side ms-0 ms-md-auto mt-2 mt-md-0">
               {candidate.status != "Deleted" ? (
