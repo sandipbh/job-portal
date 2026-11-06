@@ -9,10 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.8.0",
-=======
     "@faker-js/faker": "^10.6.0",
->>>>>>> 4b1755a7338b8badb927563200c4e31181923449
     "@reduxjs/toolkit": "^2.8.2",
     "aos": "^2.3.4",
     "axios": "^1.15.0",
