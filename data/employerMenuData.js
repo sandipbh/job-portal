@@ -38,8 +38,43 @@ module.exports = [
   {
     id: 6,
     name: "Shortlisted Resumes",
-    icon: "la-bookmark-o",
+    icon: "la-bookmark",
     routePath: "/employers-dashboard/shortlisted-resumes",
+    active: "",
+  },
+  {
+    id: 17,
+    name: "Interview Schedule",
+    icon: "la-calendar-check",
+    routePath: "/employers-dashboard/interview-schedule",
+    active: "",
+  },
+  {
+    id: 20,
+    name: "Shortlisted Candidate",
+    icon: "la-user-check",
+    routePath: "/employers-dashboard/shortlisted-candidate",
+    active: "",
+  },
+  {
+    id: 22,
+    name: "Finalize Candidate",
+    icon: "la-user-check",
+    routePath: "/employers-dashboard/finalize-candidate",
+    active: "",
+  },
+  {
+    id: 21,
+    name: "Interview Summary",
+    icon: "la-user-check",
+    routePath: "/employers-dashboard/interview-summary",
+    active: "",
+  },
+  {
+    id: 18,
+    name: "Saved Candidates",
+    icon: "la-user-check",
+    routePath: "/employers-dashboard/saved-candidates",
     active: "",
   },
   {
@@ -80,7 +115,7 @@ module.exports = [
   {
     id: 11,
     name: "Resume Alerts",
-    icon: "la-bell",
+    icon: "la-file-signature",
     routePath: "/employers-dashboard/resume-alerts",
     active: "",
   },

@@ -3,93 +3,47 @@ import TopCardBlock from "./components/TopCardBlock";
 import ProfileChart from "./components/ProfileChart";
 import Notification from "./components/Notification";
 import Applicants from "./components/Applicants";
-;
 import { cookies } from "next/headers";
 
-
 const Index = async () => {
-
   const cookieStore = await cookies();
-
   const token = cookieStore.get("regToken")?.value;
   let user = {};
   try {
-
     user = token ? JSON.parse(token) : {};
-    //console.log(user.external.fullName);
-
   } catch (err) {
-    // console.error("Invalid JSON token:", err);
     user = {};
   }
 
-
-
-
-
   return (
     <>
-
-      {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
           <BreadCrumb title="Dashboard" />
-          {/* breadCrumb */}
-
-          {/* <MenuToggler /> */}
-          {/* Collapsible sidebar button */}
-
           <div className="row">
             <TopCardBlock />
           </div>
-          {/* End .row top card block */}
-
           <div className="row">
             <div className="col-xl-12 col-lg-12">
-              {/* <!-- Graph widget --> */}
               <div className="graph-widget ls-widget">
                 <ProfileChart />
               </div>
-              {/* End profile chart */}
             </div>
-            {/* End .col */}
-
-            {/* <div className="col-xl-5 col-lg-12">
-              
-              <div className="notification-widget ls-widget">
-                <div className="widget-title">
-                  <h4>Notifications</h4>
-                </div>
-                <div className="widget-content">
-                  <Notification />
-                </div>
-              </div>
-            </div> */}
-            {/* End .col */}
-
             <div className="col-lg-12">
-              {/* <!-- applicants Widget --> */}
               <div className="applicants-widget ls-widget">
                 <div className="widget-title">
                   <h4>Recent Applicants</h4>
                 </div>
                 <div className="widget-content">
                   <div className="row">
-                    {/* <!-- Candidate block three --> */}
-
                     <Applicants />
                   </div>
                 </div>
               </div>
             </div>
-            {/* End .col */}
           </div>
-          {/* End .row profile and notificatins */}
         </div>
-        {/* End dashboard-outer */}
       </section>
-      {/* <!-- End Dashboard --> */}
-
     </>
   );
 };

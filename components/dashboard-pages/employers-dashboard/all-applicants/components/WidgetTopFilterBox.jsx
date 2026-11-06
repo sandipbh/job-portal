@@ -1,247 +1,138 @@
+
 "use client";
-
 import { useState } from "react";
-import candidatesData from "../../../../../data/candidates";
 
-const WidgetTopFilterBox = ({
-  selectedJobs = [],
-  setSelectedJobs,
-  selectedLocation = [],
-  setSelectedLocation,
-  selectedExperience = [],
-  setSelectedExperience,
-  selectedQualification = [],
-  setSelectedQualification,
-  selectedGender = [],
-  setSelectedGender,
-  selectedCategory = [],
-  setSelectedCategory,
-
-  searchTerm,
-  setSearchTerm,
-
+const WidgetToFilterBox = ({
+  selectedJobs = [], setSelectedJobs,
+  selectedLocation = [], setSelectedLocation,
+  selectedExperience = [], setSelectedExperience,
+  selectedQualification = [], setSelectedQualification,
+  selectedGender = [], setSelectedGender,
+  selectedRating = [], setSelectedRating,
+  verifiedCandidate = false, setVerifiedCandidate,
+  searchTerm = "", setSearchTerm,
+  jobOptions = [], locationOptions = []
 }) => {
   const [openFilter, setOpenFilter] = useState(null);
-  const [showFilters, setShowFilters] = useState(false);
-  const jobOptions = [
-    ...new Set(candidatesData.map((c) => c.designation)),
+
+  const experienceOptions = ["1", "2", "3", "4", "5+"];
+  const qualificationOptions = ["10th", "12th", "Graduate/Diploma", "Post Graduate/Master's", "Doctorate/PhD"];
+  const genderOptions = ["Male", "Female", "Both"];
+  const ratingOptions = ["5", "4", "3", "2", "1"];
+
+  const filters = [
+    { key: "job", title: "Select Job", options: jobOptions, selected: selectedJobs, setter: setSelectedJobs },
+    { key: "location", title: "Location", options: locationOptions, selected: selectedLocation, setter: setSelectedLocation },
+    { key: "experience", title: "Experience", options: experienceOptions, selected: selectedExperience, setter: setSelectedExperience },
+    { key: "qualification", title: "Qualification", options: qualificationOptions, selected: selectedQualification, setter: setSelectedQualification },
+    { key: "gender", title: "Gender", options: genderOptions, selected: selectedGender, setter: setSelectedGender },
+    { key: "rating", title: "Rating", options: ratingOptions, selected: selectedRating, setter: setSelectedRating }
   ];
 
-  const locationOptions = [
-    ...new Set(candidatesData.map((c) => c.location)),
-  ];
-
-  const experienceOptions = [
-    ...new Set(candidatesData.map((c) => c.experience)),
-  ];
-
-  const qualificationOptions = [
-    ...new Set(candidatesData.map((c) => c.qualification)),
-  ];
-
-  const genderOptions = [
-    ...new Set(candidatesData.map((c) => c.gender)),
-  ];
-
-  const categoryOptions = [
-    ...new Set(candidatesData.map((c) => c.category)),
-  ];
-  const handleCheckbox = (
-    value,
-    selected = [],
-    setSelected
-  ) => {
-    if (typeof setSelected !== "function") return;
-
-    if (selected.includes(value)) {
-      setSelected(
-        selected.filter((item) => item !== value)
-      );
-    } else {
-      setSelected([...selected, value]);
-    }
+  const handleCheckbox = (value, selected, setter) => {
+    if (typeof setter !== "function") return;
+    const current = Array.isArray(selected) ? selected : [];
+    setter(current.includes(value) ? current.filter(item => item !== value) : [...current, value]);
   };
 
-  const renderFilter = (
-    title,
-    options,
-    selected,
-    setSelected,
-    key
-  ) => (
-    <div className="filter-dropdown">
-      <button
-        type="button"
-        className="filter-btn"
-        onClick={() =>
-          setOpenFilter(
-            openFilter === key ? null : key
-          )
-        }
-      >
-        <span>{title}</span>
+  const clearAllFilters = () => {
+    setSearchTerm?.("");
+    setSelectedJobs?.([]);
+    setSelectedLocation?.([]);
+    setSelectedExperience?.([]);
+    setSelectedQualification?.([]);
+    setSelectedGender?.([]);
+    setSelectedRating?.([]);
+    setVerifiedCandidate?.(false);
+    setOpenFilter(null);
+  };
 
-        {selected.length > 0 &&
-          ` (${selected.length})`}
+  const totalFilters = filters.reduce((total, filter) => total + filter.selected.length, 0) + (verifiedCandidate ? 1 : 0);
 
-        <span
-          className={`la la-angle-down filter-arrow ${openFilter === key ? "open" : ""
-            }`}
-        ></span>
+  return (
+    <div className="job-bar-filter">
+      <div className="filters-header">
+        <h5>☰ Filters</h5>
+      </div>
 
-      </button>
+      <div className="candidate-filter-bar">
+        <div className="candidate-filter-search">
+          <span className="candidate-filter-icon la la-search"></span>
+          <input
+            type="text"
+            placeholder="Search Candidates..."
+            className="candidate-filter-input"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="candidate-filter-actions">
+          <button type="button" className="candidate-filter-clear-btn" onClick={clearAllFilters}>
+            <span className="la la-refresh"></span>
+            <span className="txt-clear">Clear Filters</span>
+          </button>
+        </div>
+      </div>
 
-      {openFilter === key && (
-        <div className="filter-menu">
-          {options.map((option) => (
-            <label
-              key={option}
-              className="filter-option"
-            >
-              <input
-                type="checkbox"
-                checked={selected.includes(option)}
-                onChange={() =>
-                  handleCheckbox(
-                    option,
-                    selected,
-                    setSelected
-                  )
-                }
-              />
-
-              <span>{option}</span>
-            </label>
-          ))}
-
-          <div className="filter-actions">
+      <div className="applicant-filter-bar">
+        {filters.map(filter => (
+          <div className="filter-dropdown" key={filter.key}>
             <button
               type="button"
-              className="clear-btn"
-              onClick={() => setSelected([])}
+              className="filter-btn"
+              onClick={() => setOpenFilter(openFilter === filter.key ? null : filter.key)}
             >
-              Clear
+              <span>{filter.title}</span>
+              {filter.selected.length > 0 && ` (${filter.selected.length})`}
+              <span className={`la la-angle-down filter-arrow ${openFilter === filter.key ? "open" : ""}`}></span>
             </button>
-            <button
-              type="button"
-              className="apply-btn"
-              onClick={() => setOpenFilter(null)}
-            >
-              Apply
-            </button>
+
+            {openFilter === filter.key && (
+              <div className="filter-menu">
+                {filter.options.length > 0 ? (
+                  filter.options.map(option => (
+                    <label key={option} className="filter-option">
+                      <input
+                        type="checkbox"
+                        className="me-2"
+                        checked={filter.selected.includes(option)}
+                        onChange={() => handleCheckbox(option, filter.selected, filter.setter)}
+                      />
+                      <span>{option}</span>
+                    </label>
+                  ))
+                ) : (
+                  <div className="text-muted small p-2">No options available</div>
+                )}
+
+                <div className="filter-actions">
+                  <button type="button" className="clear-btn" onClick={() => filter.setter?.([])}>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
+        ))}
+
+        <label className="filter-option verified-filter">
+          <input
+            type="checkbox"
+            className="me-2"
+            checked={Boolean(verifiedCandidate)}
+            onChange={e => setVerifiedCandidate?.(e.target.checked)}
+          />
+          <span>Verified Candidate</span>
+        </label>
+      </div>
+
+      {totalFilters > 0 && (
+        <div className="mt-2">
+          <small className="text-muted">{totalFilters} filters selected</small>
         </div>
       )}
     </div>
   );
-  return (
-    <div className="job-bar-filter">
-      <div
-        className="filters-header"
-        onClick={() => setShowFilters(!showFilters)}
-        style={{ cursor: "pointer" }}
-      >
-        <h5>
-          ☰ Filters
-          <span
-            className={`la ${showFilters ? "la-angle-down" : "la-angle-up"
-              }`}
-            style={{ marginLeft: "8px" }}
-          ></span>
-        </h5>
-      </div>
-      {showFilters && (
-        <>
-          <div className="candidate-filter-bar">
-
-            <div className="candidate-filter-search">
-              <span className="candidate-filter-icon la la-search"></span>
-
-              <input
-                type="text"
-                placeholder="Search Candidates..."
-                className="candidate-filter-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-
-            <div className="candidate-filter-actions">
-              <button
-                className="candidate-filter-clear-btn"
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedJobs([]);
-                  setSelectedLocation([]);
-                  setSelectedExperience([]);
-                  setSelectedQualification([]);
-                  setSelectedGender([]);
-                  setSelectedCategory([]);
-                }}
-              >
-                <span className="la la-refresh"></span>
-                Clear Filters
-              </button>
-            </div>
-
-          </div>
-
-          <div className="applicant-filter-bar">
-
-            {renderFilter(
-              "Select Job",
-              jobOptions,
-              selectedJobs,
-              setSelectedJobs,
-              "job"
-            )}
-
-            {renderFilter(
-              "Location",
-              locationOptions,
-              selectedLocation,
-              setSelectedLocation,
-              "location"
-            )}
-
-            {renderFilter(
-              "Experience",
-              experienceOptions,
-              selectedExperience,
-              setSelectedExperience,
-              "experience"
-            )}
-
-            {renderFilter(
-              "Qualification",
-              qualificationOptions,
-              selectedQualification,
-              setSelectedQualification,
-              "qualification"
-            )}
-            {renderFilter(
-              "Gender",
-              genderOptions,
-              selectedGender,
-              setSelectedGender,
-              "gender"
-            )}
-
-            {renderFilter(
-              "Category",
-              categoryOptions,
-              selectedCategory,
-              setSelectedCategory,
-              "category"
-            )}
-
-
-          </div>
-        </>
-      )}
-    </div>
-
-  );
 };
 
-export default WidgetTopFilterBox;
+export default WidgetToFilterBox;

@@ -164,7 +164,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
         }
 
         if (!kycData.industryId || kycData.industryId == "0") {
-            newErrors.industryId = "Search your industry";
+            newErrors.industry = "Search your industry";
         }
         if (!kycData.aboutCompany || kycData.aboutCompany.length < 10) {
             newErrors.aboutCompany = "Enter about your company";
@@ -174,13 +174,12 @@ const Verification = ({ activeTab, setActiveTab }) => {
             newErrors.logo = "Select company logo";
         }
 
-
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const validateStep2 = () => {
+
         let newErrors = {};
         //////return true ; 
         if (!kycData.docType) {
@@ -726,6 +725,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                 <option value="Company/Partnership">Company/Partnership</option>
                                 <option value="Proprietorship">Proprietorship</option>
                                 <option value="Individual">Individual</option>
+                                <option value="MNC">MNC</option>
                                 <option value="Other">Other</option>
 
                             </select>
@@ -805,7 +805,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
                             <input
                                 type="tel"
                                 value={kycData.companySize || ""}
-                                maxLength={4}
+                                maxLength={6}
                                 onChange={(e) => {
                                     const value = e.target.value.replace(/\D/g, "");
                                     setKycData({ ...kycData, companySize: value });
@@ -865,7 +865,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
                             <textarea
 
                                 className=" about-input-company"
-                                maxLength={250}
+                                maxLength={1000}
                                 value={kycData.aboutCompany}
                                 onChange={handleAboutCompany}
                                 placeholder="Write about your company, culture, values..."
@@ -880,7 +880,7 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                     className="text-end text-red mt-1"
                                     style={{ fontSize: "12px" }}
                                 >
-                                    {aboutComp.length} / 250
+                                    {aboutComp.length} / 1000
                                 </div>
                             </div></div>
 
@@ -892,7 +892,9 @@ const Verification = ({ activeTab, setActiveTab }) => {
                                     type="button"
                                     className="theme-btn btn-style-one"
                                     onClick={() => {
+
                                         if (validateStep1()) {
+
                                             setActiveTab(1);
                                         }
                                     }}

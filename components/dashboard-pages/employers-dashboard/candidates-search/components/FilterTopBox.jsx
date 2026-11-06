@@ -178,6 +178,11 @@ const FilterTopBox = ({
                   <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
                     {candidate.candiName}
                   </Link>
+                  {candidate.verifyStatus?.toLowerCase() === "verified" && (
+                    <span className="text-success p-0 mt-0 ms-2">
+                      <i className="fa fa-check-circle fw-normal me-1 fa-sm"></i>
+                    </span>
+                  )}
                 </h4>
 
                 <div className="top-meta">

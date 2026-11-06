@@ -65,7 +65,10 @@ const HeaderNavContent = () => {
           </li>
           {/* End findjobs menu items */}
 
-          <li
+          <li>
+            <Link href="/employers-list-v1">Company </Link>
+          </li>
+          {/* <li
             className={`${isActiveParent(employerItems, usePathname()) ||
               usePathname()?.split("/")[1] === "employers-dashboard"
               ? "current"
@@ -113,10 +116,13 @@ const HeaderNavContent = () => {
                 </Link>
               </li>
             </ul>
-          </li>
+          </li> */}
           {/* End Employers menu items */}
 
-          <li
+          <li>
+            <Link href="/candidates-list-v1">Candidate </Link>
+          </li>
+          {/* <li
             className={`${isActiveParent(candidateItems, usePathname()) ||
               usePathname()?.split("/")[1] === "candidates-dashboard"
               ? "current"
@@ -166,10 +172,13 @@ const HeaderNavContent = () => {
                 </Link>
               </li>
             </ul>
-          </li>
+          </li> */}
           {/* End Candidates menu items */}
 
-          <li
+          <li>
+            <Link href="/blog-list-v1">Blogs </Link>
+          </li>
+          {/* <li
             className={`${isActiveParentChaild(blogItems, usePathname()) ? "current" : ""
               } dropdown`}
           >
@@ -186,7 +195,7 @@ const HeaderNavContent = () => {
                 </li>
               ))}
             </ul>
-          </li>
+          </li> */}
           {/* End Blog menu items */}
 
 

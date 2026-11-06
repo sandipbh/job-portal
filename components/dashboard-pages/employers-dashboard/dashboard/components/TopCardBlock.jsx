@@ -11,6 +11,11 @@ const TopCardBlock = () => {
     applications: 0,
     shortlistedJobs: 0,
     MessageCount: 0,
+    ActiveJob: 0,
+    VerifiedCandidates: 0,
+    TotalReviews: 0,
+    AverageCandidateRating: 0,
+
   });
 
   useEffect(() => {
@@ -34,6 +39,10 @@ const TopCardBlock = () => {
           applications: data?.applications ?? 0,
           shortlistedJobs: data?.shortlist ?? 0,
           MessageCount: data?.messageCount ?? 0,
+          ActiveJob: data?.activeJob ?? 0,
+          VerifiedCandidates: data?.verifiedCandidates ?? 0,
+          TotalReviews: data?.totalReviews ?? 0,
+          AverageCandidateRating: data?.averageCandidateRating ?? 0,
         });
       } catch (error) {
         console.error("Dashboard card error:", error);
@@ -53,24 +62,52 @@ const TopCardBlock = () => {
     },
     {
       id: 2,
-      icon: "la-file-invoice",
+      icon: "la-file-text",
       countNumber: dashboard.applications,
-      metaName: "Application",
+      metaName: "Applications",
       uiClass: "ui-red",
     },
     {
       id: 3,
-      icon: "la-bookmark-o",
+      icon: "la-bookmark",
       countNumber: dashboard.shortlistedJobs,
-      metaName: "Shortlist",
+      metaName: "Shortlisted Candidates",
       uiClass: "ui-green",
     },
     {
       id: 4,
-      icon: "la-comment-o",
+      icon: "la-comments",
       countNumber: dashboard.MessageCount,
       metaName: "Messages",
       uiClass: "ui-yellow",
+    },
+    {
+      id: 5,
+      icon: "la-briefcase",
+      countNumber: dashboard.ActiveJob,
+      metaName: "Active Jobs",
+      uiClass: "ui-purple",
+    },
+    {
+      id: 6,
+      icon: "la-check-circle",
+      countNumber: dashboard.VerifiedCandidates,
+      metaName: "Verified Candidates",
+      uiClass: "ui-teal",
+    },
+    {
+      id: 7,
+      icon: "la-star",
+      countNumber: dashboard.TotalReviews,
+      metaName: "Total Reviews",
+      uiClass: "ui-orange",
+    },
+    {
+      id: 8,
+      icon: "la-star-half-alt",
+      countNumber: dashboard.AverageCandidateRating,
+      metaName: "Average Candidate Rating",
+      uiClass: "ui-pink",
     },
   ];
 

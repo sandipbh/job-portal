@@ -22,6 +22,7 @@ const Applicants = ({ candidate,
   const [status, setStatus] = useState(candidate.status || "");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [commentList, setCommentList] = useState([]);
+  const [verifiedCandidate, setVerifiedCandidate] = useState(false);
 
   console.log(JSON.stringify(candidate));
 
@@ -592,6 +593,163 @@ const Applicants = ({ candidate,
       </div>
     );
   };
+
+  const openResume = (resumePath) => {
+    if (!resumePath?.trim()) {
+      toast.error("Resume is not available.");
+      return;
+    }
+    const url = resumePath.startsWith("http")
+      ? resumePath
+      : `/${resumePath.replace(/^\/+/, "")}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const [showInterviewModal, setShowInterviewModal] = useState(false);
+  const [loadingInterview, setLoadingInterview] = useState(false);
+  const [interview, setInterview] = useState({
+    interviewDate: "",
+    interviewLocation: "",
+    interviewMode: "Online",
+    interviewer: "",
+    interviewerEmail: "",
+    duration: "60",
+    description: ""
+  });
+
+  const handleInterviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateInterview()) return;
+
+    const applicationId = Number(candidate?.id);
+    const jobpostId = Number(candidate?.jobId);
+    const candiUqId = String(candidate?.candiUqId || "").trim();
+
+    if (!Number.isSafeInteger(applicationId) || applicationId <= 0 ||
+      !Number.isSafeInteger(jobpostId) || jobpostId <= 0 || !candiUqId) {
+      toast.error("Invalid candidate application or job details.");
+      return;
+    }
+
+    const payload = {
+      applicationId,
+      jobpostId,
+      candiUqId,
+      interviewDate: interview.interviewDate,
+      interviewLocation: interview.interviewLocation.trim(),
+      interviewMode: interview.interviewMode,
+      interviewer: interview.interviewer.trim(),
+      interviewerEmail: interview.interviewerEmail.trim(),
+      duration: Number(interview.duration),
+      description: interview.description.trim()
+    };
+
+    try {
+      setLoadingInterview(true);
+
+      const res = await fetch("/api/emp-application-schedule-interview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await res.json();
+
+      if (!res.ok || result?.isSuccess !== true) {
+        toast.error(result?.message || "Failed to schedule interview.");
+        return;
+      }
+
+      toast.success(result.message || "Interview scheduled successfully.");
+      setShowInterviewModal(false);
+      setInterviewErrors({});
+      setInterview({
+        interviewDate: "",
+        interviewLocation: "",
+        interviewMode: "Online",
+        interviewer: "",
+        interviewerEmail: "",
+        duration: "60",
+        description: ""
+      });
+    } catch (error) {
+      console.error("Schedule interview error:", error);
+      toast.error("Request failed. Please try again.");
+    } finally {
+      setLoadingInterview(false);
+    }
+  };
+
+  const [interviewErrors, setInterviewErrors] = useState({});
+
+  const validateInterview = () => {
+    const errors = {};
+    const emailRegex = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/;
+    const descriptionRegex = new RegExp("^[\\p{L}\\p{N}\\s.,!?;:'\"()\\-/@&+#%]+$", "u");
+    const selectedDate = new Date(interview.interviewDate);
+    const location = interview.interviewLocation.trim();
+    const interviewer = interview.interviewer.trim();
+    const email = interview.interviewerEmail.trim();
+    const description = interview.description.trim();
+
+    if (!interview.interviewDate) errors.interviewDate = "Interview date and time is required.";
+    else if (Number.isNaN(selectedDate.getTime())) errors.interviewDate = "Please enter a valid date and time.";
+    else if (selectedDate.getTime() <= Date.now()) errors.interviewDate = "Interview date and time must be in the future.";
+
+    if (!interview.interviewMode) errors.interviewMode = "Please select an interview mode.";
+
+    if (!location) errors.interviewLocation = "Interview location or meeting link is required.";
+    else if (location.length > 500) errors.interviewLocation = "Location cannot exceed 500 characters.";
+    else if (interview.interviewMode === "Online" && !/^https?:\/\/\S+$/i.test(location)) errors.interviewLocation = "Enter a valid meeting URL starting with http:// or https://.";
+
+    if (!interviewer) errors.interviewer = "Interviewer name is required.";
+    else if (interviewer.length > 150) errors.interviewer = "Interviewer name cannot exceed 150 characters.";
+    else if (!/^[\p{L}\s.'-]+$/u.test(interviewer)) errors.interviewer = "Use letters, spaces, periods, apostrophes, or hyphens only.";
+
+    if (!email) errors.interviewerEmail = "Interviewer email is required.";
+    else if (email.length > 254 || !emailRegex.test(email)) errors.interviewerEmail = "Enter a valid email address, for example name@example.com.";
+
+    if (!["15", "30", "45", "60", "90", "120"].includes(String(interview.duration))) errors.duration = "Please select a valid interview duration.";
+
+    if (!description) errors.description = "Interview description is required.";
+    else if (description.length > 2000) errors.description = "Description cannot exceed 2000 characters.";
+    // else if (!descriptionRegex.test(description)) errors.description = "Description contains unsupported symbols. Use letters, numbers, spaces, and standard punctuation only.";
+
+    setInterviewErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const updateInterview = (e) => {
+    const { name, value } = e.target;
+    setInterview(prev => ({ ...prev, [name]: value }));
+    setInterviewErrors(prev => ({ ...prev, [name]: "" }));
+  };
+
+  const closeInterviewModal = () => {
+    if (loadingInterview) return;
+    setShowInterviewModal(false);
+    setInterviewErrors({});
+  };
+
+  const handleOpenInterviewModal = () => {
+    if (!candidate?.id || !candidate?.jobId || !candidate?.candiUqId) {
+      toast.error("Candidate application, job, or candidate details are missing.");
+      return;
+    }
+
+    setInterview({
+      interviewDate: "",
+      interviewLocation: "",
+      interviewMode: "Online",
+      interviewer: "",
+      interviewerEmail: "",
+      duration: "60",
+      description: ""
+    });
+    setInterviewErrors({});
+    setShowInterviewModal(true);
+  };
+
   return (
     <>
 
@@ -624,8 +782,12 @@ const Applicants = ({ candidate,
                     <input type="checkbox" className="me-2" />
                     <Link href={`/candidates-single-v1/${candidate.candiUqId}`}>
                       {candidate.candiName}
-
                     </Link>
+                    {candidate.verifyStatus?.toLowerCase() === "verified" && (
+                      <span className="text-success p-0 mt-0 ms-2">
+                        <i className="fa fa-check-circle fw-normal me-1 fa-sm"></i>
+                      </span>
+                    )}
                   </div>
                   <div>
                     <button
@@ -643,6 +805,7 @@ const Applicants = ({ candidate,
                 </div>
                 <ul className="candidate-info">
                   <li className="icon flaticon-briefcase" style={{ paddingLeft: "0" }}>
+                    <span className="ms-2"></span>
                     {candidate.experience}
                   </li>
                   <li>
@@ -719,13 +882,11 @@ const Applicants = ({ candidate,
             </div>
           </div>
 
-
-
           <div className="ccandidate-actions d-flex flex-wrap justify-content-between align-items-center gap-2">
 
             {candidate.status != "Applied" &&
               candidate.status === "Shortlisted" ? (
-              <button className="action-btn shortlist-btn" disabled={true} >
+              <button className="action-btn shortlist-btn" disabled={true}>
                 <i className="la la-check"></i> Shortlisted
               </button>
             ) : candidate.status === "Maybe" ? (
@@ -739,6 +900,13 @@ const Applicants = ({ candidate,
             ) : null
             }
 
+            <button
+              type="button"
+              className="action-btn interview-btn"
+              onClick={handleOpenInterviewModal}>
+              Schedule Interview
+            </button>
+
             <div className="right-side ms-0 ms-md-auto mt-2 mt-md-0">
               {candidate.status != "Deleted" ? (
                 <button
@@ -750,6 +918,18 @@ const Applicants = ({ candidate,
               ) : (<button className="action-btn reject-btn" disabled={true}>
                 <i className="la la-times"></i> Deleted
               </button>)}
+
+              {candidate.resumePath?.trim() && (
+                <button
+                  type="button"
+                  className="icon-circle"
+                  onClick={() => openResume(candidate.resumePath)}
+                  title="View Resume"
+                >
+                  <i className="la la-file-pdf-o"></i>
+                </button>
+              )}
+
               <button className="icon-circle">
                 <i className="la la-envelope-o"></i>
               </button>
@@ -1086,7 +1266,186 @@ const Applicants = ({ candidate,
               </div>
             )}
 
+            {/* Interview Modal */}
+            {showInterviewModal && (
+              <>
+                <div
+                  className="modal fade show d-block"
+                  tabIndex="-1"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="scheduleInterviewTitle"
+                >
+                  <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <div>
+                          <h5 className="modal-title" id="scheduleInterviewTitle">
+                            <i className="la la-calendar-check me-2"></i>
+                            Schedule Interview
+                          </h5>
+                          <small className="text-muted fw-bold text-primary">
+                            Candidate: {candidate.candiName} | Job: {candidate.jobTitle}
+                          </small>
+                        </div>
+                        <button
+                          type="button"
+                          className="btn-close"
+                          onClick={closeInterviewModal}
+                          disabled={loadingInterview}
+                          aria-label="Close"
+                        />
+                      </div>
 
+                      <form onSubmit={handleInterviewSubmit} noValidate>
+                        <div className="modal-body">
+                          <div className="row g-2">
+                            <div className="col-md-6">
+                              <label className="from-label mb-0">Interview Date & Time <span className="text-danger">*</span></label>
+                              <input
+                                type="datetime-local"
+                                className={`form-control ${interviewErrors.interviewDate ? "is-invalid" : ""}`}
+                                name="interviewDate"
+                                value={interview.interviewDate}
+                                onChange={updateInterview}
+                                min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                                required
+                              />
+                              {interviewErrors.interviewDate && <div className="invalid-feedback">{interviewErrors.interviewDate}</div>}
+                            </div>
+
+                            <div className="col-md-6">
+                              <label className="from-label mb-0">Interview Mode <span className="text-danger">*</span></label>
+                              <select
+                                className={`form-select ${interviewErrors.interviewMode ? "is-invalid" : ""}`}
+                                name="interviewMode"
+                                value={interview.interviewMode}
+                                onChange={updateInterview}
+                                required
+                              >
+                                <option value="">Select Interview Mode</option>
+                                <option value="Online">Online</option>
+                                <option value="In-person">In-person</option>
+                                <option value="Phone">Phone</option>
+                              </select>
+                              {interviewErrors.interviewMode && <div className="invalid-feedback">{interviewErrors.interviewMode}</div>}
+                            </div>
+
+                            <div className="col-md-6">
+                              <label className="from-label mb-0">Interview Location / Meeting Link <span className="text-danger">*</span></label>
+                              <input
+                                type="text"
+                                className={`form-control ${interviewErrors.interviewLocation ? "is-invalid" : ""}`}
+                                name="interviewLocation"
+                                value={interview.interviewLocation}
+                                onChange={updateInterview}
+                                placeholder={interview.interviewMode === "Online" ? "Enter meeting URL (https://...)" : interview.interviewMode === "Phone" ? "Enter contact details" : "Enter office address"}
+                                maxLength={500}
+                                required
+                              />
+                              {interviewErrors.interviewLocation && <div className="invalid-feedback">{interviewErrors.interviewLocation}</div>}
+                            </div>
+
+                            <div className="col-md-6">
+                              <label className="from-label mb-0">Interviewer Name <span className="text-danger">*</span></label>
+                              <input
+                                type="text"
+                                className={`form-control ${interviewErrors.interviewer ? "is-invalid" : ""}`}
+                                name="interviewer"
+                                value={interview.interviewer}
+                                onChange={updateInterview}
+                                placeholder="Enter interviewer name"
+                                maxLength={150}
+                                required
+                              />
+                              {interviewErrors.interviewer && <div className="invalid-feedback">{interviewErrors.interviewer}</div>}
+                            </div>
+
+                            <div className="col-md-6">
+                              <label className="from-label mb-0">Interviewer Email <span className="text-danger">*</span></label>
+                              <input
+                                type="email"
+                                className={`form-control ${interviewErrors.interviewerEmail ? "is-invalid" : ""}`}
+                                name="interviewerEmail"
+                                value={interview.interviewerEmail}
+                                onChange={updateInterview}
+                                placeholder="Enter interviewer email"
+                                maxLength={254}
+                                autoComplete="email"
+                                required
+                              />
+                              {interviewErrors.interviewerEmail && <div className="invalid-feedback">{interviewErrors.interviewerEmail}</div>}
+                            </div>
+
+                            <div className="col-md-6">
+                              <label className="from-label mb-0">Duration <span className="text-danger">*</span></label>
+                              <select
+                                className={`form-select ${interviewErrors.duration ? "is-invalid" : ""}`}
+                                name="duration"
+                                value={interview.duration}
+                                onChange={updateInterview}
+                                required
+                              >
+                                <option value="">Select Duration</option>
+                                <option value="15">15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="45">45 minutes</option>
+                                <option value="60">60 minutes</option>
+                                <option value="90">90 minutes</option>
+                                <option value="120">120 minutes</option>
+                              </select>
+                              {interviewErrors.duration && <div className="invalid-feedback">{interviewErrors.duration}</div>}
+                            </div>
+
+                            <div className="col-12">
+                              <label className="from-label mb-0">Interview Description / Instructions <span className="text-danger">*</span></label>
+                              <textarea
+                                className={`form-control ${interviewErrors.description ? "is-invalid" : ""}`}
+                                name="description"
+                                value={interview.description}
+                                onChange={updateInterview}
+                                rows={4}
+                                maxLength={2000}
+                                placeholder="Enter interview agenda, required documents, preparation instructions, or other details"
+                                required
+                              />
+                              {interviewErrors.description && <div className="invalid-feedback">{interviewErrors.description}</div>}
+                              <div className="d-flex justify-content-between mt-1">
+                                <small className="text-muted">Use letters, numbers and standard punctuation.</small>
+                                <small className={interview.description.length >= 2000 ? "text-danger" : "text-muted"}>
+                                  {interview.description.length}/2000
+                                </small>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="modal-footer">
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={closeInterviewModal}
+                            disabled={loadingInterview}
+                          >
+                            Close
+                          </button>
+                          <button type="submit" className="btn btn-primary" disabled={loadingInterview}>
+                            <i className="la la-calendar-check me-1"></i>
+                            {loadingInterview ? "Scheduling..." : "Schedule Interview"}
+                          </button>
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className="modal-backdrop fade show"
+                  onClick={closeInterviewModal}
+                />
+              </>
+            )}
 
           </div>
           {/* End admin options box */}

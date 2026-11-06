@@ -189,7 +189,7 @@ const JobListingsTable = () => {
 
                   <div className="detail-section-apply">
                     <div className=" pb-1">
-                      <div className="border rounded-3 bg-white p-3">
+                      <div className="border rounded-3 bg-white p-2">
                         <div className="timeline">
 
                           {item.statusList
@@ -203,7 +203,7 @@ const JobListingsTable = () => {
                                   <div className="timeline-number">{index + 1}</div>
 
                                   <div className="timeline-content ">
-                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <div className="d-flex justify-content-between align-items-center mb-0">
                                       <p className="text-dark mb-0">{status}</p>
 
                                       <small className="text-muted">
