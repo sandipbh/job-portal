@@ -5,6 +5,29 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
+<<<<<<< HEAD
+=======
+const StarRating = ({ label, name, value, onChange, error }) => (
+    <div className="col-md-6">
+        <label className="form-label fw-semibold mb-1">{label} <span className="text-danger">*</span></label>
+        <div className="d-flex align-items-center gap-1">
+            {[1, 2, 3, 4, 5].map(star => (
+                <button
+                    key={star}
+                    type="button"
+                    className={`rating-star ${star <= value ? "active" : ""}`}
+                    onClick={() => onChange(name, star)}
+                    aria-label={`${star} out of 5`}
+                >
+                    ★
+                </button>
+            ))}
+            <span className="ms-2 small text-muted">{value ? `${value}/5` : "Not rated"}</span>
+        </div>
+        {error && <div className="text-danger small">{error}</div>}
+    </div>
+);
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
 
 const Applicants = ({ candidate,
     onUpdateStatus,
@@ -62,6 +85,7 @@ const Applicants = ({ candidate,
         reviewDocuments: []
     });
 
+<<<<<<< HEAD
     // const StarRating = ({ label, name, value, onChange, error }) => (
     //     <div className="col-md-6">
     //         <label className="form-label fw-semibold mb-1">{label} <span className="text-danger">*</span></label>
@@ -84,6 +108,8 @@ const Applicants = ({ candidate,
     // );
 
 
+=======
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
     useEffect(() => {
         setIsSaved(candidate.isSave === "Y");
     }, [candidate.isSave]);
@@ -844,6 +870,7 @@ const Applicants = ({ candidate,
         setJoiningReviewErrors(prev => ({ ...prev, [field]: "" }));
     };
 
+<<<<<<< HEAD
     const handleJoiningReviewSubmit = async (e) => {
         e.preventDefault();
 
@@ -913,6 +940,8 @@ const Applicants = ({ candidate,
         }
     };
 
+=======
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
     return (
         <>
 
@@ -1442,10 +1471,27 @@ const Applicants = ({ candidate,
                                                 </div>
                                                 <button type="button" className="btn-close" onClick={closeJoiningReviewModal} disabled={loadingJoiningReview} />
                                             </div>
+<<<<<<< HEAD
                                             <div className="overflow-scroll">
                                                 <form onSubmit={handleJoiningReviewSubmit} noValidate>
                                                     <div className="modal-body">
                                                         <div className="row g-2">
+=======
+
+                                            <form onSubmit={handleJoiningReviewSubmit} noValidate>
+                                                <div className="modal-body">
+                                                    {/* JOINING DETAILS */}
+                                                    <div className="joining-section">
+                                                        <div className="joining-section-heading">
+                                                            <span className="joining-section-icon"><i className="la la-user-check"></i></span>
+                                                            <div>
+                                                                <h5>1. Joining Details</h5>
+                                                                <small>Update the candidate's joining information.</small>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="row g-3 mt-1">
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
                                                             <div className="col-md-6">
                                                                 <label className="form-label">Joining Status <span className="text-danger">*</span></label>
                                                                 <select
@@ -1520,6 +1566,7 @@ const Applicants = ({ candidate,
 
                                                             <div className="col-12">
                                                                 <label className="form-label">Upload Candidate Documents</label>
+<<<<<<< HEAD
                                                                 <div className="row g-2">
                                                                     <div className="col-md-4">
                                                                         <select className="form-select" name="documentType" value={joiningReview.documentType || ""} onChange={updateJoiningReview}>
@@ -1538,11 +1585,30 @@ const Applicants = ({ candidate,
                                                                 {joiningReview.joiningDocuments.map((file, index) => (
                                                                     <div className="selected-file" key={`${file.name}-${index}`}>
                                                                         <span>{file.documentType} - {file.name}</span>
+=======
+                                                                <div className="upload-box">
+                                                                    <i className="la la-cloud-upload"></i>
+                                                                    <p>Upload salary slips, relieving letters, experience letters or other supporting documents.</p>
+                                                                    <input
+                                                                        type="file"
+                                                                        name="joiningDocuments"
+                                                                        className="form-control"
+                                                                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                                                        multiple
+                                                                        onChange={updateJoiningReview}
+                                                                    />
+                                                                    <small className="text-muted">PDF, DOC, DOCX, JPG, PNG. Maximum 5 MB per file.</small>
+                                                                </div>
+                                                                {joiningReview.joiningDocuments.map((file, index) => (
+                                                                    <div className="selected-file" key={`${file.name}-${index}`}>
+                                                                        <span><i className="la la-file-alt me-1"></i>{file.name}</span>
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
                                                                         <button type="button" onClick={() => removeJoiningDocument("joiningDocuments", index)}><i className="la la-times"></i></button>
                                                                     </div>
                                                                 ))}
                                                             </div>
                                                         </div>
+<<<<<<< HEAD
 
                                                         {joiningReview.joiningStatus === "Joined" && (
                                                             <div className="joining-section mt-4">
@@ -1599,6 +1665,108 @@ const Applicants = ({ candidate,
                                                     </div>
                                                 </form>
                                             </div>
+=======
+                                                    </div>
+
+                                                    {/* REVIEW FORM */}
+                                                    {joiningReview.joiningStatus === "Joined" && (
+                                                        <div className="joining-section mt-4">
+                                                            <div className="joining-section-heading">
+                                                                <span className="joining-section-icon"><i className="la la-star"></i></span>
+                                                                <div>
+                                                                    <h5>2. Candidate Review</h5>
+                                                                    <small>Evaluate the candidate's performance and suitability.</small>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="row g-3 mt-2">
+                                                                <StarRating label="Interview Attendance" name="interviewAttendance" value={joiningReview.interviewAttendance} onChange={updateReviewRating} error={joiningReviewErrors.interviewAttendance} />
+                                                                <StarRating label="Technical Skills" name="technicalSkills" value={joiningReview.technicalSkills} onChange={updateReviewRating} error={joiningReviewErrors.technicalSkills} />
+                                                                <StarRating label="Communication" name="communication" value={joiningReview.communication} onChange={updateReviewRating} error={joiningReviewErrors.communication} />
+                                                                <StarRating label="Behaviour" name="behaviour" value={joiningReview.behaviour} onChange={updateReviewRating} error={joiningReviewErrors.behaviour} />
+                                                                <StarRating label="Professionalism" name="professionalism" value={joiningReview.professionalism} onChange={updateReviewRating} error={joiningReviewErrors.professionalism} />
+                                                                <StarRating label="Offer Commitment" name="offerCommitment" value={joiningReview.offerCommitment} onChange={updateReviewRating} error={joiningReviewErrors.offerCommitment} />
+
+                                                                <div className="col-md-6">
+                                                                    <label className="form-label fw-semibold">Would Hire Again? <span className="text-danger">*</span></label>
+                                                                    <div className="d-flex gap-3 mt-2">
+                                                                        <label className="review-radio">
+                                                                            <input type="radio" name="wouldHireAgain" value="Yes" checked={joiningReview.wouldHireAgain === "Yes"} onChange={updateJoiningReview} />
+                                                                            Yes
+                                                                        </label>
+                                                                        <label className="review-radio">
+                                                                            <input type="radio" name="wouldHireAgain" value="No" checked={joiningReview.wouldHireAgain === "No"} onChange={updateJoiningReview} />
+                                                                            No
+                                                                        </label>
+                                                                    </div>
+                                                                    {joiningReviewErrors.wouldHireAgain && <div className="text-danger small">{joiningReviewErrors.wouldHireAgain}</div>}
+                                                                </div>
+
+                                                                <div className="col-12">
+                                                                    <label className="form-label">Review Comments</label>
+                                                                    <textarea
+                                                                        name="reviewComments"
+                                                                        className="form-control"
+                                                                        rows={4}
+                                                                        maxLength={2000}
+                                                                        value={joiningReview.reviewComments}
+                                                                        onChange={updateJoiningReview}
+                                                                        placeholder="Enter detailed feedback about the candidate's performance..."
+                                                                    />
+                                                                    <small className="text-muted">{joiningReview.reviewComments.length}/2000</small>
+                                                                </div>
+
+                                                                <div className="col-12">
+                                                                    <label className="form-label fw-semibold">Upload Review Evidence</label>
+                                                                    <div className="upload-box">
+                                                                        <i className="la la-paperclip"></i>
+                                                                        <p>Upload performance reports, assessment documents or other review evidence.</p>
+                                                                        <input
+                                                                            type="file"
+                                                                            name="reviewDocuments"
+                                                                            className="form-control"
+                                                                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                                                            multiple
+                                                                            onChange={updateJoiningReview}
+                                                                        />
+                                                                    </div>
+                                                                    {joiningReview.reviewDocuments.map((file, index) => (
+                                                                        <div className="selected-file" key={`${file.name}-${index}`}>
+                                                                            <span><i className="la la-file-alt me-1"></i>{file.name}</span>
+                                                                            <button type="button" onClick={() => removeJoiningDocument("reviewDocuments", index)}><i className="la la-times"></i></button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {joiningReview.joiningStatus === "Joined" && (
+                                                        <div className="workflow-status mt-4">
+                                                            <div className="workflow-step completed">
+                                                                <i className="la la-check-circle"></i>
+                                                                <span>Joined</span>
+                                                            </div>
+                                                            <div className="workflow-line"></div>
+                                                            <div className="workflow-step active">
+                                                                <i className="la la-clipboard-check"></i>
+                                                                <span>Review Submitted</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <div className="modal-footer">
+                                                    <button type="button" className="btn btn-secondary" onClick={closeJoiningReviewModal} disabled={loadingJoiningReview}>
+                                                        Close
+                                                    </button>
+                                                    <button type="submit" className="btn btn-primary" disabled={loadingJoiningReview}>
+                                                        <i className="la la-save me-1"></i>
+                                                        {loadingJoiningReview ? "Saving..." : "Save Joining & Review"}
+                                                    </button>
+                                                </div>
+                                            </form>
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
                                         </div>
                                     </div>
                                 </div>
@@ -1611,6 +1779,7 @@ const Applicants = ({ candidate,
                 </div>
             </div>
 
+<<<<<<< HEAD
             <style jsx>{`
 .joining-review-modal{border:0;border-radius:12px;overflow:hidden}
 .joining-section{padding:18px;border:1px solid #e8edf3;border-radius:10px;background:#fff}
@@ -1637,6 +1806,8 @@ const Applicants = ({ candidate,
 @media(max-width:576px){.joining-section{padding:12px}.workflow-line{width:25px;margin:0 6px}.workflow-step{font-size:11px}}
 `}</style>
 
+=======
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
         </>
     );
 };

@@ -15,7 +15,14 @@ const WidgetContentBox = () => {
   const [selectedGender, setSelectedGender] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [selectedRating, setSelectedRating] = useState([]);
+<<<<<<< HEAD
   const [verifiedCandidate, setVerifiedCandidate] = useState(false);
+=======
+<<<<<<< HEAD
+  const [verifiedCandidate, setVerifiedCandidate] = useState(false);
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
 
   const searchParams = useSearchParams();
   const jobId = Number(searchParams.get("jobId"));
@@ -82,6 +89,10 @@ const WidgetContentBox = () => {
    * Filtering
    * --------------------------------------------------------------- */
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
   const isCandidateVerified = (candidate) => {
     const value = candidate?.verifyStatus ??
       candidate?.verificationStatus ??
@@ -94,6 +105,11 @@ const WidgetContentBox = () => {
       .includes(String(value ?? "").trim().toLowerCase());
   };
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
   const filteredCandidates = candidatesData.filter((candidate) => {
     const jobValue = getJobValue(candidate);
     const locValue = getLocationValue(candidate);
@@ -106,6 +122,10 @@ const WidgetContentBox = () => {
 
     const matchesExperience =
       selectedExperience.length === 0 ||
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
       selectedExperience.includes(String(candidate.experience ?? ""));
 
     const matchesQualification =
@@ -118,10 +138,34 @@ const WidgetContentBox = () => {
 
     const candidateRating = Math.round(Number(candidate.avgRating) || 0);
 
+<<<<<<< HEAD
+=======
+=======
+      selectedExperience.includes(candidate.experience);
+
+    const matchesQualification =
+      selectedQualification.length === 0 ||
+      selectedQualification.includes(candidate.qualification);
+
+    const matchesGender =
+      selectedGender.length === 0 ||
+      selectedGender.includes(candidate.gender);
+
+    const matchesCategory =
+      selectedCategory.length === 0 ||
+      selectedCategory.includes(candidate.category);
+
+    const candidateRating = Math.round(Number(candidate.avgRating) || 0);
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
     const matchesRating =
       selectedRating.length === 0 ||
       selectedRating.includes(String(candidateRating));
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
     const matchesVerified =
       !verifiedCandidate || isCandidateVerified(candidate);
 
@@ -141,6 +185,16 @@ const WidgetContentBox = () => {
         candidate?.education,
         candidate?.qualification
       ].some((value) => String(value ?? "").toLowerCase().includes(search));
+<<<<<<< HEAD
+=======
+=======
+    const matchesSearch =
+      searchTerm === "" ||
+      (candidate?.name || candidate?.candiName || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
 
     return (
       matchesSearch &&
@@ -149,8 +203,18 @@ const WidgetContentBox = () => {
       matchesExperience &&
       matchesQualification &&
       matchesGender &&
+<<<<<<< HEAD
       matchesRating &&
       matchesVerified
+=======
+<<<<<<< HEAD
+      matchesRating &&
+      matchesVerified
+=======
+      matchesCategory &&
+      matchesRating
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
     );
   });
 
@@ -214,8 +278,18 @@ const WidgetContentBox = () => {
     selectedExperience,
     selectedQualification,
     selectedGender,
+<<<<<<< HEAD
     selectedRating,
     verifiedCandidate
+=======
+<<<<<<< HEAD
+    selectedRating,
+    verifiedCandidate
+=======
+    selectedCategory,
+    selectedRating,
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
   ]);
 
   const PaginationControls = () => {
@@ -325,8 +399,16 @@ const WidgetContentBox = () => {
         locationOptions={locationOptions}
         ratingOptions={ratingOptions}
         categoryOptions={[]}
+<<<<<<< HEAD
         verifiedCandidate={verifiedCandidate}
         setVerifiedCandidate={setVerifiedCandidate}
+=======
+<<<<<<< HEAD
+        verifiedCandidate={verifiedCandidate}
+        setVerifiedCandidate={setVerifiedCandidate}
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
       />
 
       <div className="selected-filters">

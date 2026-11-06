@@ -11,8 +11,16 @@ const WidgetToFilterBox = ({
     selectedRating = [], setSelectedRating,
     searchTerm = "", setSearchTerm,
     location = "", setLocation,
+<<<<<<< HEAD
     verifiedCandidate = false,
     setVerifiedCandidate,
+=======
+<<<<<<< HEAD
+    verifiedCandidate = false,
+    setVerifiedCandidate,
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
     jobOptions = [],
     locationOptions = [],
     ratingOptions = [],
@@ -99,7 +107,14 @@ const WidgetToFilterBox = ({
         setSelectedCategory?.([]);
         setSelectedRating?.([]);
         setOpenFilter(null);
+<<<<<<< HEAD
         setVerifiedCandidate?.(false);
+=======
+<<<<<<< HEAD
+        setVerifiedCandidate?.(false);
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
     };
 
     const totalFilters =
@@ -109,8 +124,17 @@ const WidgetToFilterBox = ({
         selectedQualification.length +
         selectedGender.length +
         selectedCategory.length +
+<<<<<<< HEAD
         selectedRating.length +
         (verifiedCandidate ? 1 : 0);
+=======
+<<<<<<< HEAD
+        selectedRating.length +
+        (verifiedCandidate ? 1 : 0);
+=======
+        selectedRating.length;
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
 
     return (
         <div className="job-bar-filter">
@@ -149,6 +173,10 @@ const WidgetToFilterBox = ({
                 {renderFilter("Qualification", qualificationOptions, selectedQualification, setSelectedQualification, "qualification")}
                 {renderFilter("Gender", genderOptions, selectedGender, setSelectedGender, "gender")}
                 {renderFilter("Rating", ratingOptions, selectedRating, setSelectedRating, "rating")}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
                 <label className="filter-option verified-filter">
                     <input
                         type="checkbox"
@@ -158,6 +186,11 @@ const WidgetToFilterBox = ({
                     />
                     <span>Verified Candidate</span>
                 </label>
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> af6ca9c8938fe0145a5153cfec79c9b7289fb1a7
+>>>>>>> 4b1755a7338b8badb927563200c4e31181923449
             </div>
 
             {totalFilters > 0 && (
