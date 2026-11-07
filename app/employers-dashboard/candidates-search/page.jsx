@@ -9,27 +9,27 @@ export const metadata = {
 };
 
 const Index = async ({ searchParams }) => {
-    let initialSearchData = null;
+  let initialSearchData = null;
 
-    try {
-        const params = await searchParams;
+  try {
+    const params = await searchParams;
 
-        if (params?.searchData) {
-            initialSearchData = JSON.parse(params.searchData);
-        }
-    } catch (error) {
-        console.error("Failed to parse search data:", error);
+    if (params?.searchData) {
+      initialSearchData = JSON.parse(params.searchData);
     }
+  } catch (error) {
+    console.error("Failed to parse search data:", error);
+  }
 
-    return (
-        <>
-            <Suspense fallback={<JobCardSkeleton />}>
-                <CandidatesSearches
-                    initialSearchData={initialSearchData}
-                />
-            </Suspense>
-        </>
-    );
+  return (
+    <>
+      <Suspense fallback={<JobCardSkeleton />}>
+        <CandidatesSearches
+          initialSearchData={initialSearchData}
+        />
+      </Suspense>
+    </>
+  );
 };
 
 export default Index;

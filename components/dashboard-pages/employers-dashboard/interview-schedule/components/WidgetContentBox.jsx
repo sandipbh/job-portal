@@ -30,7 +30,7 @@ const WidgetContentBox = () => {
   const getJobList = async () => {
     try {
       const response = await fetch(
-        `/api/emp-job-application-shortlisted-list?JobPostId=${jobId}`,
+        `/api/emp-job-interview-list?JobPostId=${jobId}`,
         { method: "GET" }
       );
 
