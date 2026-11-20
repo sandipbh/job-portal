@@ -1,208 +1,75 @@
+
 "use client";
 
 import Link from "next/link";
-import Home from "@/components/home";
-import {
-  blogItems,
-  candidateItems,
-  employerItems,
-  findJobItems,
-  homeItems,
-  pageItems,
-  shopItems,
-} from "../../data/mainMenuData";
-import {
-  isActiveParent,
-  isActiveLink,
-  isActiveParentChaild,
-} from "../../utils/linkActiveChecker";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { findJobItems } from "../../data/mainMenuData";
+import { isActiveParent, isActiveLink } from "../../utils/linkActiveChecker";
 
 const HeaderNavContent = () => {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    const routes = [
+      "/",
+      "/company",
+      "/blog-list-v1",
+      ...findJobItems.flatMap(group => group.items.map(item => item.routePath))
+    ];
+
+    const uniqueRoutes = [...new Set(routes)];
+
+    uniqueRoutes.forEach(route => {
+      router.prefetch(route);
+    });
+  }, [router]);
+
   return (
-    <>
-      <nav className="nav main-menu">
+    <nav className="nav main-menu">
+      <ul className="navigation" id="navbar">
+        <li className={pathname === "/" ? "current" : ""}>
+          <Link href="/" prefetch={true}>Home</Link>
+        </li>
 
-        <ul className="navigation" id="navbar">
-          {/* current dropdown */}
-          <li>
-            <Link href="/">Home </Link>
-          </li>
-          {/* End homepage menu items */}
-
-          <li
-            className={`${isActiveParent(findJobItems, usePathname()) ? "current" : ""
-              } dropdown has-mega-menu`}
-            id="has-mega-menu"
-          >
-            <span>Find Jobs</span>
-            <div className="mega-menu">
-              <div className="mega-menu-bar row align-items-start">
-                {findJobItems.map((item) => (
-                  <div
-                    className="column col-lg-3 col-md-3 col-sm-12"
-                    key={item.id}
-                  >
-                    <h3>{item.title}</h3>
-                    <ul>
-                      {item.items.map((menu, i) => (
-                        <li
-                          className={
-                            isActiveLink(menu.routePath, usePathname())
-                              ? "current"
-                              : ""
-                          }
-                          key={i}
-                        >
-                          <Link href={menu.routePath}>{menu.name}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+        <li
+          className={`${isActiveParent(findJobItems, pathname) ? "current" : ""} dropdown has-mega-menu`}
+          id="has-mega-menu"
+        >
+          <span>Find Jobs</span>
+          <div className="mega-menu">
+            <div className="mega-menu-bar row align-items-start">
+              {findJobItems.map(item => (
+                <div className="column col-lg-3 col-md-3 col-sm-12" key={item.id}>
+                  <h3>{item.title}</h3>
+                  <ul>
+                    {item.items.map(menu => (
+                      <li
+                        key={menu.routePath}
+                        className={isActiveLink(menu.routePath, pathname) ? "current" : ""}
+                      >
+                        <Link href={menu.routePath} prefetch={true}>
+                          {menu.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
-          </li>
-          {/* End findjobs menu items */}
+          </div>
+        </li>
 
-          <li>
-            <Link href="/employers-list-v1">Company </Link>
-          </li>
-          {/* <li
-            className={`${isActiveParent(employerItems, usePathname()) ||
-              usePathname()?.split("/")[1] === "employers-dashboard"
-              ? "current"
-              : ""
-              } dropdown`}
-          >
-            <span>Employers</span>
-            <ul>
-              {employerItems.map((item) => (
-                <li className="dropdown" key={item.id}>
-                  <span
-                    className={
-                      isActiveParentChaild(item.items, usePathname())
-                        ? "current"
-                        : ""
-                    }
-                  >
-                    {item.title}
-                  </span>
-                  <ul>
-                    {item.items.map((menu, i) => (
-                      <li
-                        className={
-                          isActiveLink(menu.routePath, usePathname())
-                            ? "current"
-                            : ""
-                        }
-                        key={i}
-                      >
-                        <Link href={menu.routePath}>{menu.name}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-              <li
-                className={
-                  usePathname()?.includes("/employers-dashboard")
-                    ? "current"
-                    : ""
-                }
-              >
-                <Link href="/employers-dashboard/dashboard">
-                  Employers Dashboard
-                </Link>
-              </li>
-            </ul>
-          </li> */}
-          {/* End Employers menu items */}
+        <li className={pathname.startsWith("/company") ? "current" : ""}>
+          <Link href="/company" prefetch={true}>Company</Link>
+        </li>
 
-          <li>
-            <Link href="/candidates-list-v1">Candidate </Link>
-          </li>
-          {/* <li
-            className={`${isActiveParent(candidateItems, usePathname()) ||
-              usePathname()?.split("/")[1] === "candidates-dashboard"
-              ? "current"
-              : ""
-                ? "current"
-                : ""
-              } dropdown`}
-          >
-            <span>Candidates</span>
-            <ul>
-              {candidateItems.map((item) => (
-                <li className="dropdown" key={item.id}>
-                  <span
-                    className={
-                      isActiveParentChaild(item.items, usePathname())
-                        ? "current"
-                        : ""
-                    }
-                  >
-                    {item.title}
-                  </span>
-                  <ul>
-                    {item.items.map((menu, i) => (
-                      <li
-                        className={
-                          isActiveLink(menu.routePath, usePathname())
-                            ? "current"
-                            : ""
-                        }
-                        key={i}
-                      >
-                        <Link href={menu.routePath}>{menu.name}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-              <li
-                className={
-                  usePathname()?.includes("/candidates-dashboard/")
-                    ? "current"
-                    : ""
-                }
-              >
-                <Link href="/candidates-dashboard/dashboard">
-                  Candidates Dashboard
-                </Link>
-              </li>
-            </ul>
-          </li> */}
-          {/* End Candidates menu items */}
-
-          <li>
-            <Link href="/blog-list-v1">Blogs </Link>
-          </li>
-          {/* <li
-            className={`${isActiveParentChaild(blogItems, usePathname()) ? "current" : ""
-              } dropdown`}
-          >
-            <span>Blog</span>
-            <ul>
-              {blogItems.map((item, i) => (
-                <li
-                  className={
-                    isActiveLink(item.routePath, usePathname()) ? "current" : ""
-                  }
-                  key={i}
-                >
-                  <Link href={item.routePath}>{item.name}</Link>
-                </li>
-              ))}
-            </ul>
-          </li> */}
-          {/* End Blog menu items */}
-
-
-          {/* End Pages menu items */}
-        </ul>
-      </nav>
-    </>
+        <li className={pathname.startsWith("/blog-list-v1") ? "current" : ""}>
+          <Link href="/blog-list-v1" prefetch={true}>Blogs</Link>
+        </li>
+      </ul>
+    </nav>
   );
 };
 

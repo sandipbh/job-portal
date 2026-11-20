@@ -159,11 +159,11 @@ const WidgetToFilterBox = ({
                 </label>
             </div>
 
-            {totalFilters > 0 && (
+            {/* {totalFilters > 0 && (
                 <div className="mt-2">
                     <small className="text-muted">{totalFilters} filters selected</small>
                 </div>
-            )}
+            )} */}
         </div>
     );
 };

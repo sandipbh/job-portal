@@ -148,11 +148,6 @@ export async function POST(req) {
         // 7. Call .NET API
         const targetUrl = `${apiBaseUrl}${API_ENDPOINT}`;
 
-        console.log("Joining review API URL:", targetUrl);
-        console.log("Application ID:", applicationId);
-        console.log("Job Post ID:", jobpostId);
-        console.log("Document count:", documents.length);
-
         let apiResponse;
 
         try {
@@ -176,9 +171,6 @@ export async function POST(req) {
 
         // 8. Read backend response
         const responseText = await apiResponse.text();
-
-        console.log("Joining review backend status:", apiResponse.status);
-        console.log("Joining review backend response:", responseText.substring(0, 1500));
 
         let result;
 

@@ -16,8 +16,6 @@ export async function POST(req) {
     user = {};
   }
 
-  console.log("Search Candidates - User Role:", user.external?.role);
-
   try {
     const {
       JOB_POST_ID = 0,
@@ -91,8 +89,6 @@ export async function POST(req) {
       Token: user.external.accessToken,
     };
 
-    console.log("Candidate Search Request Body:", searchBody);
-
     // Allow self-signed certs in development
     if (process.env.NODE_ENV !== "production") {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -110,8 +106,6 @@ export async function POST(req) {
       process.env.CANDIDATE_SEARCH_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/getSearchCandidate`;
 
-    console.log("External API URL:", externalApiUrl);
-
     const externalResponse = await apiFetch(externalApiUrl, {
       method: "POST",
       body: JSON.stringify(searchBody),
@@ -125,8 +119,6 @@ export async function POST(req) {
     } catch (e) {
       parsedData = { message: responseData };
     }
-
-    console.log("External Candidate Search Response:", parsedData);
 
     if (!externalResponse.ok) {
       return NextResponse.json(

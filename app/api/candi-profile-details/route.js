@@ -16,18 +16,13 @@ export async function POST(req) {
         console.error("Invalid JSON token:", err);
         user = {};
     }
-    //console.log("dashboard user User Role :", user.external.role);
 
 
     const {
         term
     } = await req.json();
-    //const term = req.nextUrl.searchParams.get("term") || "";
-
-    //console.log("Search term:", term);
 
     try {
-
 
         const LoginIp =
             headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -41,7 +36,6 @@ export async function POST(req) {
             Role: user.external.role,
             Token: user.external.accessToken,
         };
-        //console.log("body Data:", loginBody);
 
         // Allow self-signed certs in local development only.
         if (process.env.NODE_ENV !== "production") {
@@ -55,14 +49,10 @@ export async function POST(req) {
                 { status: 500 }
             );
         }
-        //console.log("External API Base URL 00:", externalApiBaseUrl);
 
         const externalApiUrl =
             process.env.REGISTER_API_URL ||
             `${externalApiBaseUrl.replace(/\/+$/, "")}/Candidate/candi/CandiData`;
-
-        // console.log("External API URL :", externalApiUrl);
-        // console.log("External API Request Body:", loginBody);
 
         const externalResponse = await apiFetch(externalApiUrl, {
             method: "POST",

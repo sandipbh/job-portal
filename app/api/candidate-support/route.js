@@ -58,7 +58,6 @@ export async function GET(request) {
         });
         const responseText = await externalResponse.text();
         const responseData = responseText ? JSON.parse(responseText) : [];
-        console.log("Support API Response Data:", responseData);
         if (!externalResponse.ok) {
             return NextResponse.json(
                 { message: responseData?.message || "Failed to fetch support reports." },
@@ -157,7 +156,6 @@ export async function POST(request) {
     }
 
     const externalApiUrl = `${externalApiBaseUrl.replace(/\/+$/, "")}/api/Support/support/Insert`;
-    console.log("External API URL:", externalApiUrl);
     const payload = {
         uqId: candidate.candidateId,
         Role: candidate.role,
@@ -168,7 +166,7 @@ export async function POST(request) {
         subject,
         description,
     };
-    console.log("Payload:", JSON.stringify(payload));
+
     try {
         const externalResponse = await apiFetch(externalApiUrl, {
             method: "POST",

@@ -1104,7 +1104,7 @@ const SearchFilterBox = () => {
                                             ? candidate.profileDesc.slice(0, 97) + "..."
                                             : candidate.profileDesc}
                                     </p>
-                                    <div className="candidate-action-buttons">
+                                    {/* <div className="candidate-action-buttons">
 
                                         {showContact !== candidate.candiUqId ? (
                                             <button
@@ -1152,7 +1152,7 @@ const SearchFilterBox = () => {
                                                 </div>
                                             </div>
                                         )}
-                                    </div>
+                                    </div> */}
 
                                 </div>
                             </div>

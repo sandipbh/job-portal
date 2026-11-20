@@ -17,21 +17,7 @@ export async function POST(req) {
     user = {};
   }
 
-  console.log("dashboard user User Role :", user.external.role);
   try {
-    // const formData = await req.formData();
-
-    // console.log("formData :", formData);
-
-    // const applicationId = formData.get("applicationId");
-    // const jobpostId = formData.get("jobpostId");
-    // const communication = formData.get("communication");
-    // const interviewFeedback = formData.get("interviewFeedback");
-    // const culturalFit = formData.get("culturalFit");
-    // const overall = formData.get("overall");
-    // const remark = formData.get("remark");
-
-    // const fileData = formData.get("file");
 
     const {
       jobpostId,
@@ -45,9 +31,6 @@ export async function POST(req) {
       fileName,
       fileType
     } = await req.json();
-
-    console.log("Login attempt email:", user.external.uqId);
-    console.log("Login attempt role:", user.external.role);
 
     // 1. Basic validation
     if (!user.external.uqId || !user.external.role) {
@@ -92,14 +75,10 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-    //console.log("External API Base URL 00:", externalApiBaseUrl);
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/applicationReview`;
-
-    console.log("External API URL :", externalApiUrl);
-    console.log("External API Request Body:", loginBody);
 
     const externalResponse = await apiFetch(externalApiUrl, {
       method: "POST",
@@ -116,10 +95,6 @@ export async function POST(req) {
 
     const responseData = JSON.parse(await externalResponse.text());
 
-    // console.log("External Candi API response:", responseData);
-    // console.log("External API Response Status:", responseData.message || externalResponse.status);
-
-
     if (!externalResponse.ok) {
       console.error(
         "External UpdateProfile failed:",
@@ -135,7 +110,6 @@ export async function POST(req) {
       );
     }
 
-    console.log("Feedback Saved successfully");
 
     // 6. Send response with cookies
     const response = NextResponse.json(

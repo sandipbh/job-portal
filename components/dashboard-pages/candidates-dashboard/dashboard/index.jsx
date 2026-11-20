@@ -1,62 +1,10 @@
 'use client'
 
-import MobileMenu from "../../../header/MobileMenu";
-import LoginPopup from "../../../common/form/login/LoginPopup";
-import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
-import BreadCrumb from "../../BreadCrumb";
 import TopCardBlock from "./components/TopCardBlock";
 import ProfileChart from "./components/ProfileChart";
-import Notification from "./components/Notification";
-import CopyrightFooter from "../../CopyrightFooter";
 import JobApplied from "./components/JobApplied";
-import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
-import MenuToggler from "../../MenuToggler";
-import { useEffect, useState } from "react";
-
-import { toast } from 'react-toastify';
 
 const Index = () => {
-
-  // ✅ HANDLE SUBMIT
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-  }
-
-  const [fullName, setFullName] = useState("");
-  const [loginType, setLoginType] = useState("");
-  const [loginUqid, setLoginUqid] = useState("");
-  const [logo, setLogo] = useState("");
-
-  useEffect(() => {
-    getCookiesValue();
-  }, []);
-
-  const getCookiesValue = async () => {
-    try {
-      const response = await fetch("/api/cookies-details", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        }
-      });
-      const data = await response.json();
-      const fullname = data?.fullname ?? "";
-      const role = data?.role ?? "";
-      const uqid = data?.uqid ?? "";
-      const logo = data?.logo ?? "";
-
-      setFullName(fullname);
-      setLoginType(role);
-      setLoginUqid(uqid);
-      setLogo(logo);
-
-
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
 
   return (
 
@@ -83,18 +31,6 @@ const Index = () => {
             {/* End profile chart */}
           </div>
           {/* End .col */}
-
-          {/* <div className="col-xl-5 col-lg-12">
-            <div className="notification-widget ls-widget">
-              <div className="widget-title">
-                <h4>Notifications</h4>
-              </div>
-              <div className="widget-content">
-                <Notification />
-              </div>
-            </div>
-          </div> */}
-
 
           <div className="col-lg-12">
             {/* <!-- applicants Widget --> */}

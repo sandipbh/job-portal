@@ -13,8 +13,6 @@ export default async function Dashboard() {
         );
     }
 
-    console.log("Google User:", session.user);
-
     return (
         <div>
 

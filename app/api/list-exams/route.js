@@ -24,8 +24,6 @@ export async function POST(req) {
     } = await req.json();
     //const term = req.nextUrl.searchParams.get("term") || "";
 
-    console.log("Search term:", term);
-
     try {
 
 
@@ -57,7 +55,6 @@ export async function POST(req) {
                 { status: 500 }
             );
         }
-        console.log("External API Base URL :", externalApiBaseUrl);
 
         const externalApiUrl =
             process.env.REGISTER_API_URL ||

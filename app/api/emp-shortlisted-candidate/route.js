@@ -85,7 +85,6 @@ export async function POST(req) {
         console.error("Invalid JSON token:", err);
         user = {};
     }
-    console.log("dashboard user User Role :", user.external.role);
 
     try {
         const {
@@ -240,7 +239,6 @@ export async function POST(req) {
             Role: user.external.role,
             Token: user.external.accessToken,
         };
-        console.log("body Data:", loginBody);
 
         // Allow self-signed certs in local development only.
         if (process.env.NODE_ENV !== "production") {
@@ -254,14 +252,10 @@ export async function POST(req) {
                 { status: 500 }
             );
         }
-        console.log("External API Base URL :", externalApiBaseUrl);
 
         const externalApiUrl =
             process.env.REGISTER_API_URL ||
             `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/postJob`;
-
-        console.log("External API URL :", externalApiUrl);
-        console.log("External API Request Body:", loginBody);
 
         const externalResponse = await apiFetch(externalApiUrl, {
             method: "POST",
@@ -269,10 +263,6 @@ export async function POST(req) {
         });
 
         const responseData = JSON.parse(await externalResponse.text());
-
-        console.log("External Candi API response:", responseData);
-        console.log("External API Response Status:", responseData.message || externalResponse.status);
-
 
         if (!externalResponse.ok) {
             console.error(
@@ -288,8 +278,6 @@ export async function POST(req) {
                 { status: responseData.status || 500 }
             );
         }
-
-        console.log("Job Posted successfully");
 
         // 6. Send response with cookies
         const response = NextResponse.json(

@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import LoginWithSocial from "./LoginWithSocial";
-import globalData from "@/lib/global";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -154,8 +153,6 @@ const FormContent2 = () => {
 
       const data = await res.json();
 
-      console.log(data)
-
       if (!res.ok) {
         setError(data.message || "Login failed");
         setLoading(false);
@@ -170,9 +167,8 @@ const FormContent2 = () => {
       }
 
       //check is verified or not
-      console.log(data.isVefity)
-
       if (data.isVefity == false) {
+        setLoading(false);
         openOtpModal();
         return;
       }
@@ -184,18 +180,15 @@ const FormContent2 = () => {
       }
 
       const roleType = data.roleType?.trim().toLowerCase();
-      // console.log("roleType :", data.roleType);
-
-      // console.log("Login success roleType:", roleType);
 
       if (roleType === "employer") {
-        window.location.href = "/employers-dashboard/dashboard";
+        router.replace("/employers-dashboard/dashboard");
         return;
       } else if (roleType === "candidate") {
-        window.location.href = "/candidates-dashboard/dashboard";
+        router.replace("/candidates-dashboard/dashboard");
         return;
       } else {
-        window.location.href = "/home-10";
+        router.replace("/home-10");
       }
 
     } catch (err) {

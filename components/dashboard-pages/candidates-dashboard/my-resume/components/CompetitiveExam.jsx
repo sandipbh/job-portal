@@ -190,7 +190,6 @@ const CompetitiveExam = ({
                 });
 
                 const user = await res.json();
-                console.log("Response from /api/candi-competitive-exam:", user);
 
                 if (!res.ok) {
                     toast.error(user.message || "Request failed");

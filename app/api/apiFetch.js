@@ -23,12 +23,7 @@ export async function apiFetch(
         data = {};
         }
 
-        //console.log("API Fetch token data:", data);
-        
     const AccessToken =data.external.accessToken || null 
-    // console.log("API body:", body);
-
-  
   const response = await fetch(url, {
     method,
     cache,
@@ -40,7 +35,6 @@ export async function apiFetch(
     ...(body ? { body } : {}),
   });
 
-  //console.log("API Fetch response status:", response );
   if (response.status === 401) {
     throw new Error("Unauthorized");
   }

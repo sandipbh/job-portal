@@ -1,98 +1,82 @@
+
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { apiFetch } from "../apiFetch";
 
 export async function POST(req) {
-    const headersList = await headers();
-    const role = req.nextUrl.searchParams.get("role");
-    const isCandidate = role === "candidate";
-    const isEmployer = role === "employer";
-
-    if (!isCandidate && !isEmployer) {
-        return NextResponse.json({ message: "A valid role is required." }, { status: 400 });
-    }
-
-    let user;
     try {
         const token = req.cookies.get("regToken")?.value;
-        user = token ? JSON.parse(token) : null;
-    } catch {
-        user = null;
-    }
+        if (!token) {
+            return NextResponse.json({ isSuccess: false, message: "Please sign in again." }, { status: 401 });
+        }
 
-    if (!user?.external?.accessToken || !user?.external?.uqId) {
-        return NextResponse.json(
-            { message: "Your session has expired. Please sign in again." },
-            { status: 401 }
-        );
-    }
+        let user;
+        try {
+            user = JSON.parse(token);
+        } catch {
+            return NextResponse.json({ isSuccess: false, message: "Invalid login session." }, { status: 401 });
+        }
 
-    // Allow self-signed certs in local development only.
-    if (process.env.NODE_ENV !== "production") {
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-    }
+        const external = user?.external;
+        if (!external?.uqId || !external?.accessToken || !external?.role) {
+            return NextResponse.json({ isSuccess: false, message: "Invalid login session." }, { status: 401 });
+        }
 
-    const externalApiBaseUrl = process.env.API_BASE_URL;
-    if (!externalApiBaseUrl) {
-        return NextResponse.json(
-            { message: "API_BASE_URL is not configured." },
-            { status: 500 }
-        );
-    }
+        const role = external.role.toLowerCase();
+        if (!["candidate", "employer"].includes(role)) {
+            return NextResponse.json({ isSuccess: false, message: "Invalid user role." }, { status: 401 });
+        }
 
-    let externalApiUrl = "";
-    if (isCandidate) {
-        externalApiUrl =
-            process.env.CANDIDATE_NOTIFICATIONS_API_URL ||
-            `${externalApiBaseUrl.replace(/\/+$/, "")}/candidate/candi/getNotificationList`;
-    } else if (isEmployer) {
-        externalApiUrl =
-            process.env.EMPLOYER_NOTIFICATIONS_API_URL ||
-            `${externalApiBaseUrl.replace(/\/+$/, "")}/employer/employer/getNotificationList`;
-    }
+        const externalApiBaseUrl = process.env.API_BASE_URL;
+        if (!externalApiBaseUrl) {
+            return NextResponse.json({ isSuccess: false, message: "API_BASE_URL is not configured." }, { status: 500 });
+        }
 
+        if (process.env.NODE_ENV !== "production") {
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        }
 
-    try {
+        const headersList = await headers();
         const LoginIp =
             headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
             headersList.get("x-real-ip") ||
             headersList.get("cf-connecting-ip") ||
             "Unknown";
 
-
-        const loginBody = {
-            uqId: user.external.uqId,
-            LoginIp,
-            Role: user.external.role,
-            Token: user.external.accessToken,
-        };
-
-        console.log("Login Body:", loginBody);
-        console.log("External API URL:", externalApiUrl);
+        const baseUrl = externalApiBaseUrl.replace(/\/+$/, "");
+        const externalApiUrl = role === "candidate"
+            ? process.env.CANDIDATE_NOTIFICATIONS_API_URL || `${baseUrl}/Candidate/candi/getNotificationList`
+            : process.env.EMPLOYER_NOTIFICATIONS_API_URL || `${baseUrl}/employer/employer/getNotificationList`;
 
         const externalResponse = await apiFetch(externalApiUrl, {
             method: "POST",
-            body: JSON.stringify(loginBody),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                uqId: external.uqId,
+                LoginIp,
+                Role: external.role,
+                Token: external.accessToken
+            })
         });
-        const responseText = await externalResponse.text();
-        const responseData = responseText ? JSON.parse(responseText) : [];
 
-        if (!externalResponse.ok) {
-            return NextResponse.json(
-                { message: responseData?.message || "Unable to load notification history." },
-                { status: externalResponse.status }
-            );
+        const responseText = await externalResponse.text();
+        let responseData;
+
+        try {
+            responseData = responseText ? JSON.parse(responseText) : {};
+        } catch {
+            return NextResponse.json({
+                isSuccess: false,
+                message: "Invalid response received from server."
+            }, { status: 502 });
         }
 
-        return NextResponse.json(
-            { data: responseData || [] },
-            { status: 201 }
-        );
+        return NextResponse.json(responseData, { status: externalResponse.status });
     } catch (error) {
-        console.error("NOTIFICATIONS ERROR:", error);
-        return NextResponse.json(
-            { message: "Unable to load notification history." },
-            { status: 500 }
-        );
+        console.error("NOTIFICATIONS API ERROR:", error);
+        return NextResponse.json({
+            isSuccess: false,
+            message: "Unable to load notification history."
+        }, { status: 500 });
     }
 }

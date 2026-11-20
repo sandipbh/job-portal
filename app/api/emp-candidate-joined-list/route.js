@@ -1,0 +1,255 @@
+
+import { NextResponse } from "next/server";
+import { headers } from "next/headers";
+import { apiFetch } from "../apiFetch";
+
+export async function GET(req) {
+    const headersList = await headers();
+
+    const token = req.cookies.get("regToken")?.value;
+    const url = req.nextUrl.pathname;
+    const JobPostId = req.nextUrl.searchParams.get("JobPostId");
+    let user = {};
+    try {
+        user = token ? JSON.parse(token) : {};
+    } catch (err) {
+        console.error("Invalid JSON token:", err);
+        user = {};
+    }
+
+    try {
+
+        const loginBody = {
+            uqId: user.external.uqId,
+            Role: user.external.role,
+            Token: user.external.accessToken,
+            JobPostId: JobPostId
+        };
+
+        if (process.env.NODE_ENV !== "production") {
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        }
+
+        const externalApiBaseUrl = process.env.API_BASE_URL;
+        if (!externalApiBaseUrl) {
+            return NextResponse.json(
+                { message: "API_BASE_URL is not configured." },
+                { status: 500 }
+            );
+        }
+
+        const externalApiUrl =
+            process.env.REGISTER_API_URL ||
+            `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/getJoinedCandidateList`;
+
+        const externalResponse = await apiFetch(externalApiUrl, {
+            method: "POST",
+            body: JSON.stringify(loginBody),
+        });
+
+        const responseData = JSON.parse(await externalResponse.text());
+        const response = NextResponse.json(
+            {
+                data: responseData || [],
+            },
+            { status: 201 }
+        );
+        return response;
+
+    } catch (error) {
+        console.error("UPDATE ERROR:", error);
+
+        return NextResponse.json(
+            { message: "Failed to fetch details" },
+            { status: 500 }
+        );
+    }
+}
+
+export async function POST(req) {
+    const headersList = await headers();
+
+    const token = req.cookies.get("regToken")?.value;
+    const url = req.nextUrl.pathname;
+
+    let user = {};
+    try {
+        user = token ? JSON.parse(token) : {};
+    } catch (err) {
+        console.error("Invalid JSON token:", err);
+        user = {};
+    }
+
+    try {
+        const {
+            jobpostId,
+            companyName,
+            jobTitle,
+            jobTitleId,
+            minExperience,
+            maxExperience,
+            fresherAllowed,
+            jobType,
+            workMode,
+            minSalary,
+            maxSalary,
+            incentives,
+            department,
+            departmentId,
+            jobRole,
+            jobRoleId,
+            jobLocation,
+            jobLocationId,
+            qualification,
+            degree,
+            degreeId,
+            specialization,
+            specializationId,
+            skills,
+            industryIds,
+            languages,
+            languagesId,
+            gender,
+            contactMethod,
+            cemail,
+            cphone,
+            callFrom,
+            callTo,
+            applicationMethod,
+            externalLink,
+            allowDirectCall,
+            days,
+            jobDesc,
+            aboutCompany,
+            screeningQuestions,
+            isWalkIn,
+            walkInStartDate,
+            walkInEndDate,
+            walkInTimingFrom,
+            walkInTimingTo,
+            recruiterName,
+            walkInPhone,
+            venueAddress,
+            googleMapsUrl,
+            collaborators,
+            newCollaborator,
+            dailyDigest
+        } = await req.json();
+
+        if (!user.external.uqId || !user.external.role) {
+            return NextResponse.json(
+                { message: "Your login has expired, relogin your account" },
+                { status: 400 }
+            );
+        }
+
+        const LoginIp =
+            headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+            headersList.get("x-real-ip") ||
+            headersList.get("cf-connecting-ip") ||
+            "Unknown";
+
+        const loginBody = {
+
+            jobpostId: jobpostId,
+            companyName: companyName,
+            jobTitle: jobTitle,
+            jobTitleId: jobTitleId,
+            minExperience: minExperience,
+            maxExperience: maxExperience,
+            fresherAllowed: fresherAllowed ?? false,
+            jobType: jobType,
+            workMode: workMode,
+            minSalary: minSalary,
+            maxSalary: maxSalary,
+            incentives: incentives,
+            department: department,
+            departmentId: departmentId,
+            jobRole: jobRole,
+            jobRoleId: jobRoleId,
+            jobLocation: jobLocation,
+            jobLocationId: jobLocationId,
+            qualification: qualification,
+            degree: degree,
+            degreeId: degreeId,
+            specialization: specialization,
+            specializationId: specializationId,
+            skills: skills,
+            industryIds: industryIds,
+            languages: languages,
+            languagesId: languagesId,
+            gender: gender,
+            contactMethod: contactMethod,
+            cemail: cemail,
+            cphone: cphone,
+            callFrom: callFrom,
+            callTo: callTo,
+            applicationMethod: applicationMethod,
+            externalLink: externalLink,
+            allowDirectCall: allowDirectCall,
+            days: days,
+            jobDesc: jobDesc,
+            aboutCompany: aboutCompany,
+            screeningQuestions: screeningQuestions,
+            isWalkIn: isWalkIn,
+            walkInStartDate: walkInStartDate,
+            walkInEndDate: walkInEndDate,
+            walkInTimingFrom: walkInTimingFrom,
+            walkInTimingTo: walkInTimingTo,
+            recruiterName: recruiterName,
+            walkInPhone: walkInPhone,
+            venueAddress: venueAddress,
+            googleMapsUrl: googleMapsUrl,
+            collaborators: collaborators,
+            newCollaborator: newCollaborator,
+            dailyDigest: dailyDigest,
+            uqId: user.external.uqId,
+            LoginIp: LoginIp,
+            Role: user.external.role,
+            Token: user.external.accessToken,
+        };
+        if (process.env.NODE_ENV !== "production") {
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        }
+
+        const externalApiBaseUrl = process.env.API_BASE_URL;
+        if (!externalApiBaseUrl) {
+            return NextResponse.json(
+                { message: "API_BASE_URL is not configured." },
+                { status: 500 }
+            );
+        }
+
+        const externalApiUrl =
+            process.env.REGISTER_API_URL ||
+            `${externalApiBaseUrl.replace(/\/+$/, "")}/jobPosting/postJob`;
+        const externalResponse = await apiFetch(externalApiUrl, {
+            method: "POST",
+            body: JSON.stringify(loginBody),
+        });
+
+        const responseData = JSON.parse(await externalResponse.text());
+        if (!externalResponse.ok) {
+            return NextResponse.json(
+                {
+                    message: responseData.message || "Job Post Failed",
+                },
+                { status: responseData.status || 500 }
+            );
+        }
+        const response = NextResponse.json(
+            {
+                message: responseData.message || "Job Posted successfully",
+            },
+            { status: 201 }
+        );
+
+        return response;
+    } catch (error) {
+        return NextResponse.json(
+            { message: "Failed to update Profile" },
+            { status: 500 }
+        );
+    }
+}
+

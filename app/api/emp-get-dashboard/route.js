@@ -51,9 +51,6 @@ export async function POST(req) {
             Token: user.external.accessToken,
         };
 
-        console.log("Login Body:", loginBody);
-        console.log("External API URL:", externalApiUrl);
-
         const externalResponse = await apiFetch(externalApiUrl, {
             method: "POST",
             body: JSON.stringify(loginBody),

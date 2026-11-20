@@ -165,7 +165,6 @@ const Index = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("FINAL FORM DATA:", formData);
     const payload = new FormData();
 
     // loop all formData dynamically
@@ -206,7 +205,6 @@ const Index = () => {
       });
 
       const user = await res.json();
-      console.log("Response from /api/candi-update-profile:", user);
 
       if (!res.ok) {
         toast.error(user.message || "Request failed");

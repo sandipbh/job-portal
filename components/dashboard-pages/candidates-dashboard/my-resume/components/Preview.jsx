@@ -55,7 +55,6 @@ const Preview = ({ data }) => {
       const result = await response.json();
 
       const data = result?.data;
-      console.log('data ', data)
 
       if (data) {
 
@@ -83,7 +82,6 @@ const Preview = ({ data }) => {
 
 
         setInternship(data.internship);
-        console.log('data.internship', data.internship)
         setProject(data.project);
 
 

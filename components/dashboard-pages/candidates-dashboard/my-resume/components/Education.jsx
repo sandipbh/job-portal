@@ -94,8 +94,6 @@ const EducationForm = ({
 
       const result = await response.json();
 
-      console.log("Education Details fetched:", JSON.stringify(result));
-
       const profile = result?.data;
 
       if (profile) {
@@ -312,7 +310,6 @@ const EducationForm = ({
     };
 
     setFormDataSaveApi(eduData);
-    console.log('setFormDataSaveApi ', eduData);
 
     try {
 

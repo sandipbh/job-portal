@@ -14,7 +14,6 @@ export async function generateMetadata({ params }) {
 const Page = async ({ params }) => {
   const { slug } = await params;
   const entrydata = getFindJobBySlug(slug);
-  console.log('entrydata', entrydata)
   if (!entrydata) notFound();
 
   return <FindJobsPage key={slug} entry={entrydata} />;

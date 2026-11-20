@@ -1357,7 +1357,6 @@ const Applicants = ({
                       <div className="modal-header">
                         <div>
                           <h5 className="modal-title" id="scheduleInterviewTitle">
-                            <i className="la la-calendar-check me-2"></i>
                             Reschedule Interview
                           </h5>
                           <small className="text-muted fw-bold text-primary">
@@ -1518,7 +1517,6 @@ const Applicants = ({
                         <div className="p-3">
                           <div className="d-flex justify-content-between align-items-center mb-3">
                             <h5 className="fw-normal mb-0">
-                              <i className="la la-history me-2"></i>
                               Previous Interview Schedules
                             </h5>
                             <span className="badge bg-primary">
@@ -1559,10 +1557,9 @@ const Applicants = ({
                                       </td>
                                       <td>{item.INTER_MODE || "-"}</td>
                                       <td>
-                                        <span className="fw-semibold">{item.INTERVIEWER_NAME || "-"}</span>
-                                        <div>
+                                        <span className="fw-semibold">{item.INTERVIEWER_NAME || "-"} <br />
                                           <small className="text-muted">{item.INTERVIEWER_EMAIL || ""}</small>
-                                        </div>
+                                        </span>
                                       </td>
                                       <td>{item.DURATION || "-"}</td>
                                       <td>

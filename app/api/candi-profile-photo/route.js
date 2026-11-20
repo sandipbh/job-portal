@@ -14,18 +14,13 @@ export async function POST(req) {
   try {
     user = token ? JSON.parse(token) : {};
   } catch (err) {
-    console.log("Invalid JSON token:", err);
     user = {};
   }
-  console.log("dashboard user User Role :", user.external.role);
 
   try {
 
     const formData = await req.formData();
     const file = formData.get("file");
-
-    console.log("request data file:", file);
-    console.log("request data role:", user.external.role);
 
     // 1. Basic validation
     if (!user.external.uqId || !user.external.role) {
@@ -50,14 +45,6 @@ export async function POST(req) {
       externalFormData.append("File", file, file.name || "photo.png");
     }
 
-    console.log("body Data0:", {
-      uqId: user.external.uqId,
-      LoginIp: LoginIp,
-      Role: user.external.role,
-      Token: user.external.accessToken,
-      file: file,
-    });
-
     // Allow self-signed certs in local development only.
     if (process.env.NODE_ENV !== "production") {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -70,21 +57,10 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-    //console.log("External API Base URL 00:", externalApiBaseUrl);
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/Candidate/candi/UploadPhoto`;
-
-    console.log("External API URL :", externalApiUrl);
-    console.log("External API Request FormData:", {
-      uqId: user.external.uqId,
-      LoginIp: LoginIp,
-      Role: user.external.role,
-      Token: user.external.accessToken,
-      file: file,
-    });
-
 
     const externalResponse = await fetch(externalApiUrl, {
       method: "POST",
@@ -93,17 +69,7 @@ export async function POST(req) {
 
     const responseData = await externalResponse.text();
 
-    console.log("External Candi API response:", responseData);
-
-    console.log("External API Response Status:", responseData.message || externalResponse.status);
-
-
     if (!externalResponse.ok) {
-      console.log(
-        "External login failed:",
-        responseData.success,
-        responseData.message
-      );
 
       return NextResponse.json(
         {
@@ -112,8 +78,6 @@ export async function POST(req) {
         { status: responseData.status || 500 }
       );
     }
-
-    console.log("Photo uploaded successfully");
 
     // 6. Send response with cookies
     const response = NextResponse.json(
@@ -125,7 +89,6 @@ export async function POST(req) {
 
     return response;
   } catch (error) {
-    console.log("UPDATE ERROR:", error);
 
     return NextResponse.json(
       { message: "Failed to upload photo" },

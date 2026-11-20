@@ -17,8 +17,6 @@ export async function POST(req) {
       role
     } = await req.json();
 
-    console.log("Login attempt:", email);
-
     // 1. Basic validation
     if (!email || !password) {
       return NextResponse.json(
@@ -40,7 +38,6 @@ export async function POST(req) {
       Role: role,
       LoginIp: LoginIp,
     };
-    console.log("Login body:", loginBody);
 
     // Allow self-signed certs in local development only.
     if (process.env.NODE_ENV !== "production") {
@@ -60,8 +57,6 @@ export async function POST(req) {
       process.env.REGISTER_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/auth/login`;
 
-    console.log("External API URL :", externalApiUrl);
-
     const externalResponse = await fetch(externalApiUrl, {
       method: "POST",
       headers: {
@@ -73,7 +68,15 @@ export async function POST(req) {
 
     const externalData = await externalResponse.json();
 
-    console.log("External API response :", externalData);
+    if (!externalResponse.ok || externalData?.success !== true) {
+      return NextResponse.json(
+        {
+          status: false,
+          message: externalData?.message || "This account doesn't exist."
+        },
+        { status: 200 }
+      );
+    }
 
     if (!externalResponse.ok) {
       return NextResponse.json(
@@ -90,9 +93,6 @@ export async function POST(req) {
         }
       );
     }
-
-
-    console.log("User logged in successfully:", externalData.success);
 
     // Create response
 
@@ -128,7 +128,6 @@ export async function POST(req) {
         }
         return null;
       };
-      console.log("Unverified login payload keys:", Object.keys(externalData), Object.keys(ud));
       const otpUser = {
         Uqid: findKey(externalData, /^uq_?id$/i) ?? ud.id ?? findKey(externalData, /^id$/i) ?? externalData.dataUqId ?? null,
         Email: findKey(externalData, /^e-?mail$/i) ?? email,
@@ -205,8 +204,7 @@ export async function POST(req) {
     console.error("LOGIN ERROR:", error);
 
     return NextResponse.json(
-      { message: "Failed to login user." + error },
-      { status: 500 }
+      { message: "Failed to login user." },
     );
   }
 }

@@ -17,8 +17,6 @@ export async function POST(req) {
       role
     } = await req.json();
 
-    console.log("Login attempt:", email);
-
     // 1. Basic validation
     if (!email || !role) {
       return NextResponse.json(
@@ -38,7 +36,6 @@ export async function POST(req) {
       Email: email,
       Role: role,
     };
-    console.log("Login body:", loginBody);
 
     // Allow self-signed certs in local development only.
     if (process.env.NODE_ENV !== "production") {
@@ -52,16 +49,10 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-    //console.log("External API Base URL 00:", externalApiBaseUrl);
-
-
 
     const externalApiUrl =
       process.env.REGISTER_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/Candidate/CandiData`;
-
-    console.log("External API URL :", externalApiUrl);
-    console.log("External API Request Body:", loginBody);
 
     const externalResponse = await apiFetch(externalApiUrl, {
       method: "POST",
@@ -69,8 +60,6 @@ export async function POST(req) {
     });
 
     const externalData = await externalResponse.text();
-
-    console.log("External Candi API response:", externalData);
 
     if (!externalResponse.ok) {
       console.error(
@@ -87,8 +76,6 @@ export async function POST(req) {
         { status: externalResponse.status || 500 }
       );
     }
-
-    console.log("User logged in successfully:", role);
 
     // 6. Send response with cookies
     const response = NextResponse.json(

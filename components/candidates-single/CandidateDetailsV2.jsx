@@ -24,64 +24,59 @@ import AboutVideo from "@/components/candidates-single-pages/shared-components/A
 
 
 const CandidateDetailsV2 = ({ id }) => {
-
-    let candiId = id ?? 0;
-
+    const candiId = id ?? 0;
     const resumeRef = useRef(null);
+    const viewTrackedRef = useRef("");
     const router = useRouter();
 
     const [candidate, setCandidate] = useState({});
     const [loading, setLoading] = useState(true);
-
     const [shareUrl, setShareUrl] = useState("");
-    useEffect(() => {
-        setShareUrl(window.location.href);
-    }, []);
-
     const [fullName, setFullName] = useState("");
     const [loginType, setLoginType] = useState("");
     const [loginUqid, setLoginUqid] = useState("");
 
     useEffect(() => {
+        setShareUrl(window.location.href);
+    }, []);
+
+    useEffect(() => {
+        if (!candiId) return;
         getCandidateDetails();
     }, [candiId]);
 
     useEffect(() => {
+        if (!candiId) return;
         getCookiesValue();
-    }, []);
+    }, [candiId]);
 
     const getCandidateDetails = async () => {
         try {
-
             const response = await fetch(`/api/candidate-full-details?candiId=${candiId}`, {
                 method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                }
+                headers: { "Content-Type": "application/json" },
+                cache: "no-store"
             });
 
             const result = await response.json();
 
-            const listData = result?.data;
-            //console.log('Candidate Details  ', JSON.stringify(listData))
+            if (!response.ok) throw new Error(result?.message || "Unable to load candidate details.");
 
-            if (listData) {
-
-                setCandidate(listData);
-                setLoading(false);
-
-                // console.log(JSON.stringify(listData[0]))
-            }
-
+            if (result?.data) setCandidate(result.data);
         } catch (error) {
-            console.error(error);
+            console.error("Get candidate details error:", error);
+        } finally {
+            setLoading(false);
         }
     };
+
     const getCookiesValue = async () => {
         try {
             const response = await fetch("/api/cookies-details", {
-                method: "GET"
+                method: "GET",
+                cache: "no-store"
             });
+
             const data = await response.json();
             const fullname = data?.fullname ?? "";
             const role = data?.role ?? "";
@@ -91,17 +86,30 @@ const CandidateDetailsV2 = ({ id }) => {
             setLoginType(role);
             setLoginUqid(uqid);
 
-            if (role === "" || role === "candidate") {
+            if (!role || role.toUpperCase() === "CANDIDATE") {
                 toast.error("Login your account.");
                 router.replace("/login");
                 return;
             }
-            saveViewProfile(uqid);
+
+            if (!["EMPLOYER", "RECRUITER"].includes(role.toUpperCase())) {
+                toast.error("Unauthorized access.");
+                return;
+            }
+
+            const trackingKey = `${String(candiId)}_${String(uqid)}`;
+
+            if (viewTrackedRef.current === trackingKey) return;
+            viewTrackedRef.current = trackingKey;
+
+            await saveViewProfile(uqid);
+            await saveEmployerCandidateView();
 
         } catch (error) {
-            console.error(error);
+            console.error("Get login details error:", error);
         }
     };
+
     useEffect(() => {
     }, []);
 
@@ -109,21 +117,56 @@ const CandidateDetailsV2 = ({ id }) => {
         try {
             const payload = {
                 LoginUqid: uqid,
-                candiId: candiId,
-            }
+                candiId: candiId
+            };
+
             const response = await fetch("/api/save-profile-view", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json"
                 },
-                body: JSON.stringify(payload),
+                body: JSON.stringify(payload)
             });
 
             const result = await response.json();
 
+            if (!response.ok) {
+                console.error("Existing profile view API failed:", result?.message);
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            console.error("Existing profile view error:", error);
+            return false;
+        }
+    };
+
+    const saveEmployerCandidateView = async () => {
+        try {
+            const response = await fetch("/api/emp-view-candidate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    candiId: String(candiId)
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || result?.success === false || result?.Success === false) {
+                console.error("Employer candidate view API failed:", result?.message || result?.Message);
+                return false;
+            }
+
+            console.log("Employer candidate view recorded:", result?.data ?? result?.Data);
+            return true;
 
         } catch (error) {
-            console.error(error);
+            console.error("Employer candidate view error:", error);
+            return false;
         }
     };
 

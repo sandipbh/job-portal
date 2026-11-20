@@ -89,7 +89,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       });
       const data = await response.json();
       let fullname = data.fullname;
-      console.log(fullname)
       setFormData((prev) => ({
         ...prev,
         companyName: fullname
@@ -236,7 +235,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       });
 
       const result = await response.json();
-      console.log("Job Details fetched:", result?.data?.questions);
       const details = result?.data?.questions;
 
       //console.log(' questions ', details)
@@ -265,7 +263,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
       });
 
       const result = await response.json();
-      console.log("Job Details fetched:", result?.data?.jobDetails);
       const details = result?.data?.jobDetails;
 
       if (details) {
@@ -794,8 +791,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
   ];
 
   const handleNext = () => {
-    console.log("Current Tab:", activeTab);
-    console.log("Job Description State:", jobDesc);
 
     // Screening Questions Tab
     if (activeTab === 2) {
@@ -821,8 +816,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
         IsMandatory: q.required,
       }));
-
-      console.log("Screening Questions:", screeningQuestions);
 
       // Save in formData
       setFormData((prev) => ({
@@ -1191,7 +1184,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
     }
   };
   useEffect(() => {
-    console.log(formData);
   }, [formData]);
 
   const validationJobDesc = () => {
@@ -1340,7 +1332,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
 
       IsMandatory: q.required,
     }));
-    console.log('screeningQuestions  ', screeningQuestions)
 
     let haError = true;
 
@@ -1378,7 +1369,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         screeningQuestions: screeningQuestions,
       }));
 
-      console.log(formData.days)
       setFormData((prev) => ({
         ...prev,
         days: selectedDays,
@@ -1400,7 +1390,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
         });
 
         const user = await res.json();
-        console.log("Response from /api/emp-job-post:", user);
 
         if (!res.ok) {
           toast.error(user.message || "Request failed");
@@ -1778,7 +1767,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                 type="button"
                 className="theme-btn btn-style-one"
                 onClick={() => {
-                  console.log(formData);
                   if (validationJobDetails()) {
                     setActiveTab(1);
                   }
@@ -2015,8 +2003,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                     const selectedOptions = selected || [];
 
                     setselectedIndustrys(selectedOptions);
-
-                    console.log(selectedOptions)
 
                     setFormData((prev) => ({
                       ...prev,
@@ -2342,7 +2328,6 @@ const PostBoxForm = ({ activeTab, setActiveTab }) => {
                           ...prev,
                           [`type_${index}`]: "",
                         }));
-                        console.log(questions)
                       }}
                     >
                       <option value="">Select Type</option>

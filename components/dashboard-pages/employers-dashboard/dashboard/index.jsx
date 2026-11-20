@@ -3,18 +3,8 @@ import TopCardBlock from "./components/TopCardBlock";
 import ProfileChart from "./components/ProfileChart";
 import Notification from "./components/Notification";
 import Applicants from "./components/Applicants";
-import { cookies } from "next/headers";
 
-const Index = async () => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("regToken")?.value;
-  let user = {};
-  try {
-    user = token ? JSON.parse(token) : {};
-  } catch (err) {
-    user = {};
-  }
-
+const Index = () => {
   return (
     <>
       <section className="user-dashboard">

@@ -64,29 +64,23 @@ const JobFeatured7 = () => {
                     </span>
                     <h4>
                       <Link href={`/job-single-v2/${encodeJobId(item.id)}`}>{item.jobTitle}</Link>
-
                     </h4>
                     <ul className="job-info">
                       <li>
                         <span className="icon flaticon-briefcase"></span>
                         {item.company}
                       </li>
-                      {/* compnay info */}
                       <li>
                         <span className="icon flaticon-map-locator"></span>
                         {item.location}
                       </li>
-                      {/* location info */}
                       <li>
-                        <span className="icon flaticon-clock-3"></span> {getTimeAgo(item.time)}
+                        <span className="icon flaticon-clock-3"></span>{getTimeAgo(item.time)}
                       </li>
-                      {/* time info */}
                       <li>
                         <span className="icon flaticon-money"></span> {item.salary}
                       </li>
-                      {/* salary info */}
                     </ul>
-                    {/* End .job-info */}
                   </div>
                   <ul className="job-other-info">
                     {item.jobType.slice(0, 1).map((val, i) => (
@@ -97,8 +91,7 @@ const JobFeatured7 = () => {
                   </ul>
                   <Link
                     href={`/job-single-v2/${encodeJobId(item.id)}`}
-                    className="theme-btn btn-style-four"
-                  >
+                    className="theme-btn btn-style-four">
                     Apply Job
                   </Link>
                 </div>

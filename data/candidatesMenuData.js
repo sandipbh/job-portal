@@ -50,6 +50,13 @@ module.exports = [
     active: "",
   },
   {
+    id: 16,
+    name: "Interview Schedule",
+    icon: "la-bookmark-o",
+    routePath: "/candidates-dashboard/interview-schedule",
+    active: "",
+  },
+  {
     id: 7,
     name: "CV manager",
     icon: "la la-file-invoice",
@@ -98,11 +105,5 @@ module.exports = [
     routePath: "/logout",
     active: "",
   },
-  {
-    id: 12,
-    name: "Delete Profile",
-    icon: "la-trash",
-    routePath: "/",
-    active: "",
-  },
+
 ];

@@ -77,6 +77,7 @@ const Header = () => {
                     height={50}
                     src="/images/logo-2.svg"
                     alt="brand"
+                    priority
                   />
                 </Link>
               </div>

@@ -24,7 +24,6 @@ const JobFavouriteTable = () => {
       const result = await response.json();
       const listData = result?.data;
 
-      console.log("Applied Jobs Data:", listData);
       if (listData) {
         setJobList(listData);
       }

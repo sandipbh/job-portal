@@ -86,8 +86,6 @@ const Applicants = ({ candidate, onUpdateStatus, onUpdateCallStatus, onUpdateCom
         description: ""
     });
 
-    console.log(JSON.stringify(candidate));
-
     const parseComments = (commentsString, applicationId) => {
         if (!commentsString) return [];
         const currentAppId = Number(applicationId);

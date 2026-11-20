@@ -1,89 +1,42 @@
-"use client";
-import Aos from "aos";
-import "aos/dist/aos.css";
+
 import "../styles/index.scss";
-import { useEffect } from "react";
-import ScrollToTop from "../components/common/ScrollTop";
-import { Provider } from "react-redux";
-import { store } from "../store/store";
+import "aos/dist/aos.css";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import "rc-slider/assets/index.css";
 import "quill/dist/quill.snow.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import Providers from "./providers";
 
-export default function RootLayout({ children }) {
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      require("bootstrap/dist/js/bootstrap");
-    }
-  }, []);
+export const metadata = {
+  title: "RatinGrow - Hiring Verified",
+  description: "RatinGrow - Hiring Verified",
+  keywords: [
+    "candidates", "career", "employment", "job board",
+    "job listing", "job portal", "job postings", "job search",
+    "job seeker", "jobs", "recruiters", "recruitment", "resume"
+  ],
+  other: {
+    "x-ua-compatible": "ie=edge"
+  }
+};
 
-  useEffect(() => {
-    Aos.init({
-      duration: 1400,
-      once: true,
-    });
-  }, []);
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
-          rel="stylesheet"
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
           href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+          rel="stylesheet"
         />
-        <meta httpEquiv="x-ua-compatible" content="ie=edge" />
-        <meta
-          name="keywords"
-          content="	candidates, career, employment, indeed, job board, job listing, job portal, job postings, job search, job seeker, jobs, recruiters, recruiting, recruitment, resume"
-        />
-        <meta
-          name="description"
-          content="RatinGrow - Hiring Verified"
-        />
-        <meta name="ibthemes" content="ATFN" />
-
-        {/* <link rel="icon" href="./favicon.ico" />
-        <link rel="stylesheet" href="/css/quill.snow.css"></link> */}
       </head>
-
       <body>
-        <Provider store={store}>
-          <div className="page-wrapper">
-            {/* <Providers> */}
-            {children}
-            {/* </Providers> */}
-            {/* Toastify */}
-            {/* <ToastContainer
-              position="bottom-right"
-              autoClose={500}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="colored"
-            /> */}
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={true}
-              closeOnClick
-              pauseOnHover
-              draggable
-              theme="light"
-              rtl={false}
-              pauseOnFocusLoss
-              style={{ zIndex: 999999 }}
-            />
-            {/* <!-- Scroll To Top --> */}
-            <ScrollToTop />
-          </div>
-        </Provider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

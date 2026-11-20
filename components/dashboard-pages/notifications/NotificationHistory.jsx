@@ -1,120 +1,239 @@
+
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import BreadCrumb from "../BreadCrumb";
 
 const getRecords = (payload) => {
-    if (Array.isArray(payload)) return payload;
-
-    const records =
-        payload?.data ??
-        payload?.Data ??
-        payload?.notifications ??
-        payload?.Notifications ??
-        payload?.items ??
-        payload?.result;
-
-    if (Array.isArray(records)) return records;
-    if (records && typeof records === "object") return getRecords(records);
-    return [];
+    const records = payload?.data ?? payload?.Data ?? payload?.notifications ?? payload?.Notifications ?? payload?.items ?? [];
+    return Array.isArray(records) ? records : [];
 };
 
-const getDate = (notification) =>
-    notification?.createDate ??
-    notification?.CreateDate ??
-    notification?.createdAt ??
-    notification?.CreatedAt ??
-    notification?.notificationDate ??
-    notification?.NotificationDate ??
-    notification?.date ??
-    notification?.Date ??
-    null;
+const formatDate = (value) => {
+    if (!value) return "Date unavailable";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "Date unavailable";
+    return new Intl.DateTimeFormat("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    }).format(date);
+};
 
-const NotificationHistory = ({ role }) => {
-    const [groups, setGroups] = useState([]);
+const formatTime = (value) => {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return new Intl.DateTimeFormat("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    }).format(date);
+};
+
+const getDateKey = (value) => {
+    if (!value) return "undated";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "undated";
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+};
+
+const getNotificationIcon = (notification) => {
+    if (notification.notificationType === "GLOBAL") return "la-bullhorn";
+    switch (notification.status) {
+        case "Applied": return "la-paper-plane";
+        case "Shortlisted": return "la-star";
+        case "Interview": return "la-calendar-check";
+        case "Reschedule": return "la-calendar-alt";
+        case "Selected Candidate": return "la-trophy";
+        case "Offer": return "la-file-alt";
+        case "Offer Accept": return "la-check-circle";
+        case "Joined": return "la-user-check";
+        case "Rejected After Interview": return "la-info-circle";
+        default: return "la-bell";
+    }
+};
+
+const getStatusClass = (status) => {
+    switch (status) {
+        case "Applied": return "notification-status-applied";
+        case "Shortlisted": return "notification-status-shortlisted";
+        case "Interview":
+        case "Reschedule": return "notification-status-interview";
+        case "Selected Candidate":
+        case "Offer":
+        case "Offer Accept":
+        case "Joined": return "notification-status-success";
+        case "Rejected After Interview": return "notification-status-rejected";
+        default: return "notification-status-default";
+    }
+};
+
+const NotificationHistory = () => {
+    const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [refreshing, setRefreshing] = useState(false);
+
+    const loadNotifications = useCallback(async (isRefresh = false) => {
+        try {
+            setError("");
+            if (isRefresh) setRefreshing(true);
+            else setLoading(true);
+
+            const response = await fetch("/api/notifications", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({}),
+                cache: "no-store"
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok || payload?.isSuccess === false || payload?.IsSuccess === false) {
+                throw new Error(payload?.message || payload?.Message || "Unable to load notifications.");
+            }
+
+            const records = getRecords(payload).map((item, index) => {
+                const createDate = item.createDate ?? item.CreateDate ?? item.tdate ?? item.TDATE;
+                const status = item.status ?? item.Status ?? null;
+                const notificationType = (item.notificationType ?? item.NotificationType ?? "APPLICATION").toUpperCase();
+
+                return {
+                    notificationId: item.notificationId ?? item.NotificationId ?? item.srno ?? item.SRNO ?? `notification-${index}`,
+                    createDate,
+                    notificationType,
+                    title: item.title ?? item.Title ?? (status ? `${status} Update` : "Notification"),
+                    details: item.details ?? item.Details ?? item.description ?? item.Description ?? "",
+                    status,
+                    applicationId: item.applicationId ?? item.ApplicationId ?? item.APPLICATION_ID ?? null,
+                    jobPostId: item.jobPostId ?? item.JobPostId ?? item.JOB_POST_ID ?? null,
+                    employerUqId: item.employerUqId ?? item.EmployerUqId ?? item.UQ_ID_EMP ?? null
+                };
+            });
+
+            records.sort((a, b) => new Date(b.createDate || 0) - new Date(a.createDate || 0));
+            setNotifications(records);
+        } catch (fetchError) {
+            setError(fetchError.message || "Unable to load notifications.");
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    }, []);
 
     useEffect(() => {
-        const loadNotifications = async () => {
-            try {
-                const response = await fetch(`/api/notifications?role=${role}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({}),
-                    cache: "no-store",
-                });
-                const payload = await response.json();
-
-                console.log("Payload:", payload);
-
-                if (!response.ok) {
-                    throw new Error(payload?.message || "Unable to load notifications.");
-                }
-
-                const grouped = new Map();
-                getRecords(payload).forEach((notification) => {
-                    const rawDate = getDate(notification);
-                    const parsedDate = rawDate ? new Date(rawDate) : null;
-                    const validDate = parsedDate && !Number.isNaN(parsedDate.getTime()) ? parsedDate : null;
-                    const dateKey = validDate ? validDate.toISOString().slice(0, 10) : "undated";
-                    const dateLabel = validDate
-                        ? new Intl.DateTimeFormat(undefined, { dateStyle: "long" }).format(validDate)
-                        : "Date unavailable";
-
-                    if (!grouped.has(dateKey)) grouped.set(dateKey, { dateKey, dateLabel, items: [] });
-                    grouped.get(dateKey).items.push(notification);
-                });
-
-                setGroups(
-                    [...grouped.values()].sort((first, second) => second.dateKey.localeCompare(first.dateKey))
-                );
-            } catch (fetchError) {
-                setError(fetchError.message || "Unable to load notifications.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         loadNotifications();
-    }, [role]);
+    }, [loadNotifications]);
+
+    const groupedNotifications = notifications.reduce((groups, notification) => {
+        const key = getDateKey(notification.createDate);
+        if (!groups[key]) {
+            groups[key] = {
+                dateKey: key,
+                dateLabel: formatDate(notification.createDate),
+                items: []
+            };
+        }
+        groups[key].items.push(notification);
+        return groups;
+    }, {});
 
     return (
-        <section className="user-dashboard">
+        <section className="user-dashboard notification-history-page">
             <div className="dashboard-outer">
                 <BreadCrumb title="Notifications" />
+
                 <div className="row">
                     <div className="col-lg-12">
-                        <div className="ls-widget">
-                            <div className="widget-title">
-                                <h4>Notification History</h4>
+                        <div className="ls-widget notification-widget">
+                            <div className="widget-title notification-header">
+                                <div>
+                                    <h4>Notification History</h4>
+                                    <p className="notification-subtitle">
+                                        Stay updated with your applications, interviews and platform announcements.
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    className="notification-refresh-button"
+                                    onClick={() => loadNotifications(true)}
+                                    disabled={refreshing || loading}
+                                >
+                                    <i className={`la la-refresh ${refreshing ? "notification-spin" : ""}`}></i>
+                                    {refreshing ? "Refreshing..." : "Refresh"}
+                                </button>
                             </div>
-                            <div className="widget-content">
+
+                            <div className="widget-content notification-content">
                                 {loading ? (
-                                    <p role="status">Loading notifications...</p>
+                                    <div className="notification-state-box">
+                                        <span className="notification-loader"></span>
+                                        <p>Loading your notifications...</p>
+                                    </div>
                                 ) : error ? (
-                                    <p role="alert">{error}</p>
-                                ) : groups.length === 0 ? (
-                                    <p>No notifications yet.</p>
+                                    <div className="notification-error-box">
+                                        <i className="la la-exclamation-circle"></i>
+                                        <p>{error}</p>
+                                        <button type="button" onClick={() => loadNotifications()}>
+                                            Try Again
+                                        </button>
+                                    </div>
+                                ) : notifications.length === 0 ? (
+                                    <div className="notification-empty-box">
+                                        <div className="notification-empty-icon">
+                                            <i className="la la-bell-slash"></i>
+                                        </div>
+                                        <h5>No notifications yet</h5>
+                                        <p>
+                                            You are all caught up. New application updates and announcements will appear here.
+                                        </p>
+                                    </div>
                                 ) : (
-                                    groups.map((group) => (
-                                        <section className="mb-2" key={group.dateKey}>
-                                            <ul className="notification-list">
-                                                {group.items.map((notification, index) => (
-                                                    <li key={notification.srno ?? notification.Srno ?? notification.id ?? notification.Id ?? `${group.dateKey}-${index}`}>
-                                                        <span className="icon la la-bell" aria-hidden="true"></span>
-                                                        <div className="d-flex justify-content-between align-items-center">
-                                                            <strong>
-                                                                {notification.title ?? notification.Title ?? notification.type ?? notification.Type ?? "Notification"}
-                                                            </strong>
-                                                            <span className="mb-1">{group.dateLabel}</span>
-                                                        </div>
-                                                        {notification.details ?? notification.Details ?? notification.message ?? notification.Message ?? notification.description ?? notification.Description ?? ""}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </section>
-                                    ))
+                                    <div className="notification-groups">
+                                        {Object.values(groupedNotifications).map((group) => (
+                                            <section className="notification-date-group" key={group.dateKey}>
+                                                <div className="notification-date-heading">
+                                                    <span>{group.dateLabel}</span>
+                                                    <span className="notification-date-line"></span>
+                                                </div>
+
+                                                <div className="notification-list">
+                                                    {group.items.map((notification, index) => {
+                                                        const isGlobal = notification.notificationType === "GLOBAL";
+                                                        const key = `${notification.notificationType}-${notification.notificationId || "NA"}-${group.dateKey}-${index}`;
+
+                                                        return (
+
+                                                            <article className="notification-card" key={key}>
+                                                                <div className={`notification-icon-box ${isGlobal ? "notification-global-icon" : "notification-personal-icon"}`}>
+                                                                    <i className={`la ${getNotificationIcon(notification)}`}></i>
+                                                                </div>
+                                                                <div className="notification-body">
+                                                                    <div className="notification-card-top">
+                                                                        <div className="d-flex gap-2 align-items-center">
+                                                                            <h5>{notification.title}</h5>
+                                                                            {notification.status && (
+                                                                                <span className={`notification-status-badge ${getStatusClass(notification.status)}`}>
+                                                                                    {notification.status}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                        {/* <span className="notification-time">{formatTime(notification.createDate)}</span> */}
+                                                                        <span className="notification-date">{formatDate(notification.createDate)}</span>
+                                                                    </div>
+                                                                    {notification.details && (
+                                                                        <p className="notification-description">{notification.details}</p>
+                                                                    )}
+                                                                </div>
+                                                            </article>
+
+                                                        );
+                                                    })}
+                                                </div>
+                                            </section>
+                                        ))}
+                                    </div>
                                 )}
                             </div>
                         </div>

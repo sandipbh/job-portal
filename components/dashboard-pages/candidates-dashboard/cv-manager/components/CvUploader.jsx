@@ -65,11 +65,6 @@ const CvUploader = () => {
             const success = rawSuccess === true || ["true", "1"].includes(String(rawSuccess).toLowerCase());
             const responseMessage = result.message ?? result.Message ?? "";
 
-            console.log("Resume Upload result:", result);
-            console.log("Resume Upload rawSuccess:", rawSuccess);
-            console.log("Resume Upload success:", success);
-            console.log("Resume Upload responseMessage:", responseMessage);
-
             if (responseMessage == "Resume uploaded successfully") {
                 setError("");
                 setMessage(responseMessage || "Resume uploaded successfully.");

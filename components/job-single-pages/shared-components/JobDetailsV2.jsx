@@ -26,7 +26,6 @@ const JobDetailsV2 = ({ id }) => {
     const [loginType, setLoginType] = useState("");
     const [loginUqid, setLoginUqid] = useState("");
 
-
     useEffect(() => {
         getCookiesValue();
     }, []);
@@ -66,20 +65,13 @@ const JobDetailsV2 = ({ id }) => {
     }
 
     useEffect(() => {
-
         getJobDetails();
-
     }, []);
-
-    // useEffect(() => {
-    //     saveViewJob();
-    // }, [jobId]);
 
     const saveViewJob = async (uqid) => {
         try {
 
             if (loginType == "employer") {
-                //console.log("User is not a candidate. Skipping save view job.");
                 return;
             }
             const payload = {
@@ -97,7 +89,6 @@ const JobDetailsV2 = ({ id }) => {
 
             const result = await response.json();
 
-
         } catch (error) {
             console.error(error);
         }
@@ -114,9 +105,7 @@ const JobDetailsV2 = ({ id }) => {
             });
 
             const result = await response.json();
-
             const listData = result?.data;
-            console.log('Job Details  ', JSON.stringify(listData))
 
             if (listData) {
 
@@ -210,10 +199,6 @@ const JobDetailsV2 = ({ id }) => {
                                                                     Apply For Job
                                                                 </button>
 
-
-                                                                {/* <button className="bookmark-btn">
-                                                                    <i className="flaticon-bookmark"></i>
-                                                                </button> */}
                                                             </div>
                                                         ) : (<div className="btn-box">
                                                             <button
@@ -225,9 +210,7 @@ const JobDetailsV2 = ({ id }) => {
                                                             >
                                                                 Apply For Job
                                                             </button>
-                                                            {/* <button className="bookmark-btn">
-                                                                <i className="flaticon-bookmark"></i>
-                                                            </button> */}
+
                                                         </div>)}
 
                                                         {/* End apply for job btn */}
@@ -260,7 +243,6 @@ const JobDetailsV2 = ({ id }) => {
                                                             </div>
                                                         </div>
                                                         {/* End .modal */}
-                                                        {/* End .modal */}
                                                     </div>
                                                 </div>
                                                 {/* <!-- Job Block --> */}
@@ -273,7 +255,6 @@ const JobDetailsV2 = ({ id }) => {
                                                 <div className="job-block-seven">
                                                     <div className="inner-box">
 
-                                                        {/* End .content */}
                                                     </div>
                                                 </div>
                                                 {/* <!-- Job Block --> */}
@@ -289,7 +270,6 @@ const JobDetailsV2 = ({ id }) => {
                                                         dangerouslySetInnerHTML={{ __html: jobDetails?.jobDesc || "" }}
                                                     />
                                                 </div>
-
 
                                             </div>
                                             {/* End jobdetails content */}
@@ -316,7 +296,6 @@ const JobDetailsV2 = ({ id }) => {
                                                         className="facebook"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-
                                                     >
                                                         <i className='fab fa-facebook-f'></i>Facebook
                                                     </a>
@@ -326,7 +305,6 @@ const JobDetailsV2 = ({ id }) => {
                                                         className="twitter"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-
                                                     >
                                                         <i className='fab fa-twitter'></i>Twitter
                                                     </a>
@@ -335,7 +313,6 @@ const JobDetailsV2 = ({ id }) => {
                                                         className="linkedin"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-
                                                     >
                                                         <i className='fab fa-linkedin'></i>Linkedin
                                                     </a>
@@ -373,8 +350,6 @@ const JobDetailsV2 = ({ id }) => {
                                                                 <h5>Job Title:</h5>
                                                                 <span>{jobDetails?.jobTitle}</span>
                                                             </li>
-
-
                                                             <li>
                                                                 <i className="icon icon-salary"></i>
                                                                 <h5>Salary:</h5>
@@ -416,19 +391,10 @@ const JobDetailsV2 = ({ id }) => {
                                                                     <li style={{ paddingTop: "8px" }}>
                                                                         Company size: <span>{jobDetails?.compSize}</span>
                                                                     </li>
-                                                                    {/* <li style={{ paddingTop: "8px"}}>
-                                                                        Phone: <span>123 456 7890</span>
-                                                                    </li>
-                                                                    <li style={{ paddingTop: "8px"}}>
-                                                                        Email: <span>info@joio.com</span>
-                                                                    </li>   */}
                                                                     <li style={{ paddingTop: "8px" }}>
                                                                         Location: <span>{jobDetails?.compCity}, {jobDetails?.compState}</span>
                                                                     </li>
-                                                                    {/* <li>
-                                                        Social media:
-                                                        <Social />
-                                                    </li> */}
+
                                                                 </ul>
                                                                 {
 
@@ -457,12 +423,6 @@ const JobDetailsV2 = ({ id }) => {
                                                 </div>
                                             </div>
 
-
-                                            {/* <!-- Other Options --> */}
-
-
-
-                                            {/* <!-- Related Jobs --> */}
                                         </div>
                                         {/* End .content-column */}
 
@@ -474,11 +434,8 @@ const JobDetailsV2 = ({ id }) => {
                                                     <div className="related-jobs ">
                                                         <div className="title-box">
                                                             <h3>Related Jobs</h3>
-                                                            {/* <div className="text">
-                                            2020 jobs live - 293 added today.
-                                        </div> */}
+
                                                         </div>
-                                                        {/* End title box */}
 
                                                         <div className="row">
                                                             <RelatedJobs3 id={jobDetails?.indistryList} />
@@ -486,8 +443,6 @@ const JobDetailsV2 = ({ id }) => {
                                                         {/* End .row */}
                                                     </div>
                                                 </div>
-                                                {/* End .sidebar-widget */}
-
 
                                             </aside>
                                             {/* End .sidebar */}

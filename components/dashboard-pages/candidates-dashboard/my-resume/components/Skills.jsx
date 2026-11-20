@@ -151,7 +151,6 @@ const SkillsForm = ({ data, setData, onNext }) => {
           ...data,
           skills,
         });
-        console.log('skills list ', skills)
 
         toast.success(user.message);
       }

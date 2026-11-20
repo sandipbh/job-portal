@@ -32,13 +32,6 @@ export async function POST(req) {
       headersList.get("cf-connecting-ip") ||
       "Unknown";
 
-    console.log(JSON.stringify({
-      Uqid: uqid,
-      Email: email,
-      Mobile: mobile,
-      ipAddress: LoginIp
-    }))
-
     const resendUrl =
       process.env.RESEND_OTP_API_URL ||
       `${externalApiBaseUrl.replace(/\/+$/, "")}/auth/resendOTP`;

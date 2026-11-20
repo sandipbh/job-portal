@@ -1,6 +1,7 @@
 
 "use client";
-import { useMemo, useState } from "react";
+
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,236 +10,542 @@ import {
   ArcElement,
   Title,
   Tooltip,
-  Legend,
+  Legend
 } from "chart.js";
 import { Bar, Doughnut } from "react-chartjs-2";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const months = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 
-// Replace this sample data with your API response.
-// Each record represents one job post in one month.
-const sampleData = [
-  { year: 2026, month: 1, jobPostId: 101, jobTitle: "React Developer", jobRole: "Developer", applicants: 85, shortlisted: 32, interviewSelected: 12 },
-  { year: 2026, month: 1, jobPostId: 102, jobTitle: "HR Executive", jobRole: "HR", applicants: 45, shortlisted: 18, interviewSelected: 7 },
-  { year: 2026, month: 2, jobPostId: 101, jobTitle: "React Developer", jobRole: "Developer", applicants: 110, shortlisted: 40, interviewSelected: 18 },
-  { year: 2026, month: 2, jobPostId: 102, jobTitle: "HR Executive", jobRole: "HR", applicants: 60, shortlisted: 25, interviewSelected: 10 },
-  { year: 2026, month: 3, jobPostId: 101, jobTitle: "React Developer", jobRole: "Developer", applicants: 95, shortlisted: 38, interviewSelected: 15 },
-  { year: 2026, month: 3, jobPostId: 103, jobTitle: "UI/UX Designer", jobRole: "Designer", applicants: 70, shortlisted: 28, interviewSelected: 9 },
-  { year: 2026, month: 4, jobPostId: 101, jobTitle: "React Developer", jobRole: "Developer", applicants: 125, shortlisted: 52, interviewSelected: 22 },
-  { year: 2026, month: 4, jobPostId: 103, jobTitle: "UI/UX Designer", jobRole: "Designer", applicants: 90, shortlisted: 35, interviewSelected: 14 },
-  { year: 2025, month: 1, jobPostId: 104, jobTitle: "Backend Developer", jobRole: "Developer", applicants: 75, shortlisted: 30, interviewSelected: 11 },
-  { year: 2025, month: 2, jobPostId: 104, jobTitle: "Backend Developer", jobRole: "Developer", applicants: 95, shortlisted: 42, interviewSelected: 16 },
-];
+const START_YEAR = 2025;
 
-const ProfileChart = ({ reportData = sampleData }) => {
+const ProfileChart = () => {
   const currentYear = new Date().getFullYear();
+
+  const yearList = useMemo(() => {
+    return Array.from(
+      { length: Math.max(0, currentYear - START_YEAR + 1) },
+      (_, i) => currentYear - i
+    );
+  }, [currentYear]);
+
   const [selectedYear, setSelectedYear] = useState(String(currentYear));
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [selectedRole, setSelectedRole] = useState("all");
 
-  const years = useMemo(
-    () => [...new Set(reportData.map(item => item.year))].sort((a, b) => b - a),
-    [reportData]
-  );
+  const [reportData, setReportData] = useState([]);
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [roleQuery, setRoleQuery] = useState("");
+  const [showRoleList, setShowRoleList] = useState(false);
 
-  const roles = useMemo(
-    () => [...new Set(reportData.map(item => item.jobRole))].sort(),
-    [reportData]
-  );
+  const [loading, setLoading] = useState(false);
+  const [roleLoading, setRoleLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const filteredData = useMemo(() => {
-    return reportData.filter(item =>
-      String(item.year) === selectedYear &&
-      (selectedRole === "all" || item.jobRole === selectedRole)
+  const roleBoxRef = useRef(null);
+  const requestRef = useRef(0);
+  const roleSearchTimer = useRef(null);
+
+  // Normalize API response
+  const normalizeRecords = (response) => {
+    const records =
+      response?.data ??
+      response?.Data ??
+      response?.result ??
+      response?.Result ??
+      [];
+
+    return Array.isArray(records)
+      ? records.map((item) => ({
+        year: Number(item.year ?? item.Year ?? 0),
+        month: Number(item.month ?? item.Month ?? 0),
+        jobPostId: item.jobPostId ?? item.JobPostId,
+        jobTitle: item.jobTitle ?? item.JobTitle ?? "",
+        jobRoleId: String(item.jobRoleId ?? item.JobRoleId ?? ""),
+        jobRole: item.jobRole ?? item.JobRole ?? "",
+        applicants: Number(item.applicants ?? item.Applicants ?? 0),
+        shortlisted: Number(item.shortlisted ?? item.Shortlisted ?? 0),
+        interviewSelected: Number(
+          item.interviewSelected ?? item.InterviewSelected ?? 0
+        )
+      }))
+      : [];
+  };
+
+  // Fetch analytics from SQL through Next.js API
+  const getAnalytics = useCallback(async () => {
+    const requestId = ++requestRef.current;
+
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await fetch("/api/emp-recruitment-analytics", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          year: Number(selectedYear),
+          month: selectedMonth === "all" ? null : Number(selectedMonth),
+          jobRoleId: selectedRole === "all" ? null : Number(selectedRole)
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || result?.success === false) {
+        throw new Error(
+          result?.message || "Unable to load recruitment analytics."
+        );
+      }
+
+      if (requestId === requestRef.current) {
+        setReportData(normalizeRecords(result));
+      }
+    } catch (err) {
+      if (requestId === requestRef.current) {
+        setReportData([]);
+        setError(err.message || "Something went wrong.");
+      }
+    } finally {
+      if (requestId === requestRef.current) {
+        setLoading(false);
+      }
+    }
+  }, [selectedYear, selectedMonth, selectedRole]);
+
+  useEffect(() => {
+    getAnalytics();
+  }, [getAnalytics]);
+
+  // Fetch job roles
+  const getJobRoles = async (term = "") => {
+    try {
+      setRoleLoading(true);
+
+      const response = await fetch("/api/list-job-role-dropdown", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ term })
+      });
+
+      const result = await response.json();
+
+      const records = result?.data ?? result?.Data ?? [];
+
+      setRoleOptions(
+        Array.isArray(records)
+          ? records.map((item) => ({
+            value: String(item.key ?? item.Key ?? item.id ?? item.Id ?? ""),
+            label: String(item.value ?? item.Value ?? item.name ?? item.Name ?? "")
+          })).filter((item) => item.value && item.label)
+          : []
+      );
+    } catch (err) {
+      console.error("Job role dropdown error:", err);
+      setRoleOptions([]);
+    } finally {
+      setRoleLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getJobRoles("");
+
+    return () => {
+      if (roleSearchTimer.current) {
+        clearTimeout(roleSearchTimer.current);
+      }
+    };
+  }, []);
+
+  const getJobRolesDebounced = (term) => {
+    if (roleSearchTimer.current) {
+      clearTimeout(roleSearchTimer.current);
+    }
+
+    roleSearchTimer.current = setTimeout(() => {
+      getJobRoles(term);
+    }, 300);
+  };
+
+  // Close role dropdown on outside click
+  useEffect(() => {
+    const handler = (event) => {
+      if (
+        roleBoxRef.current &&
+        !roleBoxRef.current.contains(event.target)
+      ) {
+        setShowRoleList(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handler);
+
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  }, []);
+
+  const filteredRoles = useMemo(() => {
+    const term = roleQuery.toLowerCase().trim();
+
+    return roleOptions.filter((role) =>
+      role.label.toLowerCase().includes(term)
     );
-  }, [reportData, selectedYear, selectedRole]);
+  }, [roleOptions, roleQuery]);
 
-  // Bar chart: monthly trend or individual job-post comparison.
+  const selectedRoleName = useMemo(() => {
+    return roleOptions.find(
+      (role) => role.value === selectedRole
+    )?.label || "";
+  }, [roleOptions, selectedRole]);
+
+  // Monthly bar chart or selected-month job-wise chart
   const barData = useMemo(() => {
     const grouped = {};
 
-    filteredData
-      .filter(item => selectedMonth === "all" || item.month === Number(selectedMonth))
-      .forEach(item => {
-        const key = selectedMonth === "all"
-          ? item.month
-          : `${item.jobTitle} (#${item.jobPostId})`;
+    reportData.forEach((item) => {
+      const key = selectedMonth === "all"
+        ? item.month
+        : `${item.jobTitle || `Job #${item.jobPostId}`} (#${item.jobPostId})`;
 
-        if (!grouped[key]) {
-          grouped[key] = { applicants: 0, shortlisted: 0, interviewSelected: 0 };
-        }
+      if (!grouped[key]) {
+        grouped[key] = {
+          applicants: 0,
+          shortlisted: 0,
+          interviewSelected: 0
+        };
+      }
 
-        grouped[key].applicants += Number(item.applicants || 0);
-        grouped[key].shortlisted += Number(item.shortlisted || 0);
-        grouped[key].interviewSelected += Number(item.interviewSelected || 0);
-      });
+      grouped[key].applicants += item.applicants;
+      grouped[key].shortlisted += item.shortlisted;
+      grouped[key].interviewSelected += item.interviewSelected;
+    });
 
     const labels = selectedMonth === "all"
-      ? Object.keys(grouped).map(Number).sort((a, b) => a - b).map(month => months[month - 1])
+      ? Object.keys(grouped)
+        .map(Number)
+        .sort((a, b) => a - b)
+        .map((month) => months[month - 1])
       : Object.keys(grouped);
 
     const values = selectedMonth === "all"
-      ? labels.map(label => grouped[months.indexOf(label) + 1])
-      : labels.map(label => grouped[label]);
+      ? labels.map((label) => grouped[months.indexOf(label) + 1])
+      : labels.map((label) => grouped[label]);
 
     return {
       labels,
       datasets: [
         {
           label: "Applicants",
-          data: values.map(item => item.applicants),
+          data: values.map((item) => item.applicants),
           backgroundColor: "rgba(91, 151, 218, 0.8)",
-          borderRadius: 5,
+          borderRadius: 5
         },
         {
           label: "Shortlisted",
-          data: values.map(item => item.shortlisted),
+          data: values.map((item) => item.shortlisted),
           backgroundColor: "rgba(83, 164, 125, 0.8)",
-          borderRadius: 5,
+          borderRadius: 5
         },
         {
           label: "Interview Selected",
-          data: values.map(item => item.interviewSelected),
+          data: values.map((item) => item.interviewSelected),
           backgroundColor: "rgba(235, 176, 76, 0.8)",
-          borderRadius: 5,
-        },
-      ],
+          borderRadius: 5
+        }
+      ]
     };
-  }, [filteredData, selectedMonth]);
+  }, [reportData, selectedMonth]);
 
-  // Doughnut chart: candidate funnel for selected month or entire year.
+  // Candidate selection overview
   const pieData = useMemo(() => {
-    const totals = filteredData
-      .filter(item => selectedMonth === "all" || item.month === Number(selectedMonth))
-      .reduce((acc, item) => ({
-        applicants: acc.applicants + Number(item.applicants || 0),
-        shortlisted: acc.shortlisted + Number(item.shortlisted || 0),
-        interviewSelected: acc.interviewSelected + Number(item.interviewSelected || 0),
-      }), { applicants: 0, shortlisted: 0, interviewSelected: 0 });
+    const totals = reportData.reduce(
+      (acc, item) => ({
+        applicants: acc.applicants + item.applicants,
+        shortlisted: acc.shortlisted + item.shortlisted,
+        interviewSelected: acc.interviewSelected + item.interviewSelected
+      }),
+      {
+        applicants: 0,
+        shortlisted: 0,
+        interviewSelected: 0
+      }
+    );
 
-    // Assumes shortlisted and interview-selected candidates are subsets
-    // of the previous recruitment stages.
-    const applied = Math.max(0, totals.applicants - totals.shortlisted);
-    const shortlisted = Math.max(0, totals.shortlisted - totals.interviewSelected);
-    const interviewSelected = Math.max(0, totals.interviewSelected);
+    const applied = Math.max(
+      0,
+      totals.applicants - totals.shortlisted
+    );
+
+    const shortlisted = Math.max(
+      0,
+      totals.shortlisted - totals.interviewSelected
+    );
 
     return {
-      labels: ["Applied", "Shortlisted", "Interview Selected"],
-      datasets: [{
-        data: [applied, shortlisted, interviewSelected],
-        backgroundColor: [
-          "rgba(91, 151, 218, 0.8)",
-          "rgba(83, 164, 125, 0.8)",
-          "rgba(235, 176, 76, 0.8)",
-        ],
-        borderWidth: 2,
-        borderColor: "#ffffff",
-      }],
+      labels: [
+        "Applied",
+        "Shortlisted",
+        "Interview Selected"
+      ],
+      datasets: [
+        {
+          data: [
+            applied,
+            shortlisted,
+            totals.interviewSelected
+          ],
+          backgroundColor: [
+            "rgba(91, 151, 218, 0.8)",
+            "rgba(83, 164, 125, 0.8)",
+            "rgba(235, 176, 76, 0.8)"
+          ],
+          borderWidth: 2,
+          borderColor: "#ffffff"
+        }
+      ]
     };
-  }, [filteredData, selectedMonth]);
+  }, [reportData]);
 
   const barOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "bottom" },
-      tooltip: { mode: "index", intersect: false },
+      legend: {
+        position: "bottom"
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false
+      }
     },
     scales: {
       y: {
         beginAtZero: true,
-        ticks: { precision: 0 },
-      },
-    },
+        ticks: {
+          precision: 0
+        }
+      }
+    }
   };
 
   const pieOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "bottom" },
+      legend: {
+        position: "bottom"
+      },
       tooltip: {
         callbacks: {
-          label: context => `${context.label}: ${context.raw}`,
-        },
-      },
-    },
+          label: (ctx) => `${ctx.label}: ${ctx.raw}`
+        }
+      }
+    }
   };
 
   return (
     <div className="tabs-box">
       <div className="widget-title">
         <h4>Recruitment Analytics</h4>
+
         <div className="d-flex gap-2">
+          {/* Year filter */}
           <select
             className="form-select"
             value={selectedYear}
-            onChange={e => setSelectedYear(e.target.value)}
+            onChange={(e) => setSelectedYear(e.target.value)}
+            style={{ minWidth: 100 }}
           >
-            {years.map(year => (
-              <option key={year} value={year}>{year}</option>
+            {yearList.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
             ))}
           </select>
 
+          {/* Month filter */}
           <select
             className="form-select"
             value={selectedMonth}
-            onChange={e => setSelectedMonth(e.target.value)}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            style={{ minWidth: 130 }}
           >
             <option value="all">All Months</option>
             {months.map((month, index) => (
-              <option key={month} value={index + 1}>{month}</option>
+              <option key={month} value={index + 1}>
+                {month}
+              </option>
             ))}
           </select>
 
-          <select
-            className="form-select"
-            value={selectedRole}
-            onChange={e => setSelectedRole(e.target.value)}
+          {/* Job role filter */}
+          <div
+            className="position-relative"
+            style={{ minWidth: 240 }}
+            ref={roleBoxRef}
           >
-            <option value="all">All Job Roles</option>
-            {roles.map(role => (
-              <option key={role} value={role}>{role}</option>
-            ))}
-          </select>
+            <input
+              type="text"
+              className="form-control"
+              placeholder={
+                selectedRole === "all"
+                  ? "All Job Roles"
+                  : selectedRoleName || "Select Job Role"
+              }
+              value={roleQuery}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                setRoleQuery(value);
+                setShowRoleList(true);
+                getJobRolesDebounced(value);
+              }}
+              onFocus={() => setShowRoleList(true)}
+            />
+
+            {showRoleList && (
+              <ul
+                className="list-unstyled bg-white border rounded shadow-sm"
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  left: 0,
+                  width: "100%",
+                  margin: "4px 0 0",
+                  maxHeight: 240,
+                  overflowY: "auto",
+                  zIndex: 1000
+                }}
+              >
+                <li
+                  className="px-3 py-2"
+                  style={{
+                    cursor: "pointer",
+                    background: selectedRole === "all" ? "#eef2ff" : ""
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setSelectedRole("all");
+                    setRoleQuery("");
+                    setShowRoleList(false);
+                  }}
+                >
+                  All Job Roles
+                </li>
+
+                {roleLoading ? (
+                  <li className="px-3 py-2 text-muted">
+                    Loading...
+                  </li>
+                ) : filteredRoles.length === 0 ? (
+                  <li className="px-3 py-2 text-muted">
+                    No job roles found
+                  </li>
+                ) : (
+                  filteredRoles.map((role) => (
+                    <li
+                      key={role.value}
+                      className="px-3 py-2"
+                      style={{
+                        cursor: "pointer",
+                        background:
+                          selectedRole === role.value ? "#eef2ff" : ""
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        setSelectedRole(role.value);
+                        setRoleQuery("");
+                        setShowRoleList(false);
+                      }}
+                    >
+                      {role.label}
+                    </li>
+                  ))
+                )}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
 
       <div className="widget-content">
-        <div className="row g-4">
-          <div className="col-lg-7">
-            <div className="border rounded p-3 h-100">
-              <h6 className="mb-3 fw-medium">
-                {selectedMonth === "all"
-                  ? "Monthly Recruitment Performance"
-                  : `${months[Number(selectedMonth) - 1]} - Job Post Performance`}
-              </h6>
-              <div style={{ height: "350px", position: "relative" }}>
-                {barData.labels.length > 0
-                  ? <Bar data={barData} options={barOptions} />
-                  : <p className="text-center pt-5">No recruitment data available.</p>}
-              </div>
-            </div>
+        {error && (
+          <div className="alert alert-danger d-flex justify-content-between align-items-center">
+            <span>{error}</span>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-danger"
+              onClick={getAnalytics}
+            >
+              Retry
+            </button>
           </div>
+        )}
 
-          <div className="col-lg-5">
-            <div className="border rounded p-3 h-100">
-              <h6 className="mb-3 fw-medium">
-                Candidate Selection Overview
-              </h6>
-              <div style={{ height: "350px", position: "relative" }}>
-                {pieData.datasets[0].data.some(value => value > 0)
-                  ? <Doughnut data={pieData} options={pieOptions} />
-                  : <p className="text-center pt-5">No recruitment data available.</p>}
+        {loading ? (
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status" />
+            <p className="mt-2 mb-0">Loading recruitment analytics...</p>
+          </div>
+        ) : (
+          <div className="row g-4">
+            <div className="col-lg-7">
+              <div className="border rounded p-3 h-100">
+                <h6 className="mb-3 fw-medium">
+                  {selectedMonth === "all"
+                    ? "Monthly Recruitment Performance"
+                    : `${months[Number(selectedMonth) - 1]} - Job Post Performance`}
+                </h6>
+
+                <div style={{ height: 350, position: "relative" }}>
+                  {barData.labels.length > 0 ? (
+                    <Bar data={barData} options={barOptions} />
+                  ) : (
+                    <p className="text-center pt-5">
+                      No recruitment data available.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-5">
+              <div className="border rounded p-3 h-100">
+                <h6 className="mb-3 fw-medium">
+                  Candidate Selection Overview
+                </h6>
+
+                <div style={{ height: 350, position: "relative" }}>
+                  {pieData.datasets[0].data.some((value) => value > 0) ? (
+                    <Doughnut data={pieData} options={pieOptions} />
+                  ) : (
+                    <p className="text-center pt-5">
+                      No recruitment data available.
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

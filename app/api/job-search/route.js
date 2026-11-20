@@ -61,8 +61,6 @@ export async function POST(req) {
                 : String(body.keywordKeyword).trim()
         };
 
-        console.log("SEARCH FILTERS BEFORE ENCRYPTION:", filters);
-
         return NextResponse.json({
             token: encryptFilters(filters)
         });
@@ -181,14 +179,6 @@ export async function GET(req) {
 
         payload.PageNumber = String(pageNumber);
         payload.PageSize = String(pageSize);
-
-        console.log("DECRYPTED SEARCH FILTERS:", filters);
-        console.log("SEARCH KIND:", kind);
-        console.log("SEARCH TERM:", term);
-        console.log("JOB TITLE KEYWORD:", jobTitleKeyword);
-        console.log("LOCATION KEYWORD:", locationKeyword);
-        console.log("DATABASE KEYWORD:", keywordKeyword);
-        console.log("FINAL DOT NET API PAYLOAD:", payload);
 
         const externalApiUrl = `${externalApiBaseUrl}/api/Public/getFindJobList`;
 

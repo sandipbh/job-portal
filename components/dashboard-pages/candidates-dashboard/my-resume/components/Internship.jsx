@@ -248,7 +248,6 @@ const InternshipForm = ({ data, setData, onNext }) => {
                 });
 
                 const user = await res.json();
-                console.log("Response from /api/candi-internship:", user);
 
                 if (!res.ok) {
                     toast.error(user.message || "Update failed");

@@ -21,8 +21,6 @@ export async function POST(req) {
       companyName
     } = await req.json();
 
-    console.log("Registration attempt:", email);
-
     // 1. Basic validation
     if (!email || !password || !name || !mobile) {
       return NextResponse.json(
@@ -82,8 +80,6 @@ export async function POST(req) {
 
     const externalData = await externalResponse.json();
 
-    console.log("External API response:", externalData);
-
     if (!externalResponse.ok) {
       console.error(
         "External registration failed:",
@@ -99,8 +95,6 @@ export async function POST(req) {
         { status: externalResponse.status || 500 }
       );
     }
-
-    console.log("User registered successfully:", externalData.data);
 
     // 6. Send response with cookies
     const response = NextResponse.json(

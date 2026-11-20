@@ -190,25 +190,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 contactNumber = null;
             }
 
-
-            // =================================================
-            // LOG USER DATA
-            // =================================================
-
-            console.log("================================");
-            console.log("LOGIN PROVIDER:", provider);
-            console.log("USER ID:", userId);
-            console.log("NAME:", name);
-            console.log("EMAIL:", email);
-            console.log("IMAGE:", image);
-            console.log("PHONE:", contactNumber);
-            console.log("================================");
-
-
-            // =================================================
-            // API
-            // =================================================
-
             try {
 
                 const externalApiBaseUrl =
@@ -296,17 +277,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const checkResult =
                     await checkResponse.json();
 
-
-                console.log(
-                    "CHECK RESULT:",
-                    checkResult
-                );
-
-
-                // =================================================
-                // LOGIN ONLY: NOT REGISTERED
-                // =================================================
-
                 if (isLoginMode && checkResult.IsActive === false) {
 
                     return "/login?socialError=inactive_account";
@@ -317,21 +287,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return "/login?socialError=not_registered";
                 }
 
-
-                // =================================================
-                // EXISTING USER
-                // =================================================
-
                 if (checkResult.success === true) {
-
-                    console.log(
-                        "Existing user - performing login"
-                    );
-
-
-                    // ---------------------------------------------
-                    // LOGIN BODY
-                    // ---------------------------------------------
 
                     const loginBody = {
 
@@ -354,17 +310,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                                 ? "Google"
                                 : "LinkedIn",
                     };
-
-
-                    console.log(
-                        "LOGIN BODY:",
-                        loginBody
-                    );
-
-
-                    // ---------------------------------------------
-                    // EXTERNAL LOGIN API
-                    // ---------------------------------------------
 
                     const externalApiUrl =
                         `${apiUrl}/authLogin/login`;
@@ -389,17 +334,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                     const externalData =
                         await externalResponse.json();
-
-
-                    console.log(
-                        "External API response:",
-                        externalData
-                    );
-
-
-                    // ---------------------------------------------
-                    // LOGIN FAILED
-                    // ---------------------------------------------
 
                     if (!externalResponse.ok) {
 
@@ -470,12 +404,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                     account.loginProvider =
                         provider;
-
-
-                    console.log(
-                        "External login successful"
-                    );
-
 
                     return true;
                 }

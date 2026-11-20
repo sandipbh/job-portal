@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 //import jobs from "../../../../../data/job-featured.js";
 import Image from "next/image.js";
+import { toast } from "react-toastify";
 
 
 import {
@@ -27,6 +28,7 @@ const JobListingsTable = () => {
   const [showExperience, setShowExperience] = useState(false);
   const [showDate, setShowDate] = useState(false);
   const [location, setLocation] = useState("");
+  const [updatingJobId, setUpdatingJobId] = useState(null);
 
   const [jobList, setJobList] = useState([]);
 
@@ -66,7 +68,54 @@ const JobListingsTable = () => {
     });
   };
 
+  const handleToggleStatus = async (item) => {
+    const jobPostId = item.JOB_POST_ID ?? item.jobPostId ?? item.id;
+    const currentStatus = item.STATUS ?? item.status ?? item.jobStatus;
 
+    if (!jobPostId || Number(jobPostId) <= 0) {
+      console.error("Job posting object:", item);
+      toast.error("Job posting ID not found.");
+      return;
+    }
+
+    const newStatus = String(currentStatus).toLowerCase() === "active" ? "Inactive" : "Active";
+
+    try {
+      setUpdatingJobId(jobPostId);
+
+      const response = await fetch("/api/emp-job-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jobPostId: Number(jobPostId),
+          status: newStatus
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || result.success === false || result.Success === false) {
+        toast.error(result.message || result.Message || "Unable to update job status.");
+        return;
+      }
+
+      setJobList(prev =>
+        prev.map(job => {
+          const id = job.JOB_POST_ID ?? job.jobPostId ?? job.id;
+          return Number(id) === Number(jobPostId)
+            ? { ...job, STATUS: newStatus, status: newStatus }
+            : job;
+        })
+      );
+
+      toast.success(result.message || result.Message || "Job status updated successfully.");
+    } catch (error) {
+      console.error("Job status update:", error);
+      toast.error("Something went wrong.");
+    } finally {
+      setUpdatingJobId(null);
+    }
+  };
 
   const handleCheckbox = (value, selected, setSelected) => {
     if (selected.includes(value)) {
@@ -201,7 +250,6 @@ const JobListingsTable = () => {
     startIndex,
     endIndex
   );
-
 
   useEffect(() => {
     setCurrentPage(1);
@@ -724,7 +772,12 @@ const JobListingsTable = () => {
                       {formatDate(item.created_at)} <br />
                       <span className="error-text"> {formatDate(item.expire_at)}</span>
                     </td>
-                    <td className="status">{item.status} </td>
+                    <td className="status">
+                      <span className={`job-status-badge ${(item.STATUS ?? item.status) === "Active" ? "active" : "inactive"
+                        }`}>
+                        {item.STATUS ?? item.status}
+                      </span>
+                    </td>
                     <td>
                       <div className="option-box">
                         <ul className="option-list">
@@ -747,11 +800,26 @@ const JobListingsTable = () => {
                             </Link>
 
                           </li>
-                          {/* <li>
-                            <button data-text="Delete Aplication">
-                              <span className="la la-trash"></span>
+                          <li>
+                            <button
+                              type="button"
+                              data-text={
+                                String(item.STATUS ?? item.status ?? item.jobStatus).toLowerCase() === "active"
+                                  ? "Deactivate Job"
+                                  : "Activate Job"
+                              }
+                              disabled={Number(updatingJobId) === Number(item.JOB_POST_ID ?? item.jobPostId ?? item.id)}
+                              onClick={() => handleToggleStatus(item)}
+                            >
+                              <span
+                                className={`la ${String(item.STATUS ?? item.status ?? item.jobStatus).toLowerCase() === "active"
+                                  ? "la-toggle-on text-danger"
+                                  : "la-toggle-off text-success"
+                                  }`}
+                              ></span>
                             </button>
-                          </li> */}
+                          </li>
+
                         </ul>
                       </div>
                     </td>

@@ -24,6 +24,7 @@ const index = () => {
                 height={50}
                 src="/images/logo.svg"
                 alt="brand"
+
               />
             </Link>
           </div>

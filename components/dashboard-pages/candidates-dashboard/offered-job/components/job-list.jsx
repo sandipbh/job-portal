@@ -348,7 +348,6 @@ const JobFavouriteTable = () => {
                                                         </h5>
                                                     </div>
                                                 </div>
-
                                                 <div
                                                     className="offer-letter-document"
                                                     dangerouslySetInnerHTML={{

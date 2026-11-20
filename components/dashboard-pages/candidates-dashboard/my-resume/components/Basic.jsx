@@ -282,7 +282,6 @@ const Basic = ({ formData,
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("FINAL FORM DATA:", form);
     const payload = new FormData();
 
     const isValid = validateForm();
@@ -302,7 +301,6 @@ const Basic = ({ formData,
       });
 
       const user = await res.json();
-      console.log("Response from /api/candi-update-profile:", user);
 
       if (!res.ok) {
         toast.error(user.message || "Request failed");
@@ -347,7 +345,6 @@ const Basic = ({ formData,
     );
 
     if (exists) {
-      console.log("Language already added");
       return;
     }
 
@@ -374,8 +371,6 @@ const Basic = ({ formData,
       })),
     }));
 
-    console.log(updated);
-
     setShowLanguageSearch(false);
     setLanguageSearch("");
   };
@@ -399,14 +394,6 @@ const Basic = ({ formData,
       speak: lang.speak ? 1 : 0,
     }));
 
-    // setFormData((prev) => ({
-    //   ...prev,
-    //   languages: apiLanguages,
-    // }));
-
-    console.log(apiLanguages);
-    console.log("API Language Data");
-    console.log(apiLanguages);
   };
 
 

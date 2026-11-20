@@ -230,7 +230,6 @@ const FormInfoBox = ({ formData,
     );
 
     if (exists) {
-      console.log("Language already added");
       return;
     }
 
@@ -256,8 +255,6 @@ const FormInfoBox = ({ formData,
         speak: item.speak ? 1 : 0,
       })),
     }));
-
-    console.log(updated);
 
     setShowLanguageSearch(false);
     setLanguageSearch("");
@@ -287,9 +284,6 @@ const FormInfoBox = ({ formData,
       ...prev,
       languages: apiLanguages,
     }));
-    console.log(apiLanguages);
-    console.log("API Language Data");
-    console.log(apiLanguages);
 
     const languageString =
       updated
@@ -773,7 +767,6 @@ const FormInfoBox = ({ formData,
                         })),
                       }));
 
-                      console.log(updated);
                     }}
                   >
                     ×

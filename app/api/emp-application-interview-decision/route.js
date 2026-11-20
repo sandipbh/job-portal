@@ -68,9 +68,6 @@ export async function POST(req) {
             Token: external.accessToken
         };
 
-
-        console.log(" loginBody : ", loginBody);
-
         const externalApiBaseUrl = process.env.API_BASE_URL;
 
         if (!externalApiBaseUrl) {

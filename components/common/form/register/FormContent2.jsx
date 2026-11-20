@@ -412,7 +412,6 @@ const FormContent2 = () => {
       });
 
       const user = await res.json();
-      console.log("Response from /api/register:", user);
 
       if (!res.ok) {
         toast.error(user.message || "Registration failed");
@@ -428,13 +427,6 @@ const FormContent2 = () => {
           user?.user?.uqid ??
           user?.user?.id ??
           "";
-
-        console.log("Storing in localStorage 1:", {
-          otpUserEmail: formData.email,
-          otpUserMobile: formData.mobile,
-          otpUserUqId,
-          userData: user?.user,
-        });
 
         const otpKeys = ["otpUserEmail", "otpUserMobile", "otpUserUqId"];
 

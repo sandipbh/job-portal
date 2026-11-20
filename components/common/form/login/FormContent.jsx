@@ -188,8 +188,6 @@ const FormContent = () => {
       try {
         const user = await res.json();
 
-        console.log(user)
-
         if (!res.ok) {
           toast.error(user.message || "Login failed1");
           setLoading(false);

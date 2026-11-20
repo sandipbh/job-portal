@@ -64,7 +64,6 @@ const ExperienceForm = ({ data, setData, onNext }) => {
 
         }));
 
-        console.log(examList)
         setList(examList);
 
         setForm(emptyExperience);
@@ -82,7 +81,6 @@ const ExperienceForm = ({ data, setData, onNext }) => {
 
   const saveExperience = async () => {
     const isValid = validateForm();
-    console.log(isValid)
     if (!isValid) {
       return;
     }
@@ -103,7 +101,6 @@ const ExperienceForm = ({ data, setData, onNext }) => {
       });
 
       const user = await res.json();
-      console.log("Response from /api/candi-experience:", user);
 
       if (!res.ok) {
         toast.error(user.message || "Request failed");

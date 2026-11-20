@@ -159,12 +159,6 @@ const ApplyJobModalContent = ({ id, hasQue }) => {
     }
     else {
       setLoading(true);
-      console.log({
-        resume,
-        message,
-        answers,
-      });
-
 
       const formData = new FormData();
 
@@ -182,7 +176,6 @@ const ApplyJobModalContent = ({ id, hasQue }) => {
         });
 
         const user = await res.json();
-        console.log("Response from /api/candi-update-profile:", user);
 
         if (!res.ok) {
           toast.error(user.message || "Request failed");
@@ -210,12 +203,6 @@ const ApplyJobModalContent = ({ id, hasQue }) => {
 
     setShowDrawer(false);
     setLoading(true);
-    console.log({
-      resume,
-      message,
-      answers,
-    });
-
 
     const formData = new FormData();
 
@@ -233,7 +220,6 @@ const ApplyJobModalContent = ({ id, hasQue }) => {
       });
 
       const user = await res.json();
-      console.log("Response from /api/candi-update-profile:", user);
 
       if (!res.ok) {
         toast.error(user.message || "Request failed");

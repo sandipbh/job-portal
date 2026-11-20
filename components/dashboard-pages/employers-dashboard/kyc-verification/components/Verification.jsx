@@ -364,8 +364,6 @@ const Verification = ({ activeTab, setActiveTab }) => {
 
     const handleSubmit = async () => {
 
-        console.log("FINAL FORM DATA:", kycData);
-
         let newErrors = {};
 
         if (!kycData.compPhoto || kycData.compPhoto.length < 5) {
@@ -391,7 +389,6 @@ const Verification = ({ activeTab, setActiveTab }) => {
                 });
 
                 const user = await res.json();
-                console.log("Response from /api/emp-update-profile-kyc:", user);
 
                 if (!res.ok) {
                     toast.error(user.message || "Request failed");

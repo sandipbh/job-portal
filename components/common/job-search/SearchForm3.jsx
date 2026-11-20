@@ -76,7 +76,6 @@ const SearchForm3 = () => {
         });
 
         const result = await response.json();
-        console.log(JSON.stringify(result));
         setCategoryList(result?.data || []);
       } catch (error) {
         console.error(error);
@@ -102,7 +101,6 @@ const SearchForm3 = () => {
         });
 
         const result = await response.json();
-        console.log(JSON.stringify(result));
         setLocationList(result?.data || []);
       } catch (error) {
         console.error(error);
@@ -128,7 +126,6 @@ const SearchForm3 = () => {
         });
 
         const result = await response.json();
-        console.log(JSON.stringify(result));
         setKeywordList(result?.data || []);
       } catch (error) {
         console.error(error);

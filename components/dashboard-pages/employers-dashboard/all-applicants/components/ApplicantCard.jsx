@@ -33,6 +33,7 @@ const ApplicantCard = ({
 
     const [isSaved, setIsSaved] = useState(candidate.isSave === "Y");
     const [loadingBookmark, setLoadingBookmark] = useState(false);
+    const [showContact, setShowContact] = useState(null);
 
     useEffect(() => {
         setIsSaved(candidate.isSave === "Y");
@@ -165,9 +166,6 @@ const ApplicantCard = ({
 
     const handleShareSubmit = async (e, appId) => {
         e.preventDefault();
-
-        console.log("Email:", shareEmail);
-        console.log("Remark:", shareRemark);
 
         const payload = {
             applicationId: appId,
@@ -445,7 +443,15 @@ const ApplicantCard = ({
         } finally {
             setLoading(false);
         }
+    };
 
+    const copyToClipboard = async (text, type) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            toast.success(`${type} copied!`);
+        } catch (error) {
+            toast.error(`Unable to copy ${type}`);
+        }
     };
 
     const openResume = (resumePath) => {
@@ -582,6 +588,48 @@ const ApplicantCard = ({
                     </div>
                 </div>
 
+                <div className="candidate-row skills-row">
+                    <div className="label1">Job Title :</div>
+                    <div className="d-flex align-items-center"><span style={{ fontSize: "12pt", fontWeight: 500 }}>{candidate.jobTitle}</span></div>
+                </div>
+
+                {showContact === candidate.candiUqId && (
+                    <div className="contact-info">
+                        <button
+                            type="button"
+                            className="contact-close-btn"
+                            title="Close"
+                            onClick={() => setShowContact(null)}
+                        >
+                            <i className="las la-times"></i>
+                        </button>
+
+                        <div className="contact-item">
+                            <span className="fw-bold">Email:</span>
+                            <a href={`mailto:${candidate.email}`}>{candidate.email}</a>
+                            <button
+                                type="button"
+                                title="Copy email"
+                                onClick={() => copyToClipboard(candidate.email || "", "Email")}
+                            >
+                                <i className="la la-copy"></i>
+                            </button>
+                        </div>
+
+                        <div className="contact-item">
+                            <span className="fw-bold">Mobile:</span>
+                            <a href={`tel:${candidate.mobile}`}>{candidate.mobile}</a>
+                            <button
+                                type="button"
+                                title="Copy mobile"
+                                onClick={() => copyToClipboard(candidate.mobile || "", "Mobile")}
+                            >
+                                <i className="la la-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                )}
+
 
                 <div className="candidate-actions d-flex flex-wrap align-items-center">
 
@@ -628,6 +676,16 @@ const ApplicantCard = ({
                     )}
 
                     <div className="right-side ms-0 ms-md-auto mt-2 mt-md-0">
+                        <button
+                            type="button"
+                            className="icon-circle"
+                            onClick={() => setShowContact(candidate.candiUqId)}
+                        >
+                            <span style={{ fontWeight: "500" }}>
+                                <i className="las la-phone"></i>
+                            </span>
+                        </button>
+
                         {candidate.status != "Deleted" ? (
                             <button
                                 className="icon-circle"
@@ -638,12 +696,13 @@ const ApplicantCard = ({
                         ) : (<button className="action-btn reject-btn" disabled={true}>
                             <i className="la la-times"></i> Deleted
                         </button>)}
+
                         {candidate.resumePath?.trim() && (
                             <button
                                 type="button"
-                                className="icon-circle"
+                                className="icon-circle resume-tooltip"
                                 onClick={() => openResume(candidate.resumePath)}
-                                title="View Resume"
+                                data-tooltip="View Resume"
                             >
                                 <i className="la la-file-pdf-o"></i>
                             </button>

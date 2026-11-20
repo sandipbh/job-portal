@@ -20,9 +20,8 @@ const Header = () => {
 
   return (
     <header
-      className={`main-header ${
-        navbar ? "fixed-header animated slideInDown" : ""
-      }`}
+      className={`main-header ${navbar ? "fixed-header animated slideInDown" : ""
+        }`}
     >
       <div className="container-fluid">
         {/* <!-- Main box --> */}
@@ -38,6 +37,7 @@ const Header = () => {
                     src="/images/logo-2.svg"
                     alt="logo"
                     title="brand"
+                    priority
                   />
                 </Link>
                 <Link href="/" className="isSticky">

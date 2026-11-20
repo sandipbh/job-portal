@@ -16,7 +16,6 @@ export async function POST(req) {
         console.error("Invalid JSON token:", err);
         user = {};
     }
-    //console.log("dashboard user User Role :", user.external.role);
 
 
     const {

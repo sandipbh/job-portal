@@ -10,8 +10,6 @@ export async function GET() {
     //const regTokenCookie = cookies().get("regToken")?.value;
     const cookieStore = await cookies();
     const regTokenCookie = cookieStore.get("regToken")?.value;
-    console.log("regTokenCookie:", regTokenCookie);
-    console.log("cookieStore:", cookieStore);
 
     if (!regTokenCookie) {
       return NextResponse.json(
@@ -23,7 +21,6 @@ export async function GET() {
     let regToken;
     try {
       regToken = JSON.parse(regTokenCookie);
-      console.log("Parsed regToken:", regToken);
     } catch {
       return NextResponse.json(
         { otpUserEmail: null, otpUserMobile: null, otpUserUqId: null },

@@ -240,9 +240,6 @@ const FormInfoBox = ({ formData,
       return;
     }
 
-    console.log("Fetching universities for term:", term);
-
-
     try {
 
       const response = await fetch("/api/university-search-list", {
@@ -256,7 +253,6 @@ const FormInfoBox = ({ formData,
       });
 
       const data = await response.json();
-      console.log("Universities fetched:", JSON.stringify(data));
 
       setUniversityList(data && data.data ? data.data : []);
       setShowUniversityList(true);

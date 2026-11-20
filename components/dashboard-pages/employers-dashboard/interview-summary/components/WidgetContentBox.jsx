@@ -30,7 +30,7 @@ const WidgetContentBox = () => {
     const getJobList = async () => {
         try {
             const response = await fetch(
-                `/api/emp-job-interview-list?JobPostId=${jobId}`,
+                `/api/emp-candidate-joined-list?JobPostId=${jobId}`,
                 { method: "GET" }
             );
 
@@ -44,10 +44,6 @@ const WidgetContentBox = () => {
             console.error(error);
         }
     };
-
-    /* ---------------------------------------------------------------
-     * Derive unique + sorted filter options from the loaded candidates
-     * --------------------------------------------------------------- */
 
     const getJobValue = (c) =>
         (c?.designation ?? c?.jobTitle ?? "").toString().trim();
@@ -77,10 +73,6 @@ const WidgetContentBox = () => {
     }, [candidatesData]);
 
     const ratingOptions = useMemo(() => ["5", "4", "3", "2", "1"], []);
-
-    /* ---------------------------------------------------------------
-     * Filtering
-     * --------------------------------------------------------------- */
 
     const isCandidateVerified = (candidate) => {
         const value = candidate?.verifyStatus ??
@@ -154,10 +146,6 @@ const WidgetContentBox = () => {
         );
     });
 
-    /* ---------------------------------------------------------------
-     * Status / comment state updates
-     * --------------------------------------------------------------- */
-
     const updateCandidateStatus = (id, status) => {
         setCandidatesData((prev) =>
             prev.map((candidate) =>
@@ -189,10 +177,6 @@ const WidgetContentBox = () => {
             )
         );
     };
-
-    /* ---------------------------------------------------------------
-     * Pagination
-     * --------------------------------------------------------------- */
 
     const [currentPage, setCurrentPage] = useState(1);
     const [jobsPerPage, setJobsPerPage] = useState(20);

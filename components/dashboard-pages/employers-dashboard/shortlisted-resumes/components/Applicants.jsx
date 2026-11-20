@@ -24,9 +24,6 @@ const Applicants = ({ candidate,
   const [commentList, setCommentList] = useState([]);
   const [verifiedCandidate, setVerifiedCandidate] = useState(false);
 
-  console.log(JSON.stringify(candidate));
-
-
   const review = candidate.review?.split("^") || [];
 
   const [ratings, setRatings] = useState({
@@ -400,7 +397,6 @@ const Applicants = ({ candidate,
       });
 
       const user = await res.json();
-      console.log("Response from /api/emp-application-feedback:", user);
 
       if (!res.ok) {
         toast.error(user.message || "Request failed");
@@ -497,9 +493,6 @@ const Applicants = ({ candidate,
 
   const handleShareSubmit = async (e, appId) => {
     e.preventDefault();
-
-    console.log("Email:", shareEmail);
-    console.log("Remark:", shareRemark);
 
     const payload = {
       applicationId: appId,

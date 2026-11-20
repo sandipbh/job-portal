@@ -51,8 +51,6 @@ const Education = () => {
                 }),
             });
             const data = await response.json();
-            console.log("skills courses:", JSON.stringify(data.data));
-            //  setEducation(data && data.data ? data.data : []);
             setEducationList(data?.data || []);
         } catch (error) {
             console.error(error);

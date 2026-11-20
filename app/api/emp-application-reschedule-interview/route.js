@@ -123,12 +123,6 @@ export async function POST(req) {
 
         const endpoint = `${apiBaseUrl}/Employer/employer/RescheduleInterview`;
 
-        console.log("Schedule interview endpoint:", endpoint);
-        console.log("Schedule interview payload:", {
-            ...loginBody,
-            token: "[REDACTED]"
-        });
-
         const apiResponse = await apiFetch(endpoint, {
             method: "POST",
             headers: { "Content-Type": "application/json" },

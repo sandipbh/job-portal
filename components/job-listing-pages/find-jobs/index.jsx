@@ -86,8 +86,6 @@ const FindJobsPage = ({ entry }) => {
           body.location = String(match.key);
         }
 
-        console.log("FINAL SEARCH FILTER:", body);
-
         // CREATE ENCRYPTED SEARCH TOKEN
         const response = await fetch("/api/job-search", {
           method: "POST",

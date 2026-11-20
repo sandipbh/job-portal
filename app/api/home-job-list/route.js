@@ -23,8 +23,6 @@ export async function GET(req) {
             process.env.REGISTER_API_URL ||
             `${externalApiBaseUrl.replace(/\/+$/, "")}/api/Public/getJobList`;
 
-        console.log("Calling:", externalApiUrl);
-
         const externalResponse = await fetch(externalApiUrl, {
             method: "GET",
             headers: {

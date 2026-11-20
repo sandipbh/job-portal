@@ -1,9 +1,8 @@
-"use client";
 
+"use client";
 import { useEffect, useState } from "react";
 
-const getDashboardData = (payload) =>
-  payload?.data ?? payload?.Data ?? payload ?? {};
+const getDashboardData = (payload) => payload?.data ?? payload?.Data ?? payload ?? {};
 
 const TopCardBlock = () => {
   const [dashboard, setDashboard] = useState({
@@ -11,6 +10,10 @@ const TopCardBlock = () => {
     jobAlerts: 0,
     shortlistedJobs: 0,
     MessageCount: 0,
+    InterviewSchedule: 0,
+    InterviewSelected: 0,
+    JobOffers: 0,
+    JobOffersWithdrawal: 0,
   });
 
   useEffect(() => {
@@ -20,68 +23,44 @@ const TopCardBlock = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({}),
-          next: { revalidate: 60 }
         });
         const payload = await response.json();
-
         if (!response.ok) {
-          console.log("Dashboard card payload:", payload);
+          return;
         }
-
-
         const data = getDashboardData(payload);
         setDashboard({
           appliedJobs: data?.appliedJobs ?? 0,
           jobAlerts: data?.jobAlerts ?? 0,
           shortlistedJobs: data?.shortlistedJobs ?? 0,
-          MessageCount: data?.MessageCount ?? 0,
+          MessageCount: data?.messageCount ?? 0,
+          InterviewSchedule: data?.interviewSchedule ?? 0,
+          InterviewSelected: data?.interviewSelected ?? 0,
+          JobOffers: data?.jobOffers ?? 0,
+          JobOffersWithdrawal: data?.jobOffersWithdrawal ?? 0,
         });
       } catch (error) {
         console.error("Dashboard card error:", error);
       }
     };
-
     loadDashboard();
   }, []);
 
   const cardContent = [
-    {
-      id: 1,
-      icon: "flaticon-briefcase",
-      countNumber: dashboard.appliedJobs,
-      metaName: "Applied Jobs",
-      uiClass: "ui-blue",
-    },
-    {
-      id: 2,
-      icon: "la-file-invoice",
-      countNumber: dashboard.jobAlerts,
-      metaName: "Job Alerts",
-      uiClass: "ui-red",
-    },
-    {
-      id: 3,
-      icon: "la-bookmark-o",
-      countNumber: dashboard.shortlistedJobs,
-      metaName: "Shortlist",
-      uiClass: "ui-green",
-    },
-    {
-      id: 4,
-      icon: "la-comment-o",
-      countNumber: dashboard.MessageCount,
-      metaName: "Messages",
-      uiClass: "ui-yellow",
-    },
+    { id: 1, icon: "la-briefcase", countNumber: dashboard.appliedJobs, metaName: "Applied Jobs", uiClass: "ui-blue" },
+    { id: 2, icon: "la-bell", countNumber: dashboard.jobAlerts, metaName: "Job Alerts", uiClass: "ui-red" },
+    { id: 3, icon: "la-bookmark", countNumber: dashboard.shortlistedJobs, metaName: "Shortlisted Jobs", uiClass: "ui-green" },
+    { id: 4, icon: "la-comments", countNumber: dashboard.MessageCount, metaName: "Messages", uiClass: "ui-yellow" },
+    { id: 5, icon: "la-calendar-check", countNumber: dashboard.InterviewSchedule, metaName: "Interviews Scheduled", uiClass: "ui-blue" },
+    { id: 6, icon: "la-user-check", countNumber: dashboard.InterviewSelected, metaName: "Interviews Selected", uiClass: "ui-green" },
+    { id: 7, icon: "la-file-signature", countNumber: dashboard.JobOffers, metaName: "Job Offers Received", uiClass: "ui-yellow" },
+    { id: 8, icon: "la-undo-alt", countNumber: dashboard.JobOffersWithdrawal, metaName: "Offer Withdrawals", uiClass: "ui-red" },
   ];
 
   return (
     <>
       {cardContent.map((item) => (
-        <div
-          className="ui-block col-xl-3 col-lg-6 col-md-6 col-sm-12"
-          key={item.id}
-        >
+        <div className="ui-block col-xl-3 col-lg-6 col-md-6 col-sm-6" key={item.id}>
           <div className={`ui-item ${item.uiClass}`}>
             <div className="left">
               <i className={`icon la ${item.icon}`}></i>
