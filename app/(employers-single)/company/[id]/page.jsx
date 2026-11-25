@@ -206,7 +206,7 @@ const CompanyDetails = () => {
 
         <div className="job-detail-outer">
           <div className="auto-container">
-            <div className="row align-items-start">
+            <div className="row align-items-start mt-4">
               <div className="content-column col-lg-8 col-md-12 col-sm-12">
                 <div className="job-details">
                   <h4>About {company.name}</h4>

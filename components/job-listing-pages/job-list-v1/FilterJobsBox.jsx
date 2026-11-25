@@ -9,6 +9,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getTimeAgo } from "@/lib/dateUtils";
 import { getFindJobBySlug } from "@/data/findJobsData";
+
 import {
   addDatePosted,
   addLocation,
@@ -28,6 +29,7 @@ import {
   addIndustry,
   clearIndustry
 } from "../../../features/filter/filterSlice";
+
 import {
   clearDatePostToggle,
   clearExperienceToggle,
@@ -36,7 +38,6 @@ import {
 } from "../../../features/job/jobSlice";
 
 const getSalaryRange = (job) => {
-
 
   const range = job?.totalSalary ?? job?.salaryRange;
   if (range && typeof range === "object") {

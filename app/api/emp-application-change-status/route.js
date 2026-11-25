@@ -1,38 +1,37 @@
+
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { apiFetch } from "../apiFetch";
 
-
 export async function POST(req) {
-  const headersList = await headers();
-
-  const token = req.cookies.get("regToken")?.value;
-  const url = req.nextUrl.pathname;
-
-  const { details } = await req.json();
-
-  let user = {};
   try {
-    user = token ? JSON.parse(token) : {};
-  } catch (err) {
-    console.error("Invalid JSON token:", err);
-    user = {};
-  }
+    const headersList = await headers();
+    const token = req.cookies.get("regToken")?.value;
+    if (!token) return NextResponse.json({ message: "Your login has expired, relogin your account." }, { status: 401 });
 
-  try {
-    const {
-      jobpostId,
-      applicationId,
-      ttype,
-      candiUqId,
-    } = details;
+    let user;
+    try {
+      user = JSON.parse(token);
+    } catch {
+      return NextResponse.json({ message: "Invalid login session. Please login again." }, { status: 401 });
+    }
 
-    // 1. Basic validation
-    if (!user.external.uqId || !user.external.role) {
-      return NextResponse.json(
-        { message: "Your login has expired, relogin your account" },
-        { status: 400 }
-      );
+    const external = user?.external ?? {};
+    if (!external.uqId || !external.role || !external.accessToken) {
+      return NextResponse.json({ message: "Your login has expired, relogin your account." }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const details = body?.details ?? {};
+    const { jobpostId, applicationId, ttype, candiUqId } = details;
+
+    if (!jobpostId || !applicationId || !ttype || !candiUqId) {
+      return NextResponse.json({ message: "Required application details are missing." }, { status: 400 });
+    }
+
+    const allowedStatuses = ["Shortlisted", "Maybe", "Rejected", "Deleted"];
+    if (!allowedStatuses.includes(ttype)) {
+      return NextResponse.json({ message: "Invalid application status." }, { status: 400 });
     }
 
     const LoginIp =
@@ -42,29 +41,23 @@ export async function POST(req) {
       "Unknown";
 
     const loginBody = {
-
-      jobpostId: jobpostId,
-      applicationId: applicationId,
-      ttype: ttype,
-      candiUqId: candiUqId,
-
-      uqId: user.external.uqId,
-      LoginIp: LoginIp,
-      Role: user.external.role,
-      Token: user.external.accessToken,
+      jobpostId,
+      applicationId,
+      ttype,
+      candiUqId,
+      uqId: external.uqId,
+      LoginIp,
+      Role: external.role,
+      Token: external.accessToken
     };
 
-    // Allow self-signed certs in local development only.
     if (process.env.NODE_ENV !== "production") {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     }
 
     const externalApiBaseUrl = process.env.API_BASE_URL;
     if (!externalApiBaseUrl) {
-      return NextResponse.json(
-        { message: "API_BASE_URL is not configured." },
-        { status: 500 }
-      );
+      return NextResponse.json({ message: "API_BASE_URL is not configured." }, { status: 500 });
     }
 
     const externalApiUrl =
@@ -73,40 +66,37 @@ export async function POST(req) {
 
     const externalResponse = await apiFetch(externalApiUrl, {
       method: "POST",
-      body: JSON.stringify(loginBody),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(loginBody)
     });
 
-    const responseData = JSON.parse(await externalResponse.text());
+    const responseText = await externalResponse.text();
+    let responseData = {};
+    try {
+      responseData = responseText ? JSON.parse(responseText) : {};
+    } catch {
+      responseData = { message: responseText || "Unexpected response from server." };
+    }
 
-    if (!externalResponse.ok) {
-      console.error(
-        "External request failed:",
-        responseData.success,
-        responseData.message
-      );
+    const success = responseData.success ?? responseData.Success ?? externalResponse.ok;
+    const message = responseData.message ?? responseData.Message ?? (success ? "Status updated successfully." : "Request failed.");
 
+    if (!externalResponse.ok || !success) {
+      console.error("Application status update failed:", externalResponse.status, message);
       return NextResponse.json(
-        {
-          message: responseData.message || "Request Failed.",
-        },
-        { status: responseData.status || 500 }
+        { success: false, message },
+        { status: externalResponse.status }
       );
     }
 
-    // 6. Send response with cookies
-    const response = NextResponse.json(
-      {
-        message: responseData.message || "Status updated successfully",
-      },
-      { status: 201 }
-    );
-
-    return response;
-  } catch (error) {
-    console.error("UPDATE ERROR:", error);
-
     return NextResponse.json(
-      { message: "Failed to update details" },
+      { success: true, message },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("APPLICATION STATUS UPDATE ERROR:", error);
+    return NextResponse.json(
+      { success: false, message: "Failed to update application status." },
       { status: 500 }
     );
   }

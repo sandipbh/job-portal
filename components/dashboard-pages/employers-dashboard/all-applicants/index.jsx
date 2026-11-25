@@ -7,41 +7,26 @@ import CopyrightFooter from "../../CopyrightFooter";
 import WidgetContentBox from "./components/WidgetContentBox";
 import MenuToggler from "../../MenuToggler";
 
-
-
 const index = () => (
-
 
   <section className="user-dashboard">
     <div className="dashboard-outer">
       <BreadCrumb title="All Applicants!" />
-      {/* breadCrumb */}
-
-      {/* <MenuToggler /> */}
-      {/* Collapsible sidebar button */}
 
       <div className="row">
         <div className="col-lg-12">
-          {/* <!-- Ls widget --> */}
           <div className="ls-widget">
             <div className="tabs-box">
               <div className="widget-title">
-
                 <h4>Applicant</h4>
-
               </div>
-              {/* End top widget filter bar */}
-
               <WidgetContentBox />
-              {/* End widget-content */}
             </div>
           </div>
         </div>
       </div>
 
-      {/* End .row */}
     </div>
-    {/* End dashboard-outer */}
   </section>
 
 );

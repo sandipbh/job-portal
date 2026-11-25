@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import EmployerSubscriptionOverview from "./EmployerSubscriptionOverview";
 
+
+
 const PackageDataTable = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,6 +12,7 @@ const PackageDataTable = () => {
   const [buyingPlanId, setBuyingPlanId] = useState(null);
   const [confirmPlanId, setConfirmPlanId] = useState(null);
   const [walletRefreshKey, setWalletRefreshKey] = useState(0);
+  const [subscriptionNotice, setSubscriptionNotice] = useState("");
   const [purchaseMessage, setPurchaseMessage] = useState({
     planId: null,
     type: "",
@@ -20,6 +23,34 @@ const PackageDataTable = () => {
     const camelKey = key.charAt(0).toLowerCase() + key.slice(1);
     return plan?.[key] ?? plan?.[camelKey] ?? plan?.[key.toLowerCase()] ?? null;
   };
+
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const notice = params.get("notice");
+
+    const notices = {
+      "subscription-required":
+        "You don't have an active subscription. Please purchase a subscription plan to access candidate profiles and shortlist candidates.",
+      "shortlist-balance-exhausted":
+        "Your shortlist balance is exhausted. Please purchase another subscription plan to continue shortlisting candidates.",
+      "view-balance-exhausted":
+        "Your candidate profile view balance is exhausted. Please purchase another subscription plan to view candidate contact details and resumes."
+    };
+
+    if (notice && notices[notice]) {
+      setSubscriptionNotice(notices[notice]);
+    }
+
+    if (notice) {
+      window.history.replaceState(
+        {},
+        "",
+        window.location.pathname
+      );
+    }
+  }, []);
+
 
   const formatPrice = (value) => Number(value || 0).toLocaleString("en-IN");
 
@@ -129,6 +160,33 @@ const PackageDataTable = () => {
 
   return (
     <div>
+      {subscriptionNotice && (
+        <div
+          className="alert alert-warning d-flex align-items-start justify-content-between gap-2"
+          role="alert"
+          style={{
+            borderRadius: "8px",
+            padding: "15px 18px",
+            marginBottom: "20px"
+          }}
+        >
+          <div>
+            <i className="la la-exclamation-triangle me-2"></i>
+            <strong>Subscription Required!</strong>
+            <div className="mt-1">
+              {subscriptionNotice}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="btn-close"
+            aria-label="Close"
+            onClick={() => setSubscriptionNotice("")}
+          />
+        </div>
+      )}
+
       <EmployerSubscriptionOverview refreshKey={walletRefreshKey} />
 
       <div className="employer-subscription">

@@ -167,6 +167,7 @@ const DashboardCandidatesHeader = () => {
                                     height={50}
                                 />
                                 <span className="name">{fullName}</span>
+                                {/* <span className="role">{loginType}</span> */}
                             </a>
 
                             <ul className="dropdown-menu">

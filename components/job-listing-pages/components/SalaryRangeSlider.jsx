@@ -35,7 +35,7 @@ const SalaryRangeSlider = () => {
       <Slider
         min={0}
         range
-        max={500000}
+        max={5000000}
         value={[salary.min, salary.max]}
         onChange={(value) => handleOnChange(value)}
       />
